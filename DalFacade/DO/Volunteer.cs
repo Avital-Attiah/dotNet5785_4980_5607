@@ -35,7 +35,7 @@ namespace DO
     )
     {
         // בנאי ריק (ברירת מחדל) - נדרש לכל ישות מסוג record.
-        public Volunteer() : this(0, "", "", "") { }
+        public Volunteer() : this(0, "", "", "" ) { }
     }
    
 }
