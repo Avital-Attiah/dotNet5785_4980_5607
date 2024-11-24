@@ -44,8 +44,9 @@ namespace DO
         /// </remarks>
         public enum Role
         {
-            manager,
-            Volunteer
+            Volunteer,
+            manager
+            
         }
 
         /// <summary>
