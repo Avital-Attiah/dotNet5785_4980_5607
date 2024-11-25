@@ -280,7 +280,7 @@ internal class Program
         bool isCreated = false;
         while (!isCreated)
         {
-            if (entityName == "Volunteer")
+            if (entityName == "Volunteers")
             {
                 VolunteerImplementation V = new VolunteerImplementation();
                 Console.WriteLine("enter id");
@@ -351,7 +351,7 @@ internal class Program
 
             }
 
-            if (entityName == "Call")
+            if (entityName == "Calls")
             {
                 CallImplementation C = new CallImplementation();
                 Console.WriteLine("enter id");
@@ -414,7 +414,7 @@ internal class Program
 
 
 
-            if (entityName == "Assignment")
+            if (entityName == "Assignments")
             {
                 AssignmentImplementation A = new AssignmentImplementation();
                 Console.WriteLine("enter id");
@@ -489,7 +489,7 @@ internal class Program
         try
         {
             int id;
-            if (entityName == "Volunteer")
+            if (entityName == "Volunteers")
             {
                 Console.WriteLine("enter the id of the volunteer");
                 id = int.Parse(Console.ReadLine());
@@ -497,14 +497,14 @@ internal class Program
                 Console.WriteLine("The volunteer was deleted");
             }
 
-            if (entityName == "Call")
+            if (entityName == "Calls")
             {
                 Console.WriteLine("enter the id of the call");
                 id = int.Parse(Console.ReadLine());
                 s_dalCall.Delete(id);
                 Console.WriteLine("The call was deleted");
             }
-            if (entityName == "Assignment")
+            if (entityName == "Assignments")
             {
                 Console.WriteLine("enter the id of the Assignment");
                 id = int.Parse(Console.ReadLine());
@@ -525,7 +525,7 @@ internal class Program
         try
         {
             int id;
-            if (entityName == "Call")
+            if (entityName == "Calls")
             {
                 Console.WriteLine("Enter the ID of the call to update:");
                 id = int.Parse(Console.ReadLine());
@@ -581,7 +581,7 @@ internal class Program
                 Console.WriteLine("Call updated successfully.");
             }
 
-            else if (entityName == "Assignment")
+            else if (entityName == "Assignments")
             {
                 Console.WriteLine("Enter the ID of the assignment to update:");
                 id = int.Parse(Console.ReadLine());
@@ -647,20 +647,20 @@ internal class Program
         try
         {
             int id;
-            if (entityName == "Volunteer")
+            if (entityName == "Volunteers")
             {
                 Console.WriteLine("enter the id of the volunteer");
                 id = int.Parse(Console.ReadLine());
                 s_dalVolunteer.Read(id);
             }
 
-            if (entityName == "Call")
+            if (entityName == "Calls")
             {
                 Console.WriteLine("enter the id of the call");
                 id = int.Parse(Console.ReadLine());
                 s_dalCall.Read(id);
             }
-            if (entityName == "Assignment")
+            if (entityName == "Assignments")
             {
                 Console.WriteLine("enter the id of the Assignment");
                 id = int.Parse(Console.ReadLine());
