@@ -9,6 +9,7 @@ public interface IVolunteer
     void Update(Volunteer item); //Updates entity object
     void Delete(int id); //Deletes an object by its Id
     void DeleteAll(); //Delete all entity objects
+    void Print(Volunteer item);
     //public void SetInitialPassword(int id, string password);/// יצירת סיסמה ראשונית למתנדב
     //public void UpdatePassword(int id, string newPassword);  /// עדכון סיסמת המתנדב
     //public bool IsPasswordStrong(string password);//בדיקה אם הסיסמא חזקה מספיק

@@ -21,7 +21,14 @@ public class CallImplementation : ICall
     //Read מתודת בקשה/קבלה של אובייקט בודד 
     public Call? Read(int id)
     {
-        return DataSource.Calls.FirstOrDefault(c => c.Id == id);
+        foreach (var call in DataSource.Calls)
+        {
+            if (call.Id == id)
+            {
+                return call;
+            }
+        }
+        return null;
     }
 
     // מתודת בקשה/קבלה של כל האובייקטים מטיפוס מסוים ReadAll
@@ -65,5 +72,8 @@ public class CallImplementation : ICall
         DataSource.Calls.Clear();
     }
 
-
+    public void Print(Call item)
+    {
+        Console.WriteLine("Id:"+item.Id+ " Call-type:"+item.CallType+ " Address:"+item.FullAddress+ " Open-time:"+item.OpenTime+ " Is-emergency:"+item.isEmergency+ " Description:"+item.Description+ " Max-completion-time:"+item.MaxCompletionTime);
+    }
 }

@@ -30,14 +30,6 @@ namespace DO
         /// קונסטרוקטור ברירת מחדל (ללא פרמטרים).
         public Call() : this(0, default, "", DateTime.MinValue) { }
 
-        /// פונקציה לבדיקת תקינות זמן סיום הקריאה.
-        public bool IsValidCompletionTime()
-        {
-            if (MaxCompletionTime.HasValue)
-            {
-                return MaxCompletionTime.Value > OpenTime;
-            }
-            return true; // אם אין זמן מקסימלי לסיום, זה תמיד תקין
-        }
+   
     }
 }

@@ -21,7 +21,14 @@ public class AssignmentImplementation : IAssignment
     // מתודת בקשה/קבלה של אובייקט בודד Read
     public Assignment? Read(int id)
     {
-        return DataSource.Assignments.FirstOrDefault(a => a.Id == id);
+        foreach (var assignment in DataSource.Assignments)
+        {
+            if (assignment.Id == id)
+            {
+                return assignment;
+            }
+        }
+        return null;
     }
 
     // מתודת בקשה/קבלה של כל האובייקטים מטיפוס מסוים ReadAll
@@ -64,4 +71,10 @@ public class AssignmentImplementation : IAssignment
         // ניקוי הרשימה כולה
         DataSource.Assignments.Clear();
     }
+
+    public void Print(Assignment item)
+    {
+        Console.WriteLine("Id:"+item.Id+ " Call-Id:"+item.CallId+ " Volunteer-Id:"+item.VolunteerId+ " Entry-time:"+item.EntryTime+ " Completion-time:"+item.CompletionTime+ " Status:"+item.Status);
+    }
 }
+

@@ -1,6 +1,7 @@
 ﻿using Dal;
 using DalApi;
 using DO;
+using System.ComponentModel.Design;
 using System.Numerics;
 using static DO.Enums;
 namespace DalTest;
@@ -189,17 +190,17 @@ internal class Program
         Console.WriteLine("Volunteers:");
         foreach (var volunteer in s_dalVolunteer.ReadAll())
         {
-            Console.WriteLine(volunteer);
+            s_dalVolunteer.Print(volunteer);
         }
         Console.WriteLine("Calls:");
         foreach (var call in s_dalCall.ReadAll())
         {
-            Console.WriteLine(call);
+            s_dalCall.Print(call);
         }
         Console.WriteLine("Assignments:");
         foreach (var assignment in s_dalAssignment.ReadAll())
         {
-            Console.WriteLine(assignment);
+            s_dalAssignment.Print(assignment);
         }
     }
 
@@ -247,7 +248,7 @@ internal class Program
                         ReadEntity(entityName);
                         break;
                     case "3":
-                        ReadAllEntities();
+                        ReadAllEntities(entityName);
                         break;
                     case "4":
                         UpdateEntity(entityName);
@@ -282,7 +283,6 @@ internal class Program
         {
             if (entityName == "Volunteers")
             {
-                VolunteerImplementation V = new VolunteerImplementation();
                 Console.WriteLine("enter id");
                 int Id = int.Parse(Console.ReadLine());
                 Console.WriteLine("enter full name");
@@ -325,6 +325,7 @@ internal class Program
 
                 Volunteer newVolunteer = new Volunteer
                 {
+                    Id = Id,
                     FullName = FullName,
                     Phone = Phone,
                     Email = Email,
@@ -339,7 +340,7 @@ internal class Program
                 };
                 try
                 {
-                    V.Create(newVolunteer);
+                    s_dalVolunteer.Create(newVolunteer);
                     Console.WriteLine("Volunteer added successfully!");
                     isCreated = true;
                 }
@@ -353,7 +354,7 @@ internal class Program
 
             if (entityName == "Calls")
             {
-                CallImplementation C = new CallImplementation();
+              
                 Console.WriteLine("enter id");
                 int Id = int.Parse(Console.ReadLine());
                 Console.WriteLine("enter full adress");
@@ -400,7 +401,7 @@ internal class Program
                 };
                 try
                 {
-                    C.Create(newCall);
+                    s_dalCall.Create(newCall);
                     Console.WriteLine("Call added successfully!");
                     isCreated = true;
                 }
@@ -416,7 +417,7 @@ internal class Program
 
             if (entityName == "Assignments")
             {
-                AssignmentImplementation A = new AssignmentImplementation();
+              
                 Console.WriteLine("enter id");
                 int Id = int.Parse(Console.ReadLine());
                 Console.WriteLine("enter Call Id");
@@ -452,7 +453,7 @@ internal class Program
                 };
                 try
                 {
-                    A.Create(newAssignment);
+                   s_dalAssignment.Create(newAssignment);
                     Console.WriteLine("Assignment added successfully!");
                     isCreated = true;
                 }
@@ -525,7 +526,90 @@ internal class Program
         try
         {
             int id;
-            if (entityName == "Calls")
+           if (entityName == "Volunteers")
+            {
+                Console.WriteLine("Enter the ID of the volunteer to update:");
+                id = int.Parse(Console.ReadLine());
+                Volunteer volunteer = s_dalVolunteer.Read(id);
+                if (volunteer == null)
+                {
+                    Console.WriteLine("Volunteer not found.");
+                    return;
+                }
+                Console.WriteLine("Current volunteer details:");
+                s_dalVolunteer.Print(volunteer);
+
+                // Requesting new values from the user
+                Console.WriteLine("Enter new full name (leave empty to keep current):");
+                string newFullName = Console.ReadLine();
+                var updatedVolunteer = string.IsNullOrEmpty(newFullName) ? volunteer : volunteer with { FullName = newFullName };
+
+                Console.WriteLine("Enter new phone number (leave empty to keep current):");
+                string newPhone = Console.ReadLine();
+                updatedVolunteer = string.IsNullOrEmpty(newPhone) ? updatedVolunteer : updatedVolunteer with { Phone = newPhone };
+
+                Console.WriteLine("Enter new email (leave empty to keep current):");
+                string newEmail = Console.ReadLine();
+                updatedVolunteer = string.IsNullOrEmpty(newEmail) ? updatedVolunteer : updatedVolunteer with { Email = newEmail };
+
+                Console.WriteLine("Enter new password (leave empty to keep current):");
+                string newPassword = Console.ReadLine();
+                updatedVolunteer = string.IsNullOrEmpty(newPassword) ? updatedVolunteer : updatedVolunteer with { Password = newPassword };
+
+                Console.WriteLine("Enter new current address (leave empty to keep current):");
+                string newCurrentAddress = Console.ReadLine();
+                updatedVolunteer = string.IsNullOrEmpty(newCurrentAddress) ? updatedVolunteer : updatedVolunteer with { CurrentAddress = newCurrentAddress };
+
+                Console.WriteLine("Enter new latitude (leave empty to keep current):");
+                string newLatitude = Console.ReadLine();
+                if (double.TryParse(newLatitude, out double latitude))
+                {
+                    updatedVolunteer = updatedVolunteer with { Latitude = latitude };
+                }
+
+                Console.WriteLine("Enter new longitude (leave empty to keep current):");
+                string newLongitude = Console.ReadLine();
+                if (double.TryParse(newLongitude, out double longitude))
+                {
+                    updatedVolunteer = updatedVolunteer with { Longitude = longitude };
+                }
+
+                Console.WriteLine("Enter new maximum distance (leave empty to keep current):");
+                string newMaxDistance = Console.ReadLine();
+                if (double.TryParse(newMaxDistance, out double maxDistance))
+                {
+                    updatedVolunteer = updatedVolunteer with { MaxDistance = maxDistance };
+                }
+
+                Console.WriteLine("Enter new distance type (leave empty to keep current):");
+                string newDistanceType = Console.ReadLine();
+                if (!string.IsNullOrEmpty(newDistanceType))
+                {
+                    var distanceType = (DistanceType)Enum.Parse(typeof(DistanceType), newDistanceType);
+                    updatedVolunteer = updatedVolunteer with { DistanceType = distanceType };
+                }
+
+                Console.WriteLine("Enter new role (leave empty to keep current):");
+                string newRole = Console.ReadLine();
+                if (!string.IsNullOrEmpty(newRole))
+                {
+                    var role = (Role)Enum.Parse(typeof(Role), newRole);
+                    updatedVolunteer = updatedVolunteer with { Role = role };
+                }
+
+                Console.WriteLine("Enter new active status (leave empty to keep current):");
+                string newIsActive = Console.ReadLine();
+                if (!string.IsNullOrEmpty(newIsActive) && bool.TryParse(newIsActive, out bool isActive))
+                {
+                    updatedVolunteer = updatedVolunteer with { IsActive = isActive };
+                }
+
+                // Save the updated volunteer
+                s_dalVolunteer.Update(updatedVolunteer);
+                Console.WriteLine("Volunteer updated successfully.");
+            }
+
+            else if (entityName == "Calls")
             {
                 Console.WriteLine("Enter the ID of the call to update:");
                 id = int.Parse(Console.ReadLine());
@@ -536,7 +620,7 @@ internal class Program
                     return;
                 }
                 Console.WriteLine("Current call details:");
-                Console.WriteLine(call);
+                s_dalCall.Print(call);
 
                 // Requesting new values from the user
                 Console.WriteLine("Enter new full address (leave empty to keep current):");
@@ -592,7 +676,7 @@ internal class Program
                     return;
                 }
                 Console.WriteLine("Current assignment details:");
-                Console.WriteLine(assignment);
+                s_dalAssignment.Print(assignment);
 
                 // Requesting new values from the user
                 Console.WriteLine("Enter new completion time (leave empty to keep current):");
@@ -623,16 +707,37 @@ internal class Program
 
 
 
-    private static void ReadAllEntities()
+    private static void ReadAllEntities(string entityName)
     {
         try
         {
-            Console.WriteLine("The Volunteers data:");
-            s_dalAssignment.ReadAll();
-            Console.WriteLine("The Assignments data:");
-            s_dalCall.ReadAll();
-            Console.WriteLine("The Calls data:");
-            s_dalVolunteer.ReadAll();
+            if(entityName == "Volunteers")
+            {
+                Console.WriteLine("The Volunteers data:");
+                foreach (var volunteer in s_dalVolunteer.ReadAll())
+                {
+                    s_dalVolunteer.Print(volunteer);
+                }
+            }
+          else if(entityName == "Assignments")
+            {
+
+                Console.WriteLine("The Assignments data:");
+                foreach (var assignment in s_dalAssignment.ReadAll())
+                {
+                    s_dalAssignment.Print(assignment);
+                }
+            }
+          else if(entityName=="Calls")
+            {
+                Console.WriteLine("The Calls data:");
+                foreach (var call in s_dalCall.ReadAll())
+                {
+                    s_dalCall.Print(call);
+                }
+            }
+         
+
         }
         catch (InvalidOperationException ex)
         {
@@ -651,20 +756,23 @@ internal class Program
             {
                 Console.WriteLine("enter the id of the volunteer");
                 id = int.Parse(Console.ReadLine());
-                s_dalVolunteer.Read(id);
+                Volunteer v= s_dalVolunteer.Read(id);
+                s_dalVolunteer.Print(v);
             }
 
             if (entityName == "Calls")
             {
                 Console.WriteLine("enter the id of the call");
                 id = int.Parse(Console.ReadLine());
-                s_dalCall.Read(id);
+               Call c= s_dalCall.Read(id);
+                s_dalCall.Print(c);
             }
-            if (entityName == "Assignments")
+            if (entityName == "Assignment")
             {
                 Console.WriteLine("enter the id of the Assignment");
                 id = int.Parse(Console.ReadLine());
-                s_dalAssignment.Read(id);
+                Assignment a= s_dalAssignment.Read(id);
+                s_dalAssignment.Print(a);
             }
         }
         catch (InvalidOperationException ex)
