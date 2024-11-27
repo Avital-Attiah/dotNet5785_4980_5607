@@ -8,9 +8,9 @@ namespace DalTest;
 
 internal class Program
 {
-    private static IVolunteer? s_dalVolunteer = new VolunteerImplementation(); //stage 1
-    private static ICall? s_dalCall = new CallImplementation(); //stage 1
-    private static IAssignment? s_dalAssignment = new AssignmentImplementation(); //stage 1
+    private static IVolunteer? s_dalVolunteer = new VolunteerImplementation(); 
+    private static ICall? s_dalCall = new CallImplementation(); 
+    private static IAssignment? s_dalAssignment = new AssignmentImplementation();
     private static IConfig? s_dalConfig = new ConfigImplementation();
 
     // עבור תפריט ראשי Enum 
@@ -50,7 +50,7 @@ internal class Program
         ShowConfigValue,
         ResetConfig
     }
-
+    //תפריט הקונפגרציה
     private static void ShowConfigMenu()
     {
         bool exit = false;
@@ -66,7 +66,7 @@ internal class Program
             Console.WriteLine("6. Reset Configuration");
             Console.WriteLine("Choose an option from Configuration Submenu:");
 
-            // Read user input
+            // קורא את קלט המשתמש
             if (Enum.TryParse<ConfigMenuOptions>(Console.ReadLine(), out var selectedOption))
             {
                 switch (selectedOption)
@@ -77,32 +77,32 @@ internal class Program
                         break;
 
                     case ConfigMenuOptions.AdvanceClockByMinute:
-                        // Advance the clock by one minute
+                        // מקדם את השעון בדקה
                         AdvanceClockByMinute();
                         break;
 
                     case ConfigMenuOptions.AdvanceClockByHour:
-                        // Advance the clock by one hour
+                        // מקדם את השעון בשעה
                         AdvanceClockByHour();
                         break;
 
                     case ConfigMenuOptions.ShowCurrentClock:
-                        // Show the current system time
+                        // מראה שעה נוכחית
                         ShowCurrentTime();
                         break;
 
                     case ConfigMenuOptions.SetConfigValue:
-                        // Set a configuration value
+                        // מגדיר ערך בהגדרות
                         SetConfigValue();
                         break;
 
                     case ConfigMenuOptions.ShowConfigValue:
-                        // Display a configuration value
+                        //  מציג ערך בהגדרות
                         ShowConfigValue();
                         break;
 
                     case ConfigMenuOptions.ResetConfig:
-                        // Reset configuration
+                        // מאפס הגדרות
                         ResetConfig();
                         break;
 
@@ -120,30 +120,30 @@ internal class Program
 
     private static void AdvanceClockByMinute()
     {
-        // Add one minute to the system clock (dummy logic for demonstration)
-        DateTime currentTime = DateTime.Now;
+        // מוסיף דקה אחת לשעון המערכת
+        DateTime currentTime = Config.Clock;
         DateTime newTime = currentTime.AddMinutes(1);
         Console.WriteLine($"System time advanced by 1 minute. New time: {newTime}");
     }
 
     private static void AdvanceClockByHour()
     {
-        // Add one hour to the system clock (dummy logic for demonstration)
-        DateTime currentTime = DateTime.Now;
+        // מוסיף שעה אחת לשעון המערכת
+        DateTime currentTime = Config.Clock;
         DateTime newTime = currentTime.AddHours(1);
         Console.WriteLine($"System time advanced by 1 hour. New time: {newTime}");
     }
 
     private static void ShowCurrentTime()
     {
-        // Display current system time
-        DateTime currentTime = DateTime.Now;
+        // מראה שעה נוכחית
+        DateTime currentTime = Config.Clock;
         Console.WriteLine($"Current system time: {currentTime}");
     }
 
     private static void SetConfigValue()
     {
-        // Set a configuration value (dummy logic for demonstration)
+        // מגדיר ערך בהגדרות
         Console.WriteLine("Enter the name of the configuration parameter to set:");
         string configName = Console.ReadLine();
         Console.WriteLine($"Enter the value for {configName}:");
@@ -154,7 +154,7 @@ internal class Program
 
     private static void ShowConfigValue()
     {
-        // Display a configuration value (dummy logic for demonstration)
+        // מציג ערך בהגדרות
         Console.WriteLine("Enter the name of the configuration parameter to display:");
         string configName = Console.ReadLine();
         // Retrieve the value (could be read from a file or database in a real scenario)
@@ -163,7 +163,7 @@ internal class Program
 
     private static void ResetConfig()
     {
-        // Reset all configurations to their default values (dummy logic for demonstration)
+        // מאפס את כל ההגדרות לערכים ברירת המחדל שלהן 
         Console.WriteLine("All configuration values have been reset to their defaults.");
     }
 
@@ -173,7 +173,7 @@ internal class Program
         try
         {
             Console.WriteLine("Initializing data...");
-            // Calling Initialization.Do with the appropriate objects
+            // קריאה ל-Initialization.Do עם האובייקטים המתאימים
             Initialization.Do(s_dalAssignment, s_dalCall, s_dalConfig, s_dalVolunteer);
             Console.WriteLine("Initialization completed successfully.");
         }
@@ -604,7 +604,7 @@ internal class Program
                     updatedVolunteer = updatedVolunteer with { IsActive = isActive };
                 }
 
-                // Save the updated volunteer
+                // שומר מתנדב מעודכן
                 s_dalVolunteer.Update(updatedVolunteer);
                 Console.WriteLine("Volunteer updated successfully.");
             }
@@ -622,7 +622,7 @@ internal class Program
                 Console.WriteLine("Current call details:");
                 s_dalCall.Print(call);
 
-                // Requesting new values from the user
+                // מבקש נתונים חדשים לקריאה
                 Console.WriteLine("Enter new full address (leave empty to keep current):");
                 string newFullAddress = Console.ReadLine();
                 var updatedCall = string.IsNullOrEmpty(newFullAddress) ? call : call with { FullAddress = newFullAddress };
@@ -652,7 +652,7 @@ internal class Program
                     updatedCall = updatedCall with { isEmergency = isEmergency };
                 }
 
-                // Update MaxCompletionTime if needed
+                
                 Console.WriteLine("Enter new max completion time (leave empty to keep current):");
                 string newMaxCompletionTime = Console.ReadLine();
                 if (DateTime.TryParse(newMaxCompletionTime, out DateTime maxCompletionTime))
@@ -660,7 +660,7 @@ internal class Program
                     updatedCall = updatedCall with { MaxCompletionTime = maxCompletionTime };
                 }
 
-                // Finally, save the updated call
+                // מעעדכן את נתוני הקריאה
                 s_dalCall.Update(updatedCall);
                 Console.WriteLine("Call updated successfully.");
             }
@@ -678,7 +678,7 @@ internal class Program
                 Console.WriteLine("Current assignment details:");
                 s_dalAssignment.Print(assignment);
 
-                // Requesting new values from the user
+                
                 Console.WriteLine("Enter new completion time (leave empty to keep current):");
                 string newCompletionTime = Console.ReadLine();
                 var updatedAssignment = DateTime.TryParse(newCompletionTime, out DateTime completionTime) ?
@@ -693,7 +693,7 @@ internal class Program
                     updatedAssignment = updatedAssignment with { Status = status };
                 }
 
-                // Finally, save the updated assignment
+                // שומר עידכונים עבור הקצאה
                 s_dalAssignment.Update(updatedAssignment);
                 Console.WriteLine("Assignment updated successfully.");
             }
@@ -805,7 +805,7 @@ internal class Program
         {
             try
             {
-                // Display the main menu
+              
                 ShowMainMenu();
                 Console.Write("Choose an option from the main menu: ");
                 string choice = Console.ReadLine();

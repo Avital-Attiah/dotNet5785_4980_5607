@@ -3,11 +3,11 @@ namespace DalApi;
 using DO;
 public interface ICall
 {
-    void Create(Call item); //Creates new entity object in DAL
-    Call? Read(int id); //Reads entity object by its ID 
-    List<Call> ReadAll(); //stage 1 only, Reads all entity objects
-    void Update(Call item); //Updates entity object
-    void Delete(int id); //Deletes an object by its Id
-    void DeleteAll(); //Delete all entity objects
-    void Print(Call item);//print the item
+    void Create(Call item); // יוצר אובייקט ישות חדש ב-DAL
+    Call? Read(int id); // קורא אובייקט ישות לפי מזהה שלו
+    List<Call> ReadAll(); // שלב 1 בלבד, קורא את כל אובייקטי הישות
+    void Update(Call item); // מעדכן אובייקט ישות
+    void Delete(int id); // מוחק אובייקט לפי המזהה שלו
+    void DeleteAll(); // מוחק את כל אובייקטי הישות
+    void Print(Call item); // מדפיס את הפריט
 }

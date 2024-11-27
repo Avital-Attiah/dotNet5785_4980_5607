@@ -24,7 +24,7 @@
         // מתודה לאיפוס משתני התצורה לערכים ההתחלתיים
         internal static void Reset()
         {
-            nextCallId = startCallId;
+             nextCallId = startCallId;
             nextAssignmentId = startAssignmentId;
             Clock = DateTime.Now;
             RiskRange = TimeSpan.FromMinutes(10);

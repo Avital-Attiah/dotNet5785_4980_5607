@@ -133,7 +133,7 @@ public static class Initialization
             if (s_dalCall != null)
                 // יצירת קריאה עם ה-Call שנוצר
                 s_dalCall.Create(call);  // קריאה לפונקציה המתאימה עם אובייקט call
-       
+
         }
 
     }
@@ -212,4 +212,3 @@ public static class Initialization
 
 
 }
-
