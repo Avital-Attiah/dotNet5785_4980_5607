@@ -45,6 +45,8 @@ internal class Program
         Exit,
         AdvanceClockByMinute,
         AdvanceClockByHour,
+        AdvanceClockByDay,
+        AdvanceClockByYear,
         ShowCurrentClock,
         SetConfigValue,
         ShowConfigValue,
@@ -60,10 +62,12 @@ internal class Program
             Console.WriteLine("0. Exit");
             Console.WriteLine("1. Advance System Clock by One Minute");
             Console.WriteLine("2. Advance System Clock by One Hour");
-            Console.WriteLine("3. Show Current Time");
-            Console.WriteLine("4. Set Configuration Value");
-            Console.WriteLine("5. Display Configuration Value");
-            Console.WriteLine("6. Reset Configuration");
+            Console.WriteLine("3. Advance System Clock by One Day");
+            Console.WriteLine("4. Advance System Clock by One Year");
+            Console.WriteLine("5. Show Current Time");
+            Console.WriteLine("6. Set Configuration Value");
+            Console.WriteLine("7. Display Configuration Value");
+            Console.WriteLine("8. Reset Configuration");
             Console.WriteLine("Choose an option from Configuration Submenu:");
 
             // קורא את קלט המשתמש
@@ -86,6 +90,14 @@ internal class Program
                         AdvanceClockByHour();
                         break;
 
+                    case ConfigMenuOptions.AdvanceClockByDay:
+                        // מקדם את השעון ביום
+                        AdvanceClockByDay();
+                        break;
+                    case ConfigMenuOptions.AdvanceClockByYear:
+                        // מקדם את השעון בשנה
+                        AdvanceClockByYear();
+                        break;
                     case ConfigMenuOptions.ShowCurrentClock:
                         // מראה שעה נוכחית
                         ShowCurrentTime();
@@ -132,6 +144,20 @@ internal class Program
         DateTime currentTime = Config.Clock;
         DateTime newTime = currentTime.AddHours(1);
         Console.WriteLine($"System time advanced by 1 hour. New time: {newTime}");
+    }
+    private static void AdvanceClockByDay()
+    {
+        // מוסיף יום אחד לשעון המערכת
+        DateTime currentTime = Config.Clock;
+        DateTime newTime = currentTime.AddDays(1);
+        Console.WriteLine($"System time advanced by 1 Day. New time: {newTime}");
+    }
+    private static void AdvanceClockByYear()
+    {
+        // מוסיף שנה אחת לשעון המערכת
+        DateTime currentTime = Config.Clock;
+        DateTime newTime = currentTime.AddYears(1);
+        Console.WriteLine($"System time advanced by 1 Year. New time: {newTime}");
     }
 
     private static void ShowCurrentTime()
