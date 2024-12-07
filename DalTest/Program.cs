@@ -8,10 +8,8 @@ namespace DalTest;
 
 internal class Program
 {
-    private static IVolunteer? s_dalVolunteer = new VolunteerImplementation(); 
-    private static ICall? s_dalCall = new CallImplementation(); 
-    private static IAssignment? s_dalAssignment = new AssignmentImplementation();
-    private static IConfig? s_dalConfig = new ConfigImplementation();
+  
+    static readonly IDal s_dal = new DalList();
 
     // עבור תפריט ראשי Enum 
     private enum MainMenuOption
@@ -133,7 +131,7 @@ internal class Program
     private static void AdvanceClockByMinute()
     {
         // מוסיף דקה אחת לשעון המערכת
-        DateTime currentTime = Config.Clock;
+        DateTime currentTime = s_dal!.Config.Clock;
         DateTime newTime = currentTime.AddMinutes(1);
         Console.WriteLine($"System time advanced by 1 minute. New time: {newTime}");
     }
@@ -141,21 +139,21 @@ internal class Program
     private static void AdvanceClockByHour()
     {
         // מוסיף שעה אחת לשעון המערכת
-        DateTime currentTime = Config.Clock;
+        DateTime currentTime = s_dal!.Config.Clock;
         DateTime newTime = currentTime.AddHours(1);
         Console.WriteLine($"System time advanced by 1 hour. New time: {newTime}");
     }
     private static void AdvanceClockByDay()
     {
         // מוסיף יום אחד לשעון המערכת
-        DateTime currentTime = Config.Clock;
+        DateTime currentTime = s_dal!.Config.Clock;
         DateTime newTime = currentTime.AddDays(1);
         Console.WriteLine($"System time advanced by 1 Day. New time: {newTime}");
     }
     private static void AdvanceClockByYear()
     {
         // מוסיף שנה אחת לשעון המערכת
-        DateTime currentTime = Config.Clock;
+        DateTime currentTime = s_dal!.Config.Clock;
         DateTime newTime = currentTime.AddYears(1);
         Console.WriteLine($"System time advanced by 1 Year. New time: {newTime}");
     }
@@ -163,7 +161,7 @@ internal class Program
     private static void ShowCurrentTime()
     {
         // מראה שעה נוכחית
-        DateTime currentTime = Config.Clock;
+        DateTime currentTime = s_dal!.Config.Clock;
         Console.WriteLine($"Current system time: {currentTime}");
     }
 
@@ -200,7 +198,7 @@ internal class Program
         {
             Console.WriteLine("Initializing data...");
             // קריאה ל-Initialization.Do עם האובייקטים המתאימים
-            Initialization.Do(s_dalAssignment, s_dalCall, s_dalConfig, s_dalVolunteer);
+            Initialization.Do(s_dal);
             Console.WriteLine("Initialization completed successfully.");
         }
         catch (InvalidOperationException ex)
@@ -214,29 +212,29 @@ internal class Program
     {
         Console.WriteLine("Displaying all data:");
         Console.WriteLine("Volunteers:");
-        foreach (var volunteer in s_dalVolunteer.ReadAll())
+        foreach (var volunteer in s_dal!.Volunteer.ReadAll())
         {
-            s_dalVolunteer.Print(volunteer);
+            s_dal!.Volunteer.Print(volunteer);
         }
         Console.WriteLine("Calls:");
-        foreach (var call in s_dalCall.ReadAll())
+        foreach (var call in s_dal!.Call.ReadAll())
         {
-            s_dalCall.Print(call);
+            s_dal!.Call.Print(call);
         }
         Console.WriteLine("Assignments:");
-        foreach (var assignment in s_dalAssignment.ReadAll())
+        foreach (var assignment in s_dal!.Assignment.ReadAll())
         {
-            s_dalAssignment.Print(assignment);
+            s_dal!.Assignment.Print(assignment);
         }
     }
 
     private static void ResetDatabase()
     {
         Console.WriteLine("Resetting database...");
-        s_dalVolunteer.DeleteAll();
-        s_dalCall.DeleteAll();
-        s_dalAssignment.DeleteAll();
-        s_dalConfig.Reset();
+        s_dal!.Volunteer.DeleteAll();
+        s_dal!.Call.DeleteAll();
+        s_dal!.Assignment.DeleteAll();
+        s_dal!.Config.Reset();
         Console.WriteLine("Database reset completed.");
     }
 
@@ -366,7 +364,7 @@ internal class Program
                 };
                 try
                 {
-                    s_dalVolunteer.Create(newVolunteer);
+                    s_dal!.Volunteer.Create(newVolunteer);
                     Console.WriteLine("Volunteer added successfully!");
                     isCreated = true;
                 }
@@ -427,7 +425,7 @@ internal class Program
                 };
                 try
                 {
-                    s_dalCall.Create(newCall);
+                    s_dal!.Call.Create(newCall);
                     Console.WriteLine("Call added successfully!");
                     isCreated = true;
                 }
@@ -479,7 +477,7 @@ internal class Program
                 };
                 try
                 {
-                   s_dalAssignment.Create(newAssignment);
+                   s_dal!.Assignment.Create(newAssignment);
                     Console.WriteLine("Assignment added successfully!");
                     isCreated = true;
                 }
@@ -499,9 +497,9 @@ internal class Program
     {
         try
         {
-            s_dalAssignment.DeleteAll();
-            s_dalCall.DeleteAll();
-            s_dalVolunteer.DeleteAll();
+            s_dal!.Assignment.DeleteAll();
+            s_dal!.Call.DeleteAll();
+            s_dal!.Volunteer.DeleteAll();
             Console.WriteLine("All Entities were deleted!");
         }
         catch (InvalidOperationException ex)
@@ -520,7 +518,7 @@ internal class Program
             {
                 Console.WriteLine("enter the id of the volunteer");
                 id = int.Parse(Console.ReadLine());
-                s_dalVolunteer.Delete(id);
+                s_dal!.Volunteer.Delete(id);
                 Console.WriteLine("The volunteer was deleted");
             }
 
@@ -528,14 +526,14 @@ internal class Program
             {
                 Console.WriteLine("enter the id of the call");
                 id = int.Parse(Console.ReadLine());
-                s_dalCall.Delete(id);
+                s_dal!.Call.Delete(id);
                 Console.WriteLine("The call was deleted");
             }
             if (entityName == "Assignments")
             {
                 Console.WriteLine("enter the id of the Assignment");
                 id = int.Parse(Console.ReadLine());
-                s_dalAssignment.Delete(id);
+                s_dal!.Assignment.Delete(id);
                 Console.WriteLine("The Assignment was deleted");
             }
         }
@@ -556,14 +554,14 @@ internal class Program
             {
                 Console.WriteLine("Enter the ID of the volunteer to update:");
                 id = int.Parse(Console.ReadLine());
-                Volunteer volunteer = s_dalVolunteer.Read(id);
+                Volunteer volunteer = s_dal!.Volunteer.Read(id);
                 if (volunteer == null)
                 {
                     Console.WriteLine("Volunteer not found.");
                     return;
                 }
                 Console.WriteLine("Current volunteer details:");
-                s_dalVolunteer.Print(volunteer);
+                s_dal!.Volunteer.Print(volunteer);
 
                 // Requesting new values from the user
                 Console.WriteLine("Enter new full name (leave empty to keep current):");
@@ -631,7 +629,7 @@ internal class Program
                 }
 
                 // שומר מתנדב מעודכן
-                s_dalVolunteer.Update(updatedVolunteer);
+                s_dal!.Volunteer.Update(updatedVolunteer);
                 Console.WriteLine("Volunteer updated successfully.");
             }
 
@@ -639,14 +637,14 @@ internal class Program
             {
                 Console.WriteLine("Enter the ID of the call to update:");
                 id = int.Parse(Console.ReadLine());
-                var call = s_dalCall.Read(id);
+                var call = s_dal!.Call.Read(id);
                 if (call == null)
                 {
                     Console.WriteLine("Call not found.");
                     return;
                 }
                 Console.WriteLine("Current call details:");
-                s_dalCall.Print(call);
+                s_dal!.Call.Print(call);
 
                 // מבקש נתונים חדשים לקריאה
                 Console.WriteLine("Enter new full address (leave empty to keep current):");
@@ -687,7 +685,7 @@ internal class Program
                 }
 
                 // מעעדכן את נתוני הקריאה
-                s_dalCall.Update(updatedCall);
+                s_dal!.Call.Update(updatedCall);
                 Console.WriteLine("Call updated successfully.");
             }
 
@@ -695,14 +693,14 @@ internal class Program
             {
                 Console.WriteLine("Enter the ID of the assignment to update:");
                 id = int.Parse(Console.ReadLine());
-                var assignment = s_dalAssignment.Read(id);
+                var assignment = s_dal!.Assignment.Read(id);
                 if (assignment == null)
                 {
                     Console.WriteLine("Assignment not found.");
                     return;
                 }
                 Console.WriteLine("Current assignment details:");
-                s_dalAssignment.Print(assignment);
+                s_dal!.Assignment.Print(assignment);
 
                 
                 Console.WriteLine("Enter new completion time (leave empty to keep current):");
@@ -720,7 +718,7 @@ internal class Program
                 }
 
                 // שומר עידכונים עבור הקצאה
-                s_dalAssignment.Update(updatedAssignment);
+                s_dal!.Assignment.Update(updatedAssignment);
                 Console.WriteLine("Assignment updated successfully.");
             }
         }
@@ -740,26 +738,26 @@ internal class Program
             if(entityName == "Volunteers")
             {
                 Console.WriteLine("The Volunteers data:");
-                foreach (var volunteer in s_dalVolunteer.ReadAll())
+                foreach (var volunteer in s_dal!.Volunteer.ReadAll())
                 {
-                    s_dalVolunteer.Print(volunteer);
+                    s_dal!.Volunteer.Print(volunteer);
                 }
             }
           else if(entityName == "Assignments")
             {
 
                 Console.WriteLine("The Assignments data:");
-                foreach (var assignment in s_dalAssignment.ReadAll())
+                foreach (var assignment in s_dal!.Assignment.ReadAll())
                 {
-                    s_dalAssignment.Print(assignment);
+                    s_dal!.Assignment.Print(assignment);
                 }
             }
           else if(entityName=="Calls")
             {
                 Console.WriteLine("The Calls data:");
-                foreach (var call in s_dalCall.ReadAll())
+                foreach (var call in s_dal!.Call.ReadAll())
                 {
-                    s_dalCall.Print(call);
+                    s_dal!.Call.Print(call);
                 }
             }
          
@@ -782,23 +780,23 @@ internal class Program
             {
                 Console.WriteLine("enter the id of the volunteer");
                 id = int.Parse(Console.ReadLine());
-                Volunteer v= s_dalVolunteer.Read(id);
-                s_dalVolunteer.Print(v);
+                Volunteer v= s_dal!.Volunteer.Read(id);
+                s_dal!.Volunteer.Print(v);
             }
 
             if (entityName == "Calls")
             {
                 Console.WriteLine("enter the id of the call");
                 id = int.Parse(Console.ReadLine());
-               Call c= s_dalCall.Read(id);
-                s_dalCall.Print(c);
+               Call c= s_dal!.Call.Read(id);
+                s_dal!.Call.Print(c);
             }
             if (entityName == "Assignment")
             {
                 Console.WriteLine("enter the id of the Assignment");
                 id = int.Parse(Console.ReadLine());
-                Assignment a= s_dalAssignment.Read(id);
-                s_dalAssignment.Print(a);
+                Assignment a= s_dal!.Assignment.Read(id);
+                s_dal!.Assignment.Print(a);
             }
         }
         catch (InvalidOperationException ex)

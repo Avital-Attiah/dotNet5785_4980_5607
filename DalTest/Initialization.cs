@@ -116,7 +116,7 @@ public static class Initialization
 
         for (int i = 0; i < 50; i++)
         {
-            var startTime = Config.Clock.AddMinutes(-random.Next(1, 1440)); // פתיחה עד 24 שעות אחורה
+            var startTime = s_dal!.Config.Clock.AddMinutes(-random.Next(1, 1440)); // פתיחה עד 24 שעות אחורה
             var endTime = random.Next(0, 2) == 0
                 ? startTime.AddMinutes(random.Next(10, 120)) // זמן סיום רנדומלי
                 : (DateTime?)null;
