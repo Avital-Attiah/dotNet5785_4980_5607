@@ -201,7 +201,7 @@ internal class Program
             Initialization.Do(s_dal);
             Console.WriteLine("Initialization completed successfully.");
         }
-        catch (InvalidOperationException ex)
+        catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
@@ -368,7 +368,7 @@ internal class Program
                     Console.WriteLine("Volunteer added successfully!");
                     isCreated = true;
                 }
-                catch (InvalidOperationException ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine($"Error: {ex.Message}");
                 }
@@ -429,7 +429,7 @@ internal class Program
                     Console.WriteLine("Call added successfully!");
                     isCreated = true;
                 }
-                catch (InvalidOperationException ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine($"Error: {ex.Message}");
                 }
@@ -481,7 +481,7 @@ internal class Program
                     Console.WriteLine("Assignment added successfully!");
                     isCreated = true;
                 }
-                catch (InvalidOperationException ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine($"Error: {ex.Message}");
                 }
@@ -502,7 +502,7 @@ internal class Program
             s_dal!.Volunteer.DeleteAll();
             Console.WriteLine("All Entities were deleted!");
         }
-        catch (InvalidOperationException ex)
+        catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
@@ -537,7 +537,7 @@ internal class Program
                 Console.WriteLine("The Assignment was deleted");
             }
         }
-        catch (InvalidOperationException ex)
+        catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
@@ -763,7 +763,7 @@ internal class Program
          
 
         }
-        catch (InvalidOperationException ex)
+        catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
@@ -799,7 +799,7 @@ internal class Program
                 s_dal!.Assignment.Print(a);
             }
         }
-        catch (InvalidOperationException ex)
+        catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
         }

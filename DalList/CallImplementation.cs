@@ -3,17 +3,13 @@ namespace Dal;
 using DalApi;
 using DO;
 using System.Collections.Generic;
+using System.Linq;
 
 internal class CallImplementation : ICall
 {
     // מתודת יצירה/הוספה Create
     public void Create(Call item)
     {
-        //  ID בדיקה אם קיימת קריאה עם אותו 
-        if (DataSource.Calls.Any(c => c.Id == item.Id))
-        {
-            throw new InvalidOperationException($"Call with ID {item.Id} already exists.");
-        }
         // הוספה לרשימת הקריאות
         DataSource.Calls.Add(item);
     }
@@ -21,22 +17,16 @@ internal class CallImplementation : ICall
     //Read מתודת בקשה/קבלה של אובייקט בודד 
     public Call? Read(int id)
     {
-        foreach (var call in DataSource.Calls)
-        {
-            if (call.Id == id)
-            {
-                return call;
-            }
-        }
-        return null;
+        return DataSource.Calls.FirstOrDefault(item => item.Id == id);
+       
     }
 
     // מתודת בקשה/קבלה של כל האובייקטים מטיפוס מסוים ReadAll
-    public List<Call> ReadAll()
-    {
-        // החזרת עותק של הרשימה הקיימת
-        return new List<Call>(DataSource.Calls);
-    }
+    public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null)
+           => filter == null
+            ? DataSource.Calls.Select(item => item)
+            : DataSource.Calls.Where(filter);
+   
 
     // מתודת עדכון של אובייקט קיים Update
     public void Update(Call item)
@@ -45,7 +35,7 @@ internal class CallImplementation : ICall
         var existingCall = DataSource.Calls.FirstOrDefault(c => c.Id == item.Id);
         if (existingCall == null)
         {
-            throw new InvalidOperationException($"Call with ID {item.Id} does not exist.");
+            throw new DalDoesNotExistException($"Call with ID {item.Id} does not exist.");
         }
         // הסרה והוספה של האובייקט המעודכן
         DataSource.Calls.Remove(existingCall);
@@ -59,7 +49,7 @@ internal class CallImplementation : ICall
         var callToDelete = DataSource.Calls.FirstOrDefault(c => c.Id == id);
         if (callToDelete == null)
         {
-            throw new InvalidOperationException($"Call with ID {id} does not exist.");
+            throw new DalDoesNotExistException($"Call with ID {id} does not exist.");
         }
         // מחיקת הקריאה מהרשימה
         DataSource.Calls.Remove(callToDelete);
@@ -75,5 +65,10 @@ internal class CallImplementation : ICall
     public void Print(Call item)
     {
         Console.WriteLine("Id:"+item.Id+ " Call-type:"+item.CallType+ " Address:"+item.FullAddress+ " Open-time:"+item.OpenTime+ " Is-emergency:"+item.isEmergency+ " Description:"+item.Description+ " Max-completion-time:"+item.MaxCompletionTime);
+    }
+
+    public Call? Read(Func<Call, bool> filter)
+    {
+        return DataSource.Calls.FirstOrDefault(filter);
     }
 }
