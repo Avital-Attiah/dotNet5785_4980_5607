@@ -1,7 +1,7 @@
 ﻿namespace DalApi;
 using DO;
 
-public interface IConfig
+public interface IConfig 
 {
     
     // ערך התחלתי למזהה קריאה

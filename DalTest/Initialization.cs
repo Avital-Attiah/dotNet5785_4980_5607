@@ -8,26 +8,30 @@ using static DO.Enums;
 
 public static class Initialization
 {
-    private static IAssignment? s_dalAssignment; // ממשק למשימות
-    private static ICall? s_dalCall;             // ממשק לקריאות
-    private static IConfig? s_dalConfig;         // ממשק תצורה
-    private static IVolunteer? s_dalVolunteer;   // ממשק למתנדבים
+    //private static IAssignment? s_dalAssignment; // ממשק למשימות
+    //private static ICall? s_dalCall;             // ממשק לקריאות
+    //private static IConfig? s_dalConfig;         // ממשק תצורה
+    //private static IVolunteer? s_dalVolunteer;   // ממשק למתנדבים
+    private static IDal? s_dal;
 
     private static readonly Random s_rand = new(); // מחולל מספרים רנדומליים
-    public static void Do(IAssignment? dalAssignment, ICall? dalCall, IConfig? dalConfig, IVolunteer? dalVolunteer)
+    public static void Do(IDal dal) 
     {
-        // הצבת הפרמטרים בשדות הסטטיים של המחלקה
-        s_dalAssignment = dalAssignment ?? throw new NullReferenceException("Assignment DAL object cannot be null!");
-        s_dalCall = dalCall ?? throw new NullReferenceException("Call DAL object cannot be null!");
-        s_dalConfig = dalConfig ?? throw new NullReferenceException("Config DAL object cannot be null!");
-        s_dalVolunteer = dalVolunteer ?? throw new NullReferenceException("Volunteer DAL object cannot be null!");
 
+
+        // הצבת הפרמטרים בשדות הסטטיים של המחלקה
+        //s_dalAssignment = dalAssignment ?? throw new NullReferenceException("Assignment DAL object cannot be null!");
+        //s_dalCall = dalCall ?? throw new NullReferenceException("Call DAL object cannot be null!");
+        //s_dalConfig = dalConfig ?? throw new NullReferenceException("Config DAL object cannot be null!");
+        //s_dalVolunteer = dalVolunteer ?? throw new NullReferenceException("Volunteer DAL object cannot be null!");
+        s_dal = dal ?? throw new NullReferenceException("DAL object can not be null!"); // stage 2
         // איפוס נתוני תצורה ורשימות
         Console.WriteLine("Resetting configuration and clearing all data...");
-        s_dalConfig.Reset(); // איפוס הגדרות התצורה
-        s_dalVolunteer.DeleteAll(); // מחיקת כל המתנדבים
-        s_dalCall.DeleteAll(); // מחיקת כל הקריאות
-        s_dalAssignment.DeleteAll(); // מחיקת כל ההקצאות
+        //s_dalConfig.Reset(); // איפוס הגדרות התצורה
+        //s_dalVolunteer.DeleteAll(); // מחיקת כל המתנדבים
+        //s_dalCall.DeleteAll(); // מחיקת כל הקריאות
+        //s_dalAssignment.DeleteAll(); // מחיקת כל ההקצאות
+        s_dal.ResetDB();//stage 2
 
         // אתחול הנתונים ברשימות
         Console.WriteLine("Initializing Volunteers list...");
@@ -72,7 +76,7 @@ public static class Initialization
             do
             {
                 id = random.Next(200000000, 400000000);
-            } while (s_dalVolunteer != null && s_dalVolunteer.Read(id) != null);  // קריאה למתנדב על ידי ה-DAL
+            } while (s_dal.Volunteer != null && s_dal.Volunteer.Read(id) != null);  // קריאה למתנדב על ידי ה-DAL
 
             // יצירת אובייקט מתנדב חדש
             var volunteer = new Volunteer
@@ -90,8 +94,8 @@ public static class Initialization
             };
 
             // קריאה ל-DAL כדי ליצור את המתנדב
-            if (s_dalVolunteer != null)
-                s_dalVolunteer.Create(volunteer);
+            if (s_dal.Volunteer != null)
+                s_dal!.Volunteer.Create(volunteer);
             ro = Role.Volunteer;
         }
     }
@@ -120,7 +124,7 @@ public static class Initialization
             // יצירת אובייקט Call עם כל המאפיינים הדרושים
             var call = new Call
             {
-                Id = Config.NextCallId,  // משתמשים ב-NextCallId ליצירת מזהה ייחודי
+                Id = s_dal!.Config.NextCallId,  // משתמשים ב-NextCallId ליצירת מזהה ייחודי
                 CallType = CallType.Emergency,  // או כל סוג קריאה שדרוש
                 FullAddress = addresses[i % addresses.Length].Address,  // לדוגמה, צריך להניח כתובת רנדומלית או נכונה
                 OpenTime = startTime,  // זמן פתיחה
@@ -130,9 +134,9 @@ public static class Initialization
                 Longitude = addresses[i % addresses.Length].Longitude,
                 MaxCompletionTime = endTime  // זמן סיום אם יש
             };
-            if (s_dalCall != null)
+            if (s_dal.Call != null)
                 // יצירת קריאה עם ה-Call שנוצר
-                s_dalCall.Create(call);  // קריאה לפונקציה המתאימה עם אובייקט call
+                s_dal!.Call.Create(call);  // קריאה לפונקציה המתאימה עם אובייקט call
 
         }
 
@@ -145,11 +149,11 @@ public static class Initialization
         Random random = new Random();
 
         // וידוא שיש קריאות ומתנדבים קיימים במערכת
-        if (s_dalCall == null || s_dalVolunteer == null) return;
+        if (s_dal.Call == null || s_dal.Volunteer == null) return;
 
         // איסוף קריאות ומתנדבים מהרשימה
-        var calls = s_dalCall.ReadAll();
-        var volunteers = s_dalVolunteer.ReadAll();
+        var calls = s_dal!.Call.ReadAll();
+        var volunteers = s_dal!.Volunteer.ReadAll();
 
         if (calls == null || volunteers == null || !calls.Any() || !volunteers.Any()) return;
 
@@ -193,7 +197,7 @@ public static class Initialization
 
             // יצירת האובייקט Assignment
             var assignment = new Assignment(
-                Id: Config.NextAssignmentId, // מזהה רץ
+                Id: s_dal!.Config.NextAssignmentId, // מזהה רץ
                 CallId: call.Id, // מזהה קריאה
                 VolunteerId: volunteer.Id, // ת.ז מתנדב
                 EntryTime: entryTime, // זמן כניסה לטיפול
@@ -202,8 +206,8 @@ public static class Initialization
             );
 
             // הוספת ההקצאה לרשימה
-            if (s_dalAssignment != null)
-                s_dalAssignment.Create(assignment); // יצירת ההקצאה ברשימה
+            if (s_dal.Assignment != null)
+                s_dal!.Assignment.Create(assignment); // יצירת ההקצאה ברשימה
         }
     }
 

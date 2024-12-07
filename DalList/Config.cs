@@ -1,6 +1,6 @@
 ﻿namespace Dal
 {
-    public static class Config
+    internal static class Config
     {
         // הגדרה של מספרים רצים עבור ישויות שונות
         internal const int startCallId = 1000; // ערך התחלתי למזהה קריאה
