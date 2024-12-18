@@ -14,6 +14,7 @@ internal class ConfigImplementation : IConfig
         get => Config.startCallId;
     }
 
+
     public int NextCallId
     {
         get => Config.NextCallId;
