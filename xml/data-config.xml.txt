@@ -1,3 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<config>
-</config>
+<Config>
+    <NextCallId>1000</NextCallId>
+    <NextAssignmentId>2000</NextAssignmentId>
+    <Clock>2024-12-18T15:00:00</Clock>
+    <RiskRange>00:10:00</RiskRange>
+    <Database>
+        <ConnectionString>Server=myServerAddress;Database=myDataBase;</ConnectionString>
+    </Database>
+</Config>
+
