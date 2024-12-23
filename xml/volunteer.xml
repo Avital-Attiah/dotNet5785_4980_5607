@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfVolunteer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Volunteer>
+    <Id>1234</Id>
+    <FullName>shira</FullName>
+    <Phone>054</Phone>
+    <Email>@gmail.com</Email>
+    <Password>23456</Password>
+    <CurrentAddress>sha</CurrentAddress>
+    <Latitude>11</Latitude>
+    <Longitude>22</Longitude>
+    <Role>Volunteer</Role>
+    <IsActive>true</IsActive>
+    <MaxDistance>33</MaxDistance>
+    <DistanceType>Air</DistanceType>
+  </Volunteer>
+</ArrayOfVolunteer>

@@ -11,7 +11,7 @@ using static DO.Enums;
 
 internal class CallImplementation : ICall
 {
-    private const string FilePath = "Calls.xml";
+    private const string FilePath = "call.xml";
 
     private static Call CreateCallFromElement(XElement element)
     {
