@@ -6,10 +6,12 @@ using System.Numerics;
 using static DO.Enums;
 namespace DalTest;
 
+
 internal class Program
 {
-  
-    static readonly IDal s_dal = new DalList();
+
+    // static readonly IDal s_dal = new DalList();
+    static readonly IDal s_dal = new DalXml(); //stage 3
 
     // עבור תפריט ראשי Enum 
     private enum MainMenuOption
