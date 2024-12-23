@@ -1,3 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfVolunteer>
+<ArrayOfVolunteer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Volunteer>
+    <Id>12345</Id>
+    <FullName>avital</FullName>
+    <Phone>0987</Phone>
+    <Email>@gmail.com</Email>
+    <Password>1234567</Password>
+    <CurrentAddress>fg</CurrentAddress>
+    <Latitude>12</Latitude>
+    <Longitude>12</Longitude>
+    <Role>Volunteer</Role>
+    <IsActive>true</IsActive>
+    <MaxDistance>12</MaxDistance>
+    <DistanceType>Air</DistanceType>
+  </Volunteer>
 </ArrayOfVolunteer>

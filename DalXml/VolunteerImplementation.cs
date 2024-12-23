@@ -1,100 +1,104 @@
-﻿using DalApi;
-using DO;
-using System.ComponentModel;
+﻿namespace Dal;
 
-namespace Dal;
+using DalApi;
+using DO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 
 internal class VolunteerImplementation : IVolunteer
 {
     private const string FilePath = "volunteer.xml";
 
-    // Create
     public void Create(Volunteer item)
     {
-        if (Read(item.Id) is not null)
-            throw new DalAlreadyExistsException($"Volunteer with ID={item.Id} already exists");
+        try
+        {
+            var volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath);
+            if (volunteers.Any(v => v.Id == item.Id))
+                throw new DalAlreadyExistsException($"Volunteer with ID={item.Id} already exists");
+
+            volunteers.Add(item);
+            Console.WriteLine("Saving new volunteer to XML...");
+            XMLTools.SaveListToXMLSerializer(volunteers, FilePath);
+            Console.WriteLine("Save successful.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error during Create operation: {ex.Message}");
+            throw;
+        }
+    }
+
+
+    public Volunteer? Read(int id)
+    {
+        var volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath);
+        return volunteers.FirstOrDefault(v => v.Id == id);
+    }
+
+    public Volunteer? Read(Func<Volunteer, bool> filter)
+    {
+        var volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath);
+        return volunteers.FirstOrDefault(filter);
+    }
+
+    public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null)
+    {
+        var volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath);
+        return filter == null ? volunteers : volunteers.Where(filter);
+    }
+
+    public void Update(Volunteer item)
+    {
+        var volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath);
+        if (volunteers.RemoveAll(v => v.Id == item.Id) == 0)
+            throw new DalDoesNotExistException($"Volunteer with ID={item.Id} does not exist");
 
         volunteers.Add(item);
         XMLTools.SaveListToXMLSerializer(volunteers, FilePath);
     }
 
-    // Delete
     public void Delete(int id)
     {
-        Volunteer volunteer = Read(id);
-        if (volunteer == null)
+        var volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath);
+        if (volunteers.RemoveAll(v => v.Id == id) == 0)
             throw new DalDoesNotExistException($"Volunteer with ID={id} does not exist");
 
-        // טוען את המתנדבים מהקובץ
-        List<Volunteer> volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath);
-
-        // מסיר את המתנדב מהרשימה
-        volunteers.Remove(volunteer);
-
-        // שומר את הרשימה המעודכנת בקובץ
         XMLTools.SaveListToXMLSerializer(volunteers, FilePath);
     }
 
-    // DeleteAll
     public void DeleteAll()
     {
-        // טוען את המתנדבים מהקובץ
-        List<Volunteer> volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath);
-
-        // מנקה את כל המתנדבים
-        volunteers.Clear();
-
-        // שומר את הרשימה המעודכנת בקובץ
-        XMLTools.SaveListToXMLSerializer(volunteers, FilePath);
+        XMLTools.SaveListToXMLSerializer(new List<Volunteer>(), FilePath);
     }
 
     public void Print(Volunteer item)
     {
-        throw new NotImplementedException();
+        Console.WriteLine($"Volunteer ID: {item.Id}\nFull Name: {item.FullName}\nPhone: {item.Phone}\nEmail: {item.Email}\nRole: {item.Role}\nIs Active: {item.IsActive}\nMax Distance: {item.MaxDistance}\nDistance Type: {item.DistanceType}");
     }
 
-    // Read (בפונקציה הראשונה לפי מזהה)
-    public Volunteer? Read(int id)
+    public void SetInitialPassword(int id, string password)
     {
-        // טוען את המתנדבים מהקובץ
-        List<Volunteer> volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath);
+        var volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath);
+        var volunteer = volunteers.FirstOrDefault(v => v.Id == id) ?? throw new DalDoesNotExistException($"Volunteer with ID={id} does not exist");
 
-        // מחפש את המתנדב לפי מזהה
-        return volunteers.FirstOrDefault(v => v.Id == id);
+        volunteer = volunteer with { Password = password };
+        Update(volunteer);
     }
 
-    // Read לפי פונקציה מותאמת אישית (למשל, לפי פילטר)
-    public Volunteer? Read(Func<Volunteer, bool> filter)
+    public void UpdatePassword(int id, string newPassword)
     {
-        // טוען את המתנדבים מהקובץ
-        List<Volunteer> volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath);
+        var volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath);
+        var volunteer = volunteers.FirstOrDefault(v => v.Id == id) ?? throw new DalDoesNotExistException($"Volunteer with ID={id} does not exist");
 
-        // מחפש את המתנדב לפי הפילטר
-        return volunteers.FirstOrDefault(filter);
+        volunteer = volunteer with { Password = newPassword };
+        Update(volunteer);
     }
 
-    // ReadAll עם פילטר אופציונלי
-    public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null)
+    public bool IsPasswordStrong(string password)
     {
-        // טוען את המתנדבים מהקובץ
-        List<Volunteer> volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath);
-
-        // אם יש פילטר, מחזיר את המתנדבים המפולטרים, אחרת מחזיר את כל המתנדבים
-        return filter == null
-            ? new List<Volunteer>(volunteers)
-            : new List<Volunteer>(volunteers.Where(filter));
-    }
-
-    // Update
-    public void Update(Volunteer item)
-    {
-        // בודק אם המתנדב קיים
-        Volunteer volunteer = Read(item.Id);
-        if (volunteer == null)
-            throw new DalDoesNotExistException($"Volunteer with ID={item.Id} does not exist");
-
-        // מסיר את המתנדב הקיים ומוסיף את המתנדב המעודכן
-        Delete(item.Id);
-        Create(item);
+        return password.Length >= 8 && password.Any(char.IsUpper) && password.Any(char.IsLower) && password.Any(char.IsDigit);
     }
 }
