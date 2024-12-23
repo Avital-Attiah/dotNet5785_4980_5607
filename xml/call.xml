@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<call.xml>
+  <Call>
+    <Id>232323</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>f</FullAddress>
+    <OpenTime>2005-06-02T12:12:00</OpenTime>
+    <isEmergency>true</isEmergency>
+    <Description>dddd</Description>
+    <Latitude>2</Latitude>
+    <Longitude>2</Longitude>
+    <MaxCompletionTime />
+  </Call>
+  <Call>
+    <Id>2323232</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>d</FullAddress>
+    <OpenTime>2005-06-03T12:12:00</OpenTime>
+    <isEmergency>true</isEmergency>
+    <Description>d</Description>
+    <Latitude>3</Latitude>
+    <Longitude>4</Longitude>
+    <MaxCompletionTime />
+  </Call>
+</call.xml>

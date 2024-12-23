@@ -20,11 +20,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DalXML", "DalXml\DalXML.csp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "xml", "xml", "{5DE034EE-4B06-48A3-BF5F-92C61AAB912E}"
 	ProjectSection(SolutionItems) = preProject
-		xml\assignment.xml.txt = xml\assignment.xml.txt
-		xml\calls.xml.txt = xml\calls.xml.txt
-		xml\data-config.xml.txt = xml\data-config.xml.txt
-		xml\volunteer.xml.txt = xml\volunteer.xml.txt
 		DalXml\XmlTools.cs = DalXml\XmlTools.cs
+		xml\assignment.xml = xml\assignment.xml
+		xml\calls.xml = xml\calls.xml
+		xml\data-config.xml = xml\data-config.xml
+		xml\volunteer.xml = xml\volunteer.xml
 	EndProjectSection
 EndProject
 Global

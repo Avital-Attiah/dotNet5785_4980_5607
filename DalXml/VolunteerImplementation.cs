@@ -9,17 +9,28 @@ using System.Xml.Linq;
 
 internal class VolunteerImplementation : IVolunteer
 {
-    private const string FilePath = "Volunteers.xml";
+    private const string FilePath = "volunteer.xml";
 
     public void Create(Volunteer item)
     {
-        var volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath);
-        if (volunteers.Any(v => v.Id == item.Id))
-            throw new DalAlreadyExistsException($"Volunteer with ID={item.Id} already exists");
+        try
+        {
+            var volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath);
+            if (volunteers.Any(v => v.Id == item.Id))
+                throw new DalAlreadyExistsException($"Volunteer with ID={item.Id} already exists");
 
-        volunteers.Add(item);
-        XMLTools.SaveListToXMLSerializer(volunteers, FilePath);
+            volunteers.Add(item);
+            Console.WriteLine("Saving new volunteer to XML...");
+            XMLTools.SaveListToXMLSerializer(volunteers, FilePath);
+            Console.WriteLine("Save successful.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error during Create operation: {ex.Message}");
+            throw;
+        }
     }
+
 
     public Volunteer? Read(int id)
     {
