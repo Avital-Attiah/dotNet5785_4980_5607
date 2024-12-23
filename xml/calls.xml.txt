@@ -1,4 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfCall>
+  <Call>
+    <Id>1</Id>
+    <CallType>Fire</CallType>
+    <FullAddress>123 Main St, Tel Aviv</FullAddress>
+    <OpenTime>2024-12-21T10:00:00</OpenTime>
+    <isEmergency>true</isEmergency>
+    <Description>Fire in a residential building</Description>
+    <Latitude>32.0853</Latitude>
+    <Longitude>34.7818</Longitude>
+    <MaxCompletionTime>2024-12-21T12:00:00</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>2</Id>
+    <CallType>Medical</CallType>
+    <FullAddress>456 Elm St, Jerusalem</FullAddress>
+    <OpenTime>2024-12-20T15:30:00</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>Assistance needed for an elderly person</Description>
+    <Latitude>31.7683</Latitude>
+    <Longitude>35.2137</Longitude>
+    <MaxCompletionTime>2024-12-20T16:30:00</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>3</Id>
+    <CallType>Technical</CallType>
+    <FullAddress>789 Pine Rd, Haifa</FullAddress>
+    <OpenTime>2024-12-19T09:00:00</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Latitude>32.7940</Latitude>
+    <Longitude>34.9896</Longitude>
+  </Call>
 </ArrayOfCall>
-
