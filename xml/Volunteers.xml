@@ -42,4 +42,18 @@
     <MaxDistance>3</MaxDistance>
     <DistanceType>Air</DistanceType>
   </Volunteer>
+  <Volunteer>
+    <Id>3</Id>
+    <FullName>4</FullName>
+    <Phone>4</Phone>
+    <Email>@gn</Email>
+    <Password>5</Password>
+    <CurrentAddress>g</CurrentAddress>
+    <Latitude>5</Latitude>
+    <Longitude>5</Longitude>
+    <Role>Volunteer</Role>
+    <IsActive>true</IsActive>
+    <MaxDistance>5</MaxDistance>
+    <DistanceType>Air</DistanceType>
+  </Volunteer>
 </ArrayOfVolunteer>
