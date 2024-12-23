@@ -10,7 +10,7 @@ using static DO.Enums;
 
 internal class AssignmentImplementation : IAssignment
 {
-    private const string FilePath = "assignment.xml";
+    private const string FilePath = "assignments.xml";
 
     public void Create(Assignment item)
     {

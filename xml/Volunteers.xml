@@ -1,45 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfVolunteer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Volunteer>
-    <Id>11</Id>
-    <FullName>avital </FullName>
-    <Phone>0583210654</Phone>
-    <Email>a@gmail.com</Email>
-    <Password>123</Password>
-    <CurrentAddress>shaulzon</CurrentAddress>
-    <Latitude>2</Latitude>
-    <Longitude>3</Longitude>
+    <Id>255</Id>
+    <FullName>tt</FullName>
+    <Phone>99</Phone>
+    <Email>@gm</Email>
+    <Password>1234567</Password>
+    <CurrentAddress>sdf</CurrentAddress>
+    <Latitude>12</Latitude>
+    <Longitude>45</Longitude>
     <Role>Volunteer</Role>
     <IsActive>true</IsActive>
-    <MaxDistance>3</MaxDistance>
-    <DistanceType>Air</DistanceType>
-  </Volunteer>
-  <Volunteer>
-    <Id>1</Id>
-    <FullName>s</FullName>
-    <Phone>2</Phone>
-    <Email>@gmail</Email>
-    <Password>1</Password>
-    <CurrentAddress>sa</CurrentAddress>
-    <Latitude>1</Latitude>
-    <Longitude>2</Longitude>
-    <Role>Volunteer</Role>
-    <IsActive>true</IsActive>
-    <MaxDistance>2</MaxDistance>
-    <DistanceType>Air</DistanceType>
-  </Volunteer>
-  <Volunteer>
-    <Id>0</Id>
-    <FullName>a</FullName>
-    <Phone>1</Phone>
-    <Email>1</Email>
-    <Password>1</Password>
-    <CurrentAddress>s</CurrentAddress>
-    <Latitude>2</Latitude>
-    <Longitude>3</Longitude>
-    <Role>Volunteer</Role>
-    <IsActive>true</IsActive>
-    <MaxDistance>3</MaxDistance>
+    <MaxDistance>6</MaxDistance>
     <DistanceType>Air</DistanceType>
   </Volunteer>
 </ArrayOfVolunteer>
