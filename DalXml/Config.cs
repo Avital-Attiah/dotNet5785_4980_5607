@@ -54,10 +54,10 @@ internal static class Config
     // פונקציה לאיפוס משתני התצורה לערכים התחלתיים
     internal static void Reset()
     {
-        XMLTools.SetConfigIntVal(s_data_config, "NextCallId", 1000); // ערך התחלתי למזהה קריאה
-        XMLTools.SetConfigIntVal(s_data_config, "NextAssignmentId", 2000); // ערך התחלתי למזהה הקצאה
-        XMLTools.SetConfigDateVal(s_data_config, "Clock", DateTime.Now); // זמן נוכחי
-        XMLTools.SetConfigIntVal(s_data_config, "RiskRangeMinutes", 10); // טווח זמן בסיכון
+        XMLTools.SetConfigIntVal("s_data_config.xml", "NextCallId", 1000); // ערך התחלתי למזהה קריאה
+        XMLTools.SetConfigIntVal("s_data_config.xml", "NextAssignmentId", 2000); // ערך התחלתי למזהה הקצאה
+        XMLTools.SetConfigDateVal("s_data_config.xml", "Clock", DateTime.Now); // זמן נוכחי
+        XMLTools.SetConfigIntVal("s_data_config.xml", "RiskRangeMinutes", 10); // טווח זמן בסיכון
     }
 }
 

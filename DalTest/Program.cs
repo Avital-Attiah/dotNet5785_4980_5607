@@ -133,7 +133,7 @@ internal class Program
     private static void AdvanceClockByMinute()
     {
         // מוסיף דקה אחת לשעון המערכת
-        DateTime currentTime = s_dal!.Config.Clock;
+        DateTime currentTime = s_dal.Config!.Clock;
         DateTime newTime = currentTime.AddMinutes(1);
         Console.WriteLine($"System time advanced by 1 minute. New time: {newTime}");
     }
@@ -141,21 +141,21 @@ internal class Program
     private static void AdvanceClockByHour()
     {
         // מוסיף שעה אחת לשעון המערכת
-        DateTime currentTime = s_dal!.Config.Clock;
+        DateTime currentTime = s_dal.Config!.Clock;
         DateTime newTime = currentTime.AddHours(1);
         Console.WriteLine($"System time advanced by 1 hour. New time: {newTime}");
     }
     private static void AdvanceClockByDay()
     {
         // מוסיף יום אחד לשעון המערכת
-        DateTime currentTime = s_dal!.Config.Clock;
+        DateTime currentTime = s_dal.Config!.Clock;
         DateTime newTime = currentTime.AddDays(1);
         Console.WriteLine($"System time advanced by 1 Day. New time: {newTime}");
     }
     private static void AdvanceClockByYear()
     {
         // מוסיף שנה אחת לשעון המערכת
-        DateTime currentTime = s_dal!.Config.Clock;
+        DateTime currentTime = s_dal.Config!.Clock;
         DateTime newTime = currentTime.AddYears(1);
         Console.WriteLine($"System time advanced by 1 Year. New time: {newTime}");
     }
@@ -163,8 +163,10 @@ internal class Program
     private static void ShowCurrentTime()
     {
         // מראה שעה נוכחית
-        DateTime currentTime = s_dal!.Config.Clock;
+        DateTime currentTime = s_dal.Config!.Clock;
         Console.WriteLine($"Current system time: {currentTime}");
+
+
     }
 
     private static void SetConfigValue()
