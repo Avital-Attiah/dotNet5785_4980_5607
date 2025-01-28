@@ -191,8 +191,10 @@ internal class Program
 
     private static void ResetConfig()
     {
+        s_dal.Config!.Reset();
         // מאפס את כל ההגדרות לערכים ברירת המחדל שלהן 
         Console.WriteLine("All configuration values have been reset to their defaults.");
+
     }
 
 
@@ -382,7 +384,7 @@ internal class Program
 
             if (entityName == "Calls")
             {
-              
+
                 Console.WriteLine("enter id");
                 int Id = int.Parse(Console.ReadLine());
                 Console.WriteLine("enter full adress");
@@ -445,7 +447,7 @@ internal class Program
 
             if (entityName == "Assignments")
             {
-              
+
                 Console.WriteLine("enter id");
                 int Id = int.Parse(Console.ReadLine());
                 Console.WriteLine("enter Call Id");
@@ -481,7 +483,7 @@ internal class Program
                 };
                 try
                 {
-                   s_dal!.Assignment.Create(newAssignment);
+                    s_dal!.Assignment.Create(newAssignment);
                     Console.WriteLine("Assignment added successfully!");
                     isCreated = true;
                 }
@@ -555,7 +557,7 @@ internal class Program
         try
         {
             int id;
-           if (entityName == "Volunteers")
+            if (entityName == "Volunteers")
             {
                 Console.WriteLine("Enter the ID of the volunteer to update:");
                 id = int.Parse(Console.ReadLine());
@@ -681,7 +683,7 @@ internal class Program
                     updatedCall = updatedCall with { isEmergency = isEmergency };
                 }
 
-                
+
                 Console.WriteLine("Enter new max completion time (leave empty to keep current):");
                 string newMaxCompletionTime = Console.ReadLine();
                 if (DateTime.TryParse(newMaxCompletionTime, out DateTime maxCompletionTime))
@@ -707,7 +709,7 @@ internal class Program
                 Console.WriteLine("Current assignment details:");
                 s_dal!.Assignment.Print(assignment);
 
-                
+
                 Console.WriteLine("Enter new completion time (leave empty to keep current):");
                 string newCompletionTime = Console.ReadLine();
                 var updatedAssignment = DateTime.TryParse(newCompletionTime, out DateTime completionTime) ?
@@ -740,7 +742,7 @@ internal class Program
     {
         try
         {
-            if(entityName == "Volunteers")
+            if (entityName == "Volunteers")
             {
                 Console.WriteLine("The Volunteers data:");
                 foreach (var volunteer in s_dal!.Volunteer.ReadAll())
@@ -748,7 +750,7 @@ internal class Program
                     s_dal!.Volunteer.Print(volunteer);
                 }
             }
-          else if(entityName == "Assignments")
+            else if (entityName == "Assignments")
             {
 
                 Console.WriteLine("The Assignments data:");
@@ -757,7 +759,7 @@ internal class Program
                     s_dal!.Assignment.Print(assignment);
                 }
             }
-          else if(entityName=="Calls")
+            else if (entityName == "Calls")
             {
                 Console.WriteLine("The Calls data:");
                 foreach (var call in s_dal!.Call.ReadAll())
@@ -765,7 +767,7 @@ internal class Program
                     s_dal!.Call.Print(call);
                 }
             }
-         
+
 
         }
         catch (Exception ex)
@@ -785,7 +787,7 @@ internal class Program
             {
                 Console.WriteLine("enter the id of the volunteer");
                 id = int.Parse(Console.ReadLine());
-                Volunteer v= s_dal!.Volunteer.Read(id);
+                Volunteer v = s_dal!.Volunteer.Read(id);
                 s_dal!.Volunteer.Print(v);
             }
 
@@ -793,14 +795,14 @@ internal class Program
             {
                 Console.WriteLine("enter the id of the call");
                 id = int.Parse(Console.ReadLine());
-               Call c= s_dal!.Call.Read(id);
+                Call c = s_dal!.Call.Read(id);
                 s_dal!.Call.Print(c);
             }
             if (entityName == "Assignment")
             {
                 Console.WriteLine("enter the id of the Assignment");
                 id = int.Parse(Console.ReadLine());
-                Assignment a= s_dal!.Assignment.Read(id);
+                Assignment a = s_dal!.Assignment.Read(id);
                 s_dal!.Assignment.Print(a);
             }
         }
@@ -834,7 +836,7 @@ internal class Program
         {
             try
             {
-              
+
                 ShowMainMenu();
                 Console.Write("Choose an option from the main menu: ");
                 string choice = Console.ReadLine();
@@ -878,8 +880,3 @@ internal class Program
         }
     }
 }
-
-
-
-
-

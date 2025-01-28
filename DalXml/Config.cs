@@ -8,13 +8,13 @@ namespace Dal;
 
 internal static class Config
 {
-    internal const string s_data_config = "data-config";
+    internal const string s_data_config = "data-config.xml";
     internal const string s_volunteers_xml = "volunteers.xml";
     internal const string s_calls_xml = "calls.xml";
     internal const string s_assignments_xml = "assignments.xml";
     internal const int startCallId = 1000; // ערך התחלתי למזהה קריאה
     internal const int startAssignmentId = 2000; // ערך התחלתי למזהה הקצאה
-    
+
 
     public static int NextCallId
     {
@@ -54,19 +54,15 @@ internal static class Config
     // פונקציה לאיפוס משתני התצורה לערכים התחלתיים
     internal static void Reset()
     {
-        XMLTools.SetConfigIntVal("s_data_config.xml", "NextCallId", 1000); // ערך התחלתי למזהה קריאה
-        XMLTools.SetConfigIntVal("s_data_config.xml", "NextAssignmentId", 2000); // ערך התחלתי למזהה הקצאה
-        XMLTools.SetConfigDateVal("s_data_config.xml", "Clock", DateTime.Now); // זמן נוכחי
-        XMLTools.SetConfigIntVal("s_data_config.xml", "RiskRangeMinutes", 10); // טווח זמן בסיכון
+        //XMLTools.SetConfigIntVal(s_data_config, "NextCallId", 1000); // ערך התחלתי למזהה קריאה
+        //XMLTools.SetConfigIntVal(s_data_config, "NextAssignmentId", 2000); // ערך התחלתי למזהה הקצאה
+        //XMLTools.SetConfigDateVal(s_data_config, "Clock", DateTime.Now); // זמן נוכחי
+        //XMLTools.SetConfigIntVal(s_data_config, "RiskRangeMinutes", 10); // טווח זמן בסיכון
+        NextCallId = 1000;
+        NextAssignmentId = 2000;
+        Clock = DateTime.Now;
+        RiskRange = TimeSpan.Zero;
+
     }
+
 }
-
-
-
-
-
-
-
-
-
-
