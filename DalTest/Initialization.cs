@@ -15,7 +15,8 @@ public static class Initialization
     private static IDal? s_dal;
 
     private static readonly Random s_rand = new(); // מחולל מספרים רנדומליים
-    public static void Do(IDal dal) 
+    //public static void Do(IDal dal) //stage 2
+    public static void Do() //stage 4
     {
 
 
@@ -24,7 +25,8 @@ public static class Initialization
         //s_dalCall = dalCall ?? throw new NullReferenceException("Call DAL object cannot be null!");
         //s_dalConfig = dalConfig ?? throw new NullReferenceException("Config DAL object cannot be null!");
         //s_dalVolunteer = dalVolunteer ?? throw new NullReferenceException("Volunteer DAL object cannot be null!");
-        s_dal = dal ?? throw new NullReferenceException("DAL object can not be null!"); // stage 2
+        //s_dal = dal ?? throw new NullReferenceException("DAL object can not be null!"); //stage 2
+        s_dal = DalApi.Factory.Get; //stage 4
         // איפוס נתוני תצורה ורשימות
         Console.WriteLine("Resetting configuration and clearing all data...");
         //s_dalConfig.Reset(); // איפוס הגדרות התצורה

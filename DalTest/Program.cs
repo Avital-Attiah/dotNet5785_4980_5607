@@ -10,8 +10,9 @@ namespace DalTest;
 internal class Program
 {
 
-    // static readonly IDal s_dal = new DalList();
-    static readonly IDal s_dal = new Dal.DalXml(); //stage 3
+    //static readonly IDal s_dal = new DalList(); //stage 2
+    //static readonly IDal s_dal = new DalXml(); //stage 3
+    static readonly IDal s_dal = Factory.Get; //stage 4
 
     // עבור תפריט ראשי Enum 
     private enum MainMenuOption
@@ -204,7 +205,8 @@ internal class Program
         {
             Console.WriteLine("Initializing data...");
             // קריאה ל-Initialization.Do עם האובייקטים המתאימים
-            Initialization.Do(s_dal);
+            //Initialization.Do(s_dal); //stage 2
+            Initialization.Do(); //stage 4
             Console.WriteLine("Initialization completed successfully.");
         }
         catch (Exception ex)
@@ -384,9 +386,6 @@ internal class Program
 
             if (entityName == "Calls")
             {
-
-                Console.WriteLine("enter id");
-                int Id = int.Parse(Console.ReadLine());
                 Console.WriteLine("enter full adress");
                 string FullAddress = Console.ReadLine();
                 Console.WriteLine("enter Latitude");
@@ -419,7 +418,6 @@ internal class Program
 
                 Call newCall = new Call
                 {
-                    Id = Id,
                     FullAddress = FullAddress,
                     CallType = CallT,
                     Description = Description,
@@ -447,9 +445,6 @@ internal class Program
 
             if (entityName == "Assignments")
             {
-
-                Console.WriteLine("enter id");
-                int Id = int.Parse(Console.ReadLine());
                 Console.WriteLine("enter Call Id");
                 int CallId = int.Parse(Console.ReadLine());
                 Console.WriteLine("enter Volunteer Id");
@@ -473,7 +468,7 @@ internal class Program
 
                 Assignment newAssignment = new Assignment
                 {
-                    Id = Id,
+                    
                     CallId = CallId,
                     VolunteerId = VolunteerId,
                     Status = Status,

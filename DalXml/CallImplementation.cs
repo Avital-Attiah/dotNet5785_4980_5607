@@ -46,12 +46,21 @@ internal class CallImplementation : ICall
     public void Create(Call item)
     {
         XElement callsRootElem = XMLTools.LoadListFromXMLElement(FilePath);
-        if (callsRootElem.Elements().Any(c => (int?)c.Element("Id") == item.Id))
-            throw new DalAlreadyExistsException($"Call with ID={item.Id} already exists");
 
-        callsRootElem.Add(CreateElementFromCall(item));
+        // קביעת מזהה רץ באמצעות המנגנון שב-Config
+        int id = Config.NextCallId;
+
+        // יצירת עותק של הקריאה עם המזהה החדש
+        Call copy = item with { Id = id };
+
+        // הוספת ה-XElement שנוצר לרשימה
+        callsRootElem.Add(CreateElementFromCall(copy));
+
+        // שמירת הקובץ לאחר עדכון הרשימה
         XMLTools.SaveListToXMLElement(callsRootElem, FilePath);
     }
+
+
 
     public Call? Read(int id)
     {

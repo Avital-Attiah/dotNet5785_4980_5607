@@ -1,2 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ArrayOfAssignment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfAssignment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Assignment>
+    <Id>2001</Id>
+    <CallId>1001</CallId>
+    <VolunteerId>1</VolunteerId>
+    <EntryTime>2024-12-12T12:32:00</EntryTime>
+    <Status>CompletedOnTime</Status>
+  </Assignment>
+</ArrayOfAssignment>

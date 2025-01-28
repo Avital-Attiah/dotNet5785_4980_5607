@@ -14,13 +14,47 @@ internal class AssignmentImplementation : IAssignment
 
     public void Create(Assignment item)
     {
-        var assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(FilePath);
-        if (assignments.Any(a => a.Id == item.Id))
-            throw new DalAlreadyExistsException($"Assignment with ID={item.Id} already exists");
+        XElement assignmentElements = XMLTools.LoadListFromXMLElement(Config.s_assignments_xml);
 
-        assignments.Add(item);
-        XMLTools.SaveListToXMLSerializer(assignments, FilePath);
+        // מקבל את המזהה הרץ ומעדכן בקובץ הקונפיג
+        int id = Config.NextAssignmentId;
+
+        // יוצר עותק חדש של ה-Assignment עם המזהה החדש
+        Assignment copy = item with { Id = id };
+
+        // מוסיף את ה-XElement החדש לרשימה
+        assignmentElements.Add(GetXElement(copy));
+
+        // שומר את העדכונים
+        XMLTools.SaveListToXMLElement(assignmentElements, Config.s_assignments_xml);
     }
+
+
+    static XElement GetXElement(Assignment assignment)
+    {
+        var elements = new List<XElement>();
+
+        if (assignment.Id != 0)
+            elements.Add(new XElement("Id", assignment.Id));
+
+        if (assignment.CallId != 0)
+            elements.Add(new XElement("CallId", assignment.CallId));
+
+        if (assignment.VolunteerId != 0)
+            elements.Add(new XElement("VolunteerId", assignment.VolunteerId));
+
+        if (assignment.EntryTime != null)
+            elements.Add(new XElement("EntryTime", assignment.EntryTime));
+
+        if (assignment.CompletionTime != null)
+            elements.Add(new XElement("CompletionTime", assignment.CompletionTime));
+
+        if (assignment.Status != null)
+            elements.Add(new XElement("Status", assignment.Status.ToString()));
+
+        return new XElement("Assignment", elements);
+    }
+
 
     public Assignment? Read(int id)
     {
