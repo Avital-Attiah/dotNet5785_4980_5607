@@ -1,2 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Calls />
+<Calls>
+  <Call>
+    <Id>1001</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>a</FullAddress>
+    <OpenTime>2024-12-12T12:12:00</OpenTime>
+    <isEmergency>true</isEmergency>
+    <Description>as</Description>
+    <Latitude>1</Latitude>
+    <Longitude>1</Longitude>
+    <MaxCompletionTime />
+  </Call>
+</Calls>
