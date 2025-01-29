@@ -1,18 +1,17 @@
-﻿
-
-using static DO.Enums;
+﻿using static DO.Enums;
 
 namespace DO
 {
     /// <summary>
-    /// ישות הקצאת קריאה למתנדב, המייצגת את הקישור בין קריאה למתנדב שבחר לטפל בה.
+    /// An entity representing the assignment of a call to a volunteer, 
+    /// linking a call to the volunteer who chose to handle it.
     /// </summary>
-    /// <param name="Id">מספר מזהה ייחודי של ההקצאה.</param>
-    /// <param name="CallId">מספר מזהה של הקריאה שהמתנדב בחר לטפל בה.</param>
-    /// <param name="VolunteerId">ת.ז של המתנדב.</param>
-    /// <param name="EntryTime">זמן הכניסה לטיפול.</param>
-    /// <param name="CompletionTime">זמן סיום הטיפול בפועל של הקריאה.</param>
-    /// <param name="Status">סוג סיום הטיפול של הקריאה.</param>
+    /// <param name="Id">A unique identifier for the assignment.</param>
+    /// <param name="CallId">The ID of the call the volunteer chose to handle.</param>
+    /// <param name="VolunteerId">The volunteer's ID number.</param>
+    /// <param name="EntryTime">The time the volunteer started handling the call.</param>
+    /// <param name="CompletionTime">The actual time the call was completed.</param>
+    /// <param name="Status">The type of completion status for the call.</param>
     public record Assignment
     (
         int Id,
@@ -23,8 +22,7 @@ namespace DO
         TreatmentStatus? Status = null
     )
     {
-
-        /// קונסטרוקטור ברירת מחדל-ללא פרמטרים
+        /// Default constructor - no parameters
         public Assignment() : this(0, 0, 0, DateTime.MinValue) { }
     }
 }

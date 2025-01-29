@@ -1,27 +1,27 @@
 ﻿namespace DalApi;
 using DO;
 
-public interface IConfig 
+public interface IConfig
 {
-    
-    // ערך התחלתי למזהה קריאה
+
+    // Initial value for call ID
     int StartCallId { get; }
 
-    // מזהה רץ למזהה קריאה
+    // Auto-incrementing call ID
     int NextCallId { get; }
 
-    // ערך התחלתי למזהה הקצאה
+    // Initial value for assignment ID
     int StartAssignmentId { get; }
 
-    // מזהה רץ למזהה הקצאה
+    // Auto-incrementing assignment ID
     int NextAssignmentId { get; }
 
-    // שעון מערכת
+    // System clock
     DateTime Clock { get; set; }
 
-    // טווח זמן סיכון
+    // Risk time range
     TimeSpan RiskRange { get; set; }
 
-    // מתודה לאיפוס משתני התצורה לערכים ההתחלתיים
+    // Method to reset configuration variables to their initial values
     void Reset();
 }

@@ -8,11 +8,11 @@ using System.Linq;
 using System.Xml.Linq;
 using static DO.Enums;
 
-
 internal class CallImplementation : ICall
 {
     private const string FilePath = "calls.xml";
 
+    // Converts an XElement to a Call object
     private static Call CreateCallFromElement(XElement element)
     {
         return new Call(
@@ -28,6 +28,7 @@ internal class CallImplementation : ICall
         );
     }
 
+    // Converts a Call object to an XElement
     private static XElement CreateElementFromCall(Call call)
     {
         return new XElement("Call",
@@ -43,25 +44,17 @@ internal class CallImplementation : ICall
         );
     }
 
+    // Adds a new Call to the XML file
     public void Create(Call item)
     {
         XElement callsRootElem = XMLTools.LoadListFromXMLElement(FilePath);
-
-        // קביעת מזהה רץ באמצעות המנגנון שב-Config
         int id = Config.NextCallId;
-
-        // יצירת עותק של הקריאה עם המזהה החדש
         Call copy = item with { Id = id };
-
-        // הוספת ה-XElement שנוצר לרשימה
         callsRootElem.Add(CreateElementFromCall(copy));
-
-        // שמירת הקובץ לאחר עדכון הרשימה
         XMLTools.SaveListToXMLElement(callsRootElem, FilePath);
     }
 
-
-
+    // Reads a Call by ID from the XML file
     public Call? Read(int id)
     {
         XElement callsRootElem = XMLTools.LoadListFromXMLElement(FilePath);
@@ -69,12 +62,14 @@ internal class CallImplementation : ICall
         return callElem is null ? null : CreateCallFromElement(callElem);
     }
 
+    // Reads the first Call that matches the given filter
     public Call? Read(Func<Call, bool> filter)
     {
         XElement callsRootElem = XMLTools.LoadListFromXMLElement(FilePath);
         return callsRootElem.Elements().Select(CreateCallFromElement).FirstOrDefault(filter);
     }
 
+    // Reads all Calls from the XML file, optionally filtering them
     public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null)
     {
         XElement callsRootElem = XMLTools.LoadListFromXMLElement(FilePath);
@@ -82,6 +77,7 @@ internal class CallImplementation : ICall
         return filter == null ? calls : calls.Where(filter);
     }
 
+    // Updates an existing Call in the XML file
     public void Update(Call item)
     {
         XElement callsRootElem = XMLTools.LoadListFromXMLElement(FilePath);
@@ -94,6 +90,7 @@ internal class CallImplementation : ICall
         XMLTools.SaveListToXMLElement(callsRootElem, FilePath);
     }
 
+    // Deletes a Call by ID from the XML file
     public void Delete(int id)
     {
         XElement callsRootElem = XMLTools.LoadListFromXMLElement(FilePath);
@@ -105,11 +102,13 @@ internal class CallImplementation : ICall
         XMLTools.SaveListToXMLElement(callsRootElem, FilePath);
     }
 
+    // Deletes all Calls from the XML file
     public void DeleteAll()
     {
         XMLTools.SaveListToXMLElement(new XElement("Calls"), FilePath);
     }
 
+    // Prints Call details to the console
     public void Print(Call item)
     {
         Console.WriteLine($"Call ID: {item.Id}\nType: {item.CallType}\nAddress: {item.FullAddress}\nOpened: {item.OpenTime}\nEmergency: {item.isEmergency}\nDescription: {item.Description}\nLatitude: {item.Latitude}\nLongitude: {item.Longitude}\nMax Completion Time: {item.MaxCompletionTime}");

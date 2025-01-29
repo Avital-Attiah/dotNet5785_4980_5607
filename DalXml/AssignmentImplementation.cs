@@ -12,24 +12,32 @@ internal class AssignmentImplementation : IAssignment
 {
     private const string FilePath = "assignments.xml";
 
+    /// <summary>
+    /// Creates a new assignment and saves it to the XML file.
+    /// </summary>
+    /// <param name="item">The assignment object to create.</param>
     public void Create(Assignment item)
     {
         XElement assignmentElements = XMLTools.LoadListFromXMLElement(Config.s_assignments_xml);
 
-        // מקבל את המזהה הרץ ומעדכן בקובץ הקונפיג
+        // Retrieves the next available ID and updates the config file
         int id = Config.NextAssignmentId;
 
-        // יוצר עותק חדש של ה-Assignment עם המזהה החדש
+        // Creates a new copy of the Assignment with the new ID
         Assignment copy = item with { Id = id };
 
-        // מוסיף את ה-XElement החדש לרשימה
+        // Adds the new XElement to the list
         assignmentElements.Add(GetXElement(copy));
 
-        // שומר את העדכונים
+        // Saves the updates to the XML file
         XMLTools.SaveListToXMLElement(assignmentElements, Config.s_assignments_xml);
     }
 
-
+    /// <summary>
+    /// Converts an Assignment object into an XElement representation for XML storage.
+    /// </summary>
+    /// <param name="assignment">The assignment object to convert.</param>
+    /// <returns>An XElement representation of the assignment.</returns>
     static XElement GetXElement(Assignment assignment)
     {
         var elements = new List<XElement>();
@@ -55,25 +63,44 @@ internal class AssignmentImplementation : IAssignment
         return new XElement("Assignment", elements);
     }
 
-
+    /// <summary>
+    /// Reads an assignment by its unique ID.
+    /// </summary>
+    /// <param name="id">The ID of the assignment to read.</param>
+    /// <returns>The assignment object if found; otherwise, null.</returns>
     public Assignment? Read(int id)
     {
         var assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(FilePath);
         return assignments.FirstOrDefault(a => a.Id == id);
     }
 
+    /// <summary>
+    /// Reads an assignment based on a filter condition.
+    /// </summary>
+    /// <param name="filter">A function that defines the condition for retrieving an assignment.</param>
+    /// <returns>The first assignment that matches the condition, or null if none found.</returns>
     public Assignment? Read(Func<Assignment, bool> filter)
     {
         var assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(FilePath);
         return assignments.FirstOrDefault(filter);
     }
 
+    /// <summary>
+    /// Reads all assignments that match a given filter (if provided).
+    /// </summary>
+    /// <param name="filter">An optional filter function.</param>
+    /// <returns>A list of assignments that match the condition.</returns>
     public IEnumerable<Assignment> ReadAll(Func<Assignment, bool>? filter = null)
     {
         var assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(FilePath);
         return filter == null ? assignments : assignments.Where(filter);
     }
 
+    /// <summary>
+    /// Updates an existing assignment.
+    /// </summary>
+    /// <param name="item">The updated assignment object.</param>
+    /// <exception cref="DalDoesNotExistException">Thrown if the assignment does not exist.</exception>
     public void Update(Assignment item)
     {
         var assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(FilePath);
@@ -84,6 +111,11 @@ internal class AssignmentImplementation : IAssignment
         XMLTools.SaveListToXMLSerializer(assignments, FilePath);
     }
 
+    /// <summary>
+    /// Deletes an assignment by ID.
+    /// </summary>
+    /// <param name="id">The ID of the assignment to delete.</param>
+    /// <exception cref="DalDoesNotExistException">Thrown if the assignment does not exist.</exception>
     public void Delete(int id)
     {
         var assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(FilePath);
@@ -93,23 +125,39 @@ internal class AssignmentImplementation : IAssignment
         XMLTools.SaveListToXMLSerializer(assignments, FilePath);
     }
 
+    /// <summary>
+    /// Deletes all assignments from the XML file.
+    /// </summary>
     public void DeleteAll()
     {
         XMLTools.SaveListToXMLSerializer(new List<Assignment>(), FilePath);
     }
 
+    /// <summary>
+    /// Prints assignment details to the console.
+    /// </summary>
+    /// <param name="item">The assignment object to print.</param>
     public void Print(Assignment item)
     {
         Console.WriteLine($"Assignment ID: {item.Id}\nCall ID: {item.CallId}\nVolunteer ID: {item.VolunteerId}\nEntry Time: {item.EntryTime}\nCompletion Time: {item.CompletionTime}\nStatus: {item.Status}");
     }
 
-    // LINQ to XML for demonstration purposes
+    /// <summary>
+    /// Reads an assignment using LINQ to XML.
+    /// </summary>
+    /// <param name="id">The ID of the assignment.</param>
+    /// <returns>The assignment object if found; otherwise, null.</returns>
     public Assignment? ReadWithXElement(int id)
     {
         XElement? assignmentElem = XMLTools.LoadListFromXMLElement(FilePath).Elements().FirstOrDefault(a => (int?)a.Element("Id") == id);
         return assignmentElem == null ? null : GetAssignmentFromXElement(assignmentElem);
     }
 
+    /// <summary>
+    /// Updates an assignment using XElement.
+    /// </summary>
+    /// <param name="item">The updated assignment object.</param>
+    /// <exception cref="DalDoesNotExistException">Thrown if the assignment does not exist.</exception>
     public void UpdateWithXElement(Assignment item)
     {
         XElement assignmentsRoot = XMLTools.LoadListFromXMLElement(FilePath);
@@ -122,6 +170,11 @@ internal class AssignmentImplementation : IAssignment
         XMLTools.SaveListToXMLElement(assignmentsRoot, FilePath);
     }
 
+    /// <summary>
+    /// Converts an XElement into an Assignment object.
+    /// </summary>
+    /// <param name="elem">The XElement to convert.</param>
+    /// <returns>The corresponding Assignment object.</returns>
     private static Assignment GetAssignmentFromXElement(XElement elem)
     {
         return new Assignment
@@ -135,6 +188,11 @@ internal class AssignmentImplementation : IAssignment
         );
     }
 
+    /// <summary>
+    /// Converts an Assignment object into an XElement representation.
+    /// </summary>
+    /// <param name="assignment">The assignment object to convert.</param>
+    /// <returns>An XElement representing the assignment.</returns>
     private static XElement CreateXElementFromAssignment(Assignment assignment)
     {
         return new XElement("Assignment",

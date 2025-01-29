@@ -5,5 +5,5 @@ public interface ICall : ICrud<Call>
 
 {
     
-    void Print(Call item); // מדפיס את הפריט
+    void Print(Call item); // print the item
 }

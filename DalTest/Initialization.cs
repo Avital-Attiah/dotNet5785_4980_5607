@@ -70,7 +70,7 @@ public static class Initialization
     };
 
         var random = new Random();
-        Role ro = Role.manager;
+        Role ro = Role.Manager;
         for (int i = 0; i < names.Length; i++)
         {
 
@@ -194,7 +194,7 @@ public static class Initialization
                 // סטטוס ביטול רנדומלי
                 status = random.Next(0, 2) == 0
                     ? TreatmentStatus.CanceledByVolunteer // ביטול על ידי מתנדב
-                    : TreatmentStatus.CanceledBymanager; // ביטול על ידי מנהל
+                    : TreatmentStatus.CanceledByManager; // ביטול על ידי מנהל
             }
 
             // יצירת האובייקט Assignment

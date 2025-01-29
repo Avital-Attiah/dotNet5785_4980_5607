@@ -19,7 +19,7 @@
     }
 
     // Enum representing the role of a volunteer within the system.
-    public enum VolunteerRole
+    public enum Role
     {
         Manager,
         Volunteer
@@ -38,7 +38,7 @@
     {
         CompletedOnTime,
         CanceledByVolunteer,
-        CanceledBymanager,
+        CanceledByManager,
         Expired
     }
 

@@ -1,32 +1,17 @@
-﻿
-namespace DO
+﻿namespace DO
 {
     public class Enums
     {
-        /// <summary>
-        /// סוגי סיום הטיפול בהקצאת הקריאה.
-        /// </summary>
-        /// <remarks>
-        /// - <see cref="CompletedOnTime"/>: הקריאה טופלה בזמן.
-        /// - <see cref="CanceledByVolunteer"/>: המתנדב ביטל את הטיפול.
-        /// - <see cref="CanceledBymanager"/>: המנהל ביטל את ההקצאה.
-        /// - <see cref="Expired"/>: הקריאה בוטלה עקב פג תוקף (לא טופלה בזמן).
-        /// </remarks>
+        // Types of call assignment completion statuses.
         public enum TreatmentStatus
         {
             CompletedOnTime,
             CanceledByVolunteer,
-            CanceledBymanager,
+            CanceledByManager,
             Expired
         }
 
-        /// <summary>
-        /// סוגי הקריאות השונות.
-        /// </summary>
-        /// <remarks>
-        /// - <see cref="FoodPreparation"/>: הכנת אוכל.
-        /// - <see cref="FoodTransport"/>: שינוע האוכל.
-        /// </remarks>
+        // Different types of calls.
         public enum CallType
         {
             EmotionalSupport,
@@ -35,28 +20,14 @@ namespace DO
             Emergency
         }
 
-        /// <summary>
-        /// סוגי תפקידים של המתנדב.
-        /// </summary>
-        /// <remarks>
-        /// - <see cref="manager"/>: מנהל.
-        /// - <see cref="Volunteer"/>: מתנדב.
-        /// </remarks>
+        // Types of volunteer roles.
         public enum Role
         {
             Volunteer,
-            manager
-            
+            Manager
         }
 
-        /// <summary>
-        /// סוגי מרחקים.
-        /// </summary>
-        /// <remarks>
-        /// - <see cref="Air"/>: מרחק אווירי.
-        /// - <see cref="Walking"/>: מרחק הליכה.
-        /// - <see cref="Car"/>: מרחק נסיעה ברכב.
-        /// </remarks>
+        // Types of distances.
         public enum DistanceType
         {
             Air,
@@ -65,4 +36,3 @@ namespace DO
         }
     }
 }
-   

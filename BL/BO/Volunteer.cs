@@ -38,7 +38,7 @@ namespace BO
         string? Address { get; set; }
         double? Latitude { get; set; }
         double? Longitude { get; set; }
-        VolunteerRole Role { get; set; }
+        Role Role { get; set; }
         bool IsActive { get; set; }
         double? MaxCallDistance { get; set; }
         DistanceType DistanceType { get; set; }

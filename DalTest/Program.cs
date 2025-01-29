@@ -353,7 +353,7 @@ internal class Program
                 if (role == "V")
                     Rol = Role.Volunteer;
                 if (role == "M")
-                    Rol = Role.manager;
+                    Rol = Role.Manager;
 
                 Volunteer newVolunteer = new Volunteer
                 {
@@ -457,7 +457,7 @@ internal class Program
                 if (st == "CanceledByV")
                     Status = TreatmentStatus.CanceledByVolunteer;
                 if (st == "CanceledBym")
-                    Status = TreatmentStatus.CanceledBymanager;
+                    Status = TreatmentStatus.CanceledByManager;
                 if (st == "Expired")
                     Status = TreatmentStatus.Expired;
                 Console.WriteLine("Enter the assignment entry time (format: yyyy-MM-dd HH:mm):");
