@@ -1,4 +1,5 @@
-﻿using BO.BO;
+﻿using BO;
+using BO.BO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,6 @@ namespace BO
         public DateTime OpenTime { get; init; } // Non-nullable, set once
         public DateTime? MaxCompletionTime { get; set; } // Nullable
         public CallStatus Status { get; set; } // ENUM, non-nullable
-        public List<CallAssignInList>? Assignments { get; set; } // Nullable if no assignments exist
+        public List<CallAssignInList>? ListAssignments { get; set; } // Nullable if no assignments exist
     }
 }

@@ -45,7 +45,7 @@ namespace BO
         int TotalCompletedCalls { get; set; }
         int TotalCanceledCalls { get; set; }
         int TotalExpiredCalls { get; set; }
-        CallInProgress? CurrentCall { get; set; }
+        CallProgress? CurrentCall { get; set; }
     };
 
   

@@ -68,12 +68,61 @@
         InProgressAtRisk// Call is in progress and nearing its maximum allowed time to be resolved.
     }
 
-    public enum CallInProgress
+    public enum CallProgress
     {
         InTreatment,
         AtRisk
     }
 
-   
+    //שיטת מיון למתנדב
+    public enum VolunteerInLIstFields
+    {
+        Id,
+        FullName,
+        IsActive,
+        TotalHandledCalls,
+        TotalCancelledCalls,
+        TotalExpiredSelectedCalls,
+        CallId,
+        TypeCall
+    }
+
+
+    public enum CallInListFieldSor
+    {
+        Id,
+        CallId,
+        CallType,
+        TimeOpen,
+        RemainingTime,
+        LastVolunteerName,
+        CompletionTime,
+        Status,
+        ListAssignments
+    }
+    public enum ClosedCallInListFields
+    {
+        Id,
+        TypeCall,
+        AddressOfCall,
+        OpenTime,
+        EntryTimeToHandling,
+        ActualEndTime,
+        FinishType
+    }
+
+    public enum OpenCallInListFields
+    {
+        Id,
+        typeCall,
+        VerbalDescription,
+        FullAddressOfCall,
+        TimeOpen,
+        MaxTimeFinishCall,
+        VolunteerDistance
+    }
+
+
+
 }
 

@@ -27,7 +27,6 @@
 
   <ItemGroup>
     <Folder Include="BlImplementation\" />
-    <Folder Include="BIApi\" />
     <Folder Include="BlImplementation\" />
   </ItemGroup>
 
