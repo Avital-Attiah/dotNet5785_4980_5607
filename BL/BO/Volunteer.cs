@@ -30,22 +30,22 @@ namespace BO
     /// <param name="CurrentCall">The current call being handled by the volunteer (optional, can be null).</param>
     public class Volunteer
     {
-        int Id { get; init; }
-        string FullName { get; set; }
-        string Phone { get; set; }
-        string Email { get; set; }
-        string? Password { get; set; }
-        string? Address { get; set; }
-        double? Latitude { get; set; }
-        double? Longitude { get; set; }
-        Role Role { get; set; }
-        bool IsActive { get; set; }
-        double? MaxCallDistance { get; set; }
-        DistanceType DistanceType { get; set; }
-        int TotalCompletedCalls { get; set; }
-        int TotalCanceledCalls { get; set; }
-        int TotalExpiredCalls { get; set; }
-        CallProgress? CurrentCall { get; set; }
+       public int Id { get; init; }
+       public string FullName { get; set; }
+       public string Phone { get; set; }
+       public string Email { get; set; }
+       public string? Password { get; set; }
+       public string? Address { get; set; }
+       public double? Latitude { get; set; }
+       public double? Longitude { get; set; }
+       public Role Role { get; set; }
+       public bool IsActive { get; set; }
+       public double? MaxCallDistance { get; set; }
+       public DistanceType DistanceType { get; set; }
+       public int TotalCompletedCalls { get; set; }
+       public int TotalCanceledCalls { get; set; }
+       public int TotalExpiredCalls { get; set; }
+       public CallProgress? CurrentCall { get; set; }
     };
 
   

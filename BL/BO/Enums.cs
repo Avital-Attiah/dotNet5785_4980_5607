@@ -39,7 +39,8 @@
         CompletedOnTime,
         CanceledByVolunteer,
         CanceledByManager,
-        Expired
+        Expired,
+        OpenAtRisk
     }
 
     /// Represents the types of closure for a call.

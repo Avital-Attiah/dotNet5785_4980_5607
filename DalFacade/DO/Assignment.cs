@@ -23,6 +23,20 @@ namespace DO
     )
     {
         /// Default constructor - no parameters
-        public Assignment() : this(0, 0, 0, DateTime.MinValue) { }
+        private static int nextId = 1;
+
+        // קונסטרקטור שלא מקבל ID - יוצר אוטומטית מספר רץ
+        public Assignment(int callId, int volunteerId, DateTime entryTime, DateTime? completionTime = null, TreatmentStatus? status = null)
+            : this(GenerateId(), callId, volunteerId, entryTime, completionTime, status) { }
+
+        private static int GenerateId()
+        {
+            return Interlocked.Increment(ref nextId);
+        }
     }
 }
+
+    
+      
+    
+
