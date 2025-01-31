@@ -7,6 +7,7 @@ using static DO.Enums;
 using System.Net;
 
 
+
 namespace BlImplementation;
 internal class VolunteerImplementation : IVolunteer
 {
@@ -20,10 +21,10 @@ internal class VolunteerImplementation : IVolunteer
         try
         {
             _dal.Volunteer.Create(new DO.Volunteer(
-                boVolunteer.Id, boVolunteer.Name, boVolunteer.PhoneNumber,
+                boVolunteer.Id, boVolunteer.FullName, boVolunteer.Phone,
                 boVolunteer.Email, boVolunteer.Password, boVolunteer.Address,
-                boVolunteer.Latitude, boVolunteer.Longitude, (DO.RoleT)boVolunteer.Role,
-                boVolunteer.Active, boVolunteer.Distance, (DO.TypeDistance)boVolunteer.DistanceType));
+                boVolunteer.Latitude, boVolunteer.Longitude, (DO.Enums.Role)boVolunteer.Role,
+                boVolunteer.IsActive, boVolunteer.MaxCallDistance, (DO.Enums.DistanceType)boVolunteer.DistanceType));
         }
         catch (DO.DalAlreadyExistsException ex)
         {
@@ -38,7 +39,7 @@ internal class VolunteerImplementation : IVolunteer
         {
             BO.Volunteer boVolunteer = Read(id);
 
-            if (boVolunteer.VolunteerCallInProgress != null || boVolunteer.TotalHandledCalls > 0)
+            if (boVolunteer.CurrentCall != null || boVolunteer.TotalCompletedCalls > 0)
             {
                 throw new BO.BlCannotBeDeletedException($"Volunteer with ID={id} cannot be deleted because they are currently handling or have handled calls.");
             }
@@ -59,14 +60,14 @@ internal class VolunteerImplementation : IVolunteer
     {
         try
         {
-            var user = _dal.Volunteer.Read(v => v.Name == userName) ?? throw new BO.BlDoesNotExistException($"Volunteer with UserName={userName} does not exist.");
+            var user = _dal.Volunteer.Read(v => v.FullName == userName) ?? throw new BO.BlDoesNotExistException($"Volunteer with UserName={userName} does not exist.");
 
             if (user.Password != password)
             {
                 throw new BO.BlValidationException("Incorrect password");
             }
 
-            return (BO.RoleT)user.Role;
+            return (BO.Role)user.Role;
         }
         catch (BO.BlDoesNotExistException)
         {
@@ -84,24 +85,24 @@ internal class VolunteerImplementation : IVolunteer
     {
         var volunteers = filterByActive == null
         ? _dal.Volunteer.ReadAll()
-        : _dal.Volunteer.ReadAll(v => v.Active == filterByActive);
+        : _dal.Volunteer.ReadAll(v => v.IsActive == filterByActive);
 
         var volunteersInList = volunteers.Select(item => {
             var doAssignmentList = _dal.Assignment.ReadAll(a => a.VolunteerId == item.Id);
-            var (totalHandledCalls, totalCancelledCalls, totalExpiredSelectedCalls) = VolunteerManager.GetTotalsCalls(doAssignmentList);
-            var doAssignment = _dal.Assignment.Read(a => a.TypeFinish == null);
+            var (TotalHandledCalls, TotalCanceledCalls, TotalExpiredCalls) = VolunteerManager.GetTotalsCalls(doAssignmentList);
+            var doAssignment = _dal.Assignment.Read(a => a.CompletionTime == null);
 
             return new BO.VolunteerInList
             {
                 Id = item.Id,
-                FullName = item.Name,
-                IsActive = item.Active,
-                TotalHandledCalls = totalHandledCalls,
-                TotalCancelledCalls = totalCancelledCalls,
-                TotalExpiredSelectedCalls = totalExpiredSelectedCalls,
-                CallId = doAssignment != null ? doAssignment.CallId : null,
-                TypeCall = doAssignment == null ? BO.TypeCall.None
-                : (BO.TypeCall)_dal.Call.Read(doAssignment.CallId)!.CallType
+                FullName = item.FullName,
+                IsActive = item.IsActive,
+                TotalHandledCalls = TotalHandledCalls,
+                TotalCanceledCalls = TotalCanceledCalls,
+                TotalExpiredCalls = TotalExpiredCalls,
+                CurrentCallId = doAssignment != null ? doAssignment.CallId : null,
+                CurrentCallType = doAssignment == null ? BO.CallType.None
+                : (BO.CallType)_dal.Call.Read(doAssignment.CallId)!.CallType
             };
         })
           .ToList();
@@ -155,20 +156,20 @@ internal class VolunteerImplementation : IVolunteer
         var (totalHandledCalls, totalCancelledCalls, totalExpiredSelectedCalls) = VolunteerManager.GetTotalsCalls(doAssignmentList);
         var doAssignment = doAssignmentList.LastOrDefault();
         BO.CallInProgress? callInProgress;
-        if (doAssignment != null && doAssignment.TypeFinish == null)
+        if (doAssignment != null && doAssignment.CompletionTime == null)
         {
             var doCall = _dal.Call.Read(doAssignment.CallId);
             callInProgress = new BO.CallInProgress()
             {
                 Id = doAssignment.Id,
                 CallId = doAssignment.CallId,
-                TypeCall = (BO.TypeCall)doCall.CallType,
-                Description = doCall.VerbalDescription,
-                AddressOfCall = doCall.FullAddressOfCall,
-                OpenTime = doCall.TimeOpen,
-                EntryTimeToHandling = doAssignment.TimeEnter,
-                DistanceFromVolunteer = CallManager.GetDistanceBetweenAddresses(doVolunteer.Address, doCall.FullAddressOfCall),
-                Status = CallManager.GetStatusCall(doAssignment.CallId) == BO.StatusCall.InProgress ? BO.StatusCallProgress.InHandling : BO.StatusCallProgress.InRiskHandling
+                CallType = (BO.CallType)doCall.CallType,
+                Description = doCall.Description,
+                FullAddress = doCall.FullAddress,
+                OpeningTime = doCall.OpenTime,
+                StartHandlingTime = doAssignment.EntryTime,
+                DistanceFromVolunteer = CallManager.GetDistanceBetweenAddresses(doVolunteer.Address, doCall.FullAddress),
+                Status = CallManager.GetStatusCall(doAssignment.CallId) == BO.CallStatus.InProgress ? BO.CallInProgressStatus.InProgress : BO.CallInProgressStatus.AtRisk
             };
         }
         else
@@ -178,21 +179,21 @@ internal class VolunteerImplementation : IVolunteer
         return new()
         {
             Id = id,
-            Name = doVolunteer.Name,
-            PhoneNumber = doVolunteer.PhoneNumber,
+            FullName = doVolunteer.FullName,
+            Phone = doVolunteer.Phone,
             Email = doVolunteer.Email,
             Password = doVolunteer.Password,
-            Address = doVolunteer.Address,
+            Address = doVolunteer.CurrentAddress,
             Latitude = doVolunteer.Latitude,
             Longitude = doVolunteer.Longitude,
-            Role = (BO.RoleT)doVolunteer.Role,
-            Active = doVolunteer.Active,
-            Distance = doVolunteer.Distance,
-            DistanceType = (BO.TypeDistance)doVolunteer.DistanceType,
-            TotalHandledCalls = totalHandledCalls,
-            TotalCancelledCalls = totalCancelledCalls,
-            TotalExpiredSelectedCalls = totalExpiredSelectedCalls,
-            VolunteerCallInProgress = callInProgress
+            Role = (BO.Role)doVolunteer.Role,
+            IsActive = doVolunteer.IsActive,
+            MaxCallDistance = doVolunteer.MaxDistance,
+            DistanceType = (BO.DistanceType)doVolunteer.DistanceType,
+            TotalCompletedCalls = totalHandledCalls,
+            TotalCanceledCalls = totalCancelledCalls,
+            TotalExpiredCalls = totalExpiredSelectedCalls,
+            CurrentCall = callInProgress
         };
     }
 
@@ -207,7 +208,7 @@ internal class VolunteerImplementation : IVolunteer
         var doVolunteer = _dal.Volunteer.Read(id)
                           ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={id} does not exist");
 
-        if (doVolunteer.Role == DO.RoleT.manager || doVolunteer.Id == id)
+        if (doVolunteer.Role == DO.Enums.Role.Manager || doVolunteer.Id == id)
         {
             try
             {

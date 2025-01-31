@@ -9,17 +9,17 @@ namespace BlApi
 {
     public interface IVolunteer
     {
-        Role GetUserRole(string Name);
+        Role GetUserRole(string Name, string password);
 
-        IEnumerable<VolunteerInList> GetVolunteersList(bool? sortByActive = null, VolunteerInLIstFields? filterFields = null);
+        IEnumerable<BO.VolunteerInList> GetVolunteersList(bool? filterByActive = null, BO.VolunteerInLIstFields? sortByField = null);
 
-        Volunteer GetVolunteerById(int id);
+        BO.Volunteer Read(int id);
 
-        void UpdateVolunteer(int id, Volunteer volunteerToUpdate);
+        void Update(int id, BO.Volunteer updateVolunteerObj);
 
-        void RemoveVolunteer(int id);
+        void Delete(int id);
 
-        void AddVolunteer(Volunteer newVolunteer);
+        void Create(BO.Volunteer boVolunteer);
 
 
 

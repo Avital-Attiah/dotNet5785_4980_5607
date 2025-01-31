@@ -5,7 +5,7 @@
     public enum CallInProgressStatus
     {
         InProgress,
-        AtRisk
+        AtRisk,
     }
 
     /// סוגי הקריאות השונות.
@@ -122,8 +122,16 @@
         MaxTimeFinishCall,
         VolunteerDistance
     }
+    public enum TimeUnit
+    {
+        MINUTE,
+        HOUR,
+        DAY,
+        MONTH,
+        YEAR
+    }
 
 
-
+    
 }
 

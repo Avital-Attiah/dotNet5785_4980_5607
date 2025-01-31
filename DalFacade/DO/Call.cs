@@ -22,12 +22,22 @@ namespace DO
         DateTime OpenTime,
         bool isEmergency = false,
         string? Description = null,
-        double Latitude = 0.0,
-        double Longitude = 0.0,
+        double Latitude=0.0 ,
+        double Longitude=0.0,
         DateTime? MaxCompletionTime = null
     )
     {
-        /// Default constructor (no parameters).
-        public Call() : this(0, default, "", DateTime.MinValue) { }
+        /// Default constructor - no parameters
+        private static int nextId = 1;
+
+        // קונסטרקטור שלא מקבל ID - יוצר אוטומטית מספר רץ
+        public Call(CallType CallType, string FullAddress, DateTime OpenTime, bool isEmergency = false, string? Description = null, double Latitude=0.0, double Longitude=0.0, DateTime? MaxCompletionTime = null)
+            : this(GenerateId(), CallType, FullAddress, OpenTime, isEmergency = false, Description=null, Latitude, Longitude, MaxCompletionTime) { }
+
+        
+        private static int GenerateId()
+        {
+            return Interlocked.Increment(ref nextId);
+        }
     }
 }

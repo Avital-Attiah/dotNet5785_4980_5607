@@ -25,14 +25,14 @@ namespace BO
     {
         public int Id { get; init; }
         public int CallId { get; init; }
-        public CallType CallType { get; set; } // ENUM שהוגדר בקובץ Enums.cs
-        public string? Description { get; set; } // מאחר שתכונה זו יכולה להיות null
+        public CallType CallType { get; set; } 
+        public string? Description { get; set; } 
         public string FullAddress { get; set; }
         public DateTime OpeningTime { get; set; }
-        public DateTime? MaxCompletionTime { get; set; } // מאחר שתכונה זו יכולה להיות null
+        public DateTime? MaxCompletionTime { get; set; } 
         public DateTime StartHandlingTime { get; set; }
         public double DistanceFromVolunteer { get; set; }
-        public CallInProgressStatus Status { get; set; } // ENUM שהוגדר בקובץ Enums.cs
+        public CallInProgressStatus Status { get; set; } 
     }
 
 }

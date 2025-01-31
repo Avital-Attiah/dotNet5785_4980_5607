@@ -168,17 +168,17 @@ internal static class CallManager
     public static void ValidateCall(BO.Call boCall, bool isUpdate = false)
     {
         // Validation - TimeOpen and MaxTimeFinishCall
-        if (boCall.MaxTimeFinishCall.HasValue && boCall.TimeOpen >= boCall.MaxTimeFinishCall)
+        if (boCall.MaxCompletionTime.HasValue && boCall.OpenTime >= boCall.MaxCompletionTime)
         {
             throw new BO.BlValidationException("MaxTimeFinishCall must be later than TimeOpen.");
         }
 
         // Validation - FullAddressOfCall
-        if (!string.IsNullOrEmpty(boCall.FullAddressOfCall))
+        if (!string.IsNullOrEmpty(boCall.FullAddress))
         {
             try
             {
-                var (latitude, longitude) = GetCoordinates(boCall.FullAddressOfCall);
+                var (latitude, longitude) = GetCoordinates(boCall.FullAddress);
                 boCall.Latitude = latitude;
                 boCall.Longitude = longitude;
             }
@@ -192,14 +192,14 @@ internal static class CallManager
             throw new BO.BlValidationException("Full address of the call is required.");
         }
 
-        // Validation - VerbalDescription
-        if (string.IsNullOrEmpty(boCall.VerbalDescription))
+        // Validation - Description
+        if (string.IsNullOrEmpty(boCall.Description))
         {
             throw new BO.BlValidationException("Verbal description is required.");
         }
 
         // Validation - CallType
-        if (!VolunteerManager.IsValidEnum<BO.TypeCall>((int)boCall.CallType))
+        if (!VolunteerManager.IsValidEnum<BO.CallType>((int)boCall.CallType))
         {
             throw new BO.BlValidationException($"Invalid TypeCall value: {boCall.CallType}");
         }
@@ -209,24 +209,24 @@ internal static class CallManager
     {
         var copyDoCall = doCall;
 
-        if (doCall.TimeOpen != boCAll.TimeOpen || doCall.MaxTimeFinishCall != boCAll.MaxTimeFinishCall)
+        if (doCall.OpenTime != boCAll.OpenTime || doCall.MaxCompletionTime != boCAll.MaxCompletionTime)
         {
-            copyDoCall = copyDoCall with { TimeOpen = boCAll.TimeOpen, MaxTimeFinishCall = boCAll.MaxTimeFinishCall };
+            copyDoCall = copyDoCall with { OpenTime = boCAll.OpenTime, MaxCompletionTime = boCAll.MaxCompletionTime };
         }
 
-        if (doCall.FullAddressOfCall != boCAll.FullAddressOfCall)
+        if (doCall.FullAddress != boCAll.FullAddress)
         {
-            copyDoCall = copyDoCall with { FullAddressOfCall = boCAll.FullAddressOfCall, Latitude = boCAll.Latitude, Longitude = boCAll.Longitude };
+            copyDoCall = copyDoCall with { FullAddress = boCAll.FullAddress, Latitude = boCAll.Latitude, Longitude = boCAll.Longitude };
         }
 
-        if (doCall.VerbalDescription != boCAll.VerbalDescription)
+        if (doCall.Description != boCAll.Description)
         {
-            copyDoCall = copyDoCall with { VerbalDescription = boCAll.VerbalDescription };
+            copyDoCall = copyDoCall with { Description = boCAll.Description };
         }
 
-        if (doCall.CallType != (DO.TypeCall)boCAll.CallType)
+        if (doCall.CallType != (DO.Enums.CallType)boCAll.CallType)
         {
-            copyDoCall = copyDoCall with { CallType = (DO.TypeCall)boCAll.CallType };
+            copyDoCall = copyDoCall with { CallType = (DO.Enums.CallType)boCAll.CallType };
         }
         return copyDoCall;
     }
