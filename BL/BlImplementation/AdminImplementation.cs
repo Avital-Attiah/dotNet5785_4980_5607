@@ -34,7 +34,6 @@ internal class AdminImplementation : IAdmin
 
                 break;
         }
-        return;
     }
 
     TimeSpan IAdmin.GetRiskRange()

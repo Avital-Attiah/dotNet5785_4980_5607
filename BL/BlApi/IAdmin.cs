@@ -8,6 +8,7 @@ namespace BlApi
 {
     public interface IAdmin
     {
+        void UpdateClock(BO.TimeUnit timeUnit);
         DateTime GetClock();
         TimeSpan GetRiskRange();
         void SetRiskRange(TimeSpan riskRange);

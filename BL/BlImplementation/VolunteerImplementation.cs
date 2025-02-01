@@ -118,41 +118,6 @@ internal class VolunteerImplementation : IVolunteer
 
         return volunteersInList;
 
-        
-
-
-
-
-
-            #region  //if (sortByField != null)
-            //{
-            //    volunteersInList = sortByField switch
-            //    {
-            //        BO.VolunteerInLIstFields.Id => volunteersInList
-            //            .OrderByDescending(v => v.Id).ToList(),
-            //        BO.VolunteerInLIstFields.FullName => volunteersInList
-            //            .OrderByDescending(v => v.FullName).ToList(),
-            //        BO.VolunteerInLIstFields.IsActive => volunteersInList
-            //            .OrderByDescending(v => v.IsActive).ToList(),
-            //        BO.VolunteerInLIstFields.TotalHandledCalls => volunteersInList
-            //       .OrderByDescending(v => v.TotalHandledCalls).ToList(),
-            //        BO.VolunteerInLIstFields.TotalCancelledCalls => volunteersInList
-            //            .OrderByDescending(v => v.TotalCancelledCalls).ToList(),
-            //        BO.VolunteerInLIstFields.TotalExpiredSelectedCalls => volunteersInList
-            //       .OrderByDescending(v => v.TotalExpiredSelectedCalls).ToList(),
-            //        BO.VolunteerInLIstFields.CallId => volunteersInList
-            //       .OrderByDescending(v => v.CallId).ToList(),
-            //        BO.VolunteerInLIstFields.TypeCall => volunteersInList
-            //       .OrderByDescending(v => v.TypeCall).ToList(),
-            //        _ => volunteersInList
-            //    };
-
-            //}
-            //else
-            //{
-            //    volunteersInList.OrderByDescending(v => v.Id).ToList();
-            //} 
-            #endregion
         }
 
     public BO.Volunteer Read(int id)
