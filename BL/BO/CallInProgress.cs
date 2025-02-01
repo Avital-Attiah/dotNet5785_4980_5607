@@ -32,7 +32,7 @@ namespace BO
         public DateTime? MaxCompletionTime { get; set; } 
         public DateTime StartHandlingTime { get; set; }
         public double DistanceFromVolunteer { get; set; }
-        public CallInProgressStatus Status { get; set; } 
+        public CallProgress Status { get; set; } 
     }
 
 }

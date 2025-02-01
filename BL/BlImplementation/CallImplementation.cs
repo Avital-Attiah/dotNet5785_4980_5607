@@ -16,9 +16,8 @@ internal class CallImplementation : ICall
         CallManager.ValidateCall(boCall);
 
         // Create DO.Call object
-        DO.Call doCall = new(boCall.Id,(DO.Enums.CallType)boCall.CallType, boCall.FullAddress, boCall.OpenTime, boCall.Description, boCall.Latitude, boCall.Longitude, 
+        DO.Call doCall = new(boCall.Id,(DO.Enums.CallType)boCall.CallType, boCall.FullAddress, boCall.OpenTime,false, boCall.Description, boCall.Latitude, boCall.Longitude, 
         boCall.MaxCompletionTime);
-
 
         try
         {

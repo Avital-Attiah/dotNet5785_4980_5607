@@ -1,4 +1,5 @@
-﻿using static DO.Enums;
+﻿using System;
+using static DO.Enums;
 
 namespace DO
 {
@@ -22,22 +23,22 @@ namespace DO
         DateTime OpenTime,
         bool isEmergency = false,
         string? Description = null,
-        double Latitude=0.0 ,
-        double Longitude=0.0,
+        double Latitude = 0.0,
+        double Longitude = 0.0,
         DateTime? MaxCompletionTime = null
     )
     {
-        /// Default constructor - no parameters
-        private static int nextId = 1;
+
 
         // קונסטרקטור שלא מקבל ID - יוצר אוטומטית מספר רץ
-        public Call(CallType CallType, string FullAddress, DateTime OpenTime, bool isEmergency = false, string? Description = null, double Latitude=0.0, double Longitude=0.0, DateTime? MaxCompletionTime = null)
-            : this(GenerateId(), CallType, FullAddress, OpenTime, isEmergency = false, Description=null, Latitude, Longitude, MaxCompletionTime) { }
+        public Call()
+            : this(0, CallType.EmotionalSupport, "", DateTime.Now, false, "", 0, 0, DateTime.Now) { }
 
-        
-        private static int GenerateId()
-        {
-            return Interlocked.Increment(ref nextId);
-        }
+        public override string ToString() =>
+       $"Id: {Id}, Full Address: {FullAddress}, Latitude: {Latitude}, Longitude: {Longitude}, Time Open: {OpenTime}, " +
+       $"Call Type: {CallType}, Verbal Description: {Description ?? "N/A"}, Max Time Finish: {MaxCompletionTime?.ToString() ?? "N/A"}";
     }
-}
+    
+    }
+
+   

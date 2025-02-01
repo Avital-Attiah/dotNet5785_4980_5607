@@ -21,7 +21,7 @@ internal static class CallManager
                 if (assignment == null)
                 {
                     DO.Assignment doAssignment =
-                     new(doCall.Id, 0, ClockManager.Now, ClockManager.Now, DO.Enums.TreatmentStatus.Expired);
+                     new(doCall.Id, 0,0, ClockManager.Now, ClockManager.Now, DO.Enums.TreatmentStatus.Expired);
                     s_dal.Assignment.Create(doAssignment);
                 }
                 else
@@ -184,7 +184,7 @@ internal static class CallManager
             }
             catch (BO.BlValidationException)
             {
-                throw new BO.BlValidationException($"Invalid address: {boCall.FullAddressOfCall}");
+                throw new BO.BlValidationException($"Invalid address: {boCall.FullAddress}");
             }
         }
         else

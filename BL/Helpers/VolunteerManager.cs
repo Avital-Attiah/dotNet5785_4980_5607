@@ -82,13 +82,12 @@ internal static class VolunteerManager
         }
     }
 
-    public static Tuple<int, int, int, int> GetTotalsCalls(IEnumerable<DO.Assignment> doAssignments)
+    public static Tuple<int, int, int> GetTotalsCalls(IEnumerable<DO.Assignment> doAssignments)
     {
         int totalHandledCalls = doAssignments.Count(a => a.Status == DO.Enums.TreatmentStatus.CompletedOnTime);
-        int totalCancelledVCalls = doAssignments.Count(a => a.Status == DO.Enums.TreatmentStatus.CanceledByVolunteer);
-        int totalCancelledMCalls = doAssignments.Count(a => a.Status == DO.Enums.TreatmentStatus.CanceledByVolunteer);
+        int totalCancelledVCalls = doAssignments.Count(a => a.Status == DO.Enums.TreatmentStatus.CanceledByVolunteer || a.Status == DO.Enums.TreatmentStatus.CanceledByManager);
         int totalExpiredSelectedCalls = doAssignments.Count(a => a.Status == DO.Enums.TreatmentStatus.Expired);
-        return new Tuple<int, int, int, int>(totalHandledCalls, totalCancelledVCalls, totalCancelledMCalls, totalExpiredSelectedCalls);
+        return new Tuple<int, int, int>(totalHandledCalls, totalCancelledVCalls,  totalExpiredSelectedCalls);
     }
     public static bool IsValidEnum<T>(int value) where T : Enum
     {

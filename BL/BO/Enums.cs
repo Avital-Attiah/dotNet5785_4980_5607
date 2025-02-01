@@ -1,12 +1,6 @@
 ﻿namespace BO
 {
  
-    // Enum representing the status of the call.
-    public enum CallInProgressStatus
-    {
-        InProgress,
-        AtRisk,
-    }
 
     /// סוגי הקריאות השונות.
     public enum CallType

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using static DO.Enums;
 using System.Net;
+using System;
 
 
 
@@ -81,7 +82,7 @@ internal class VolunteerImplementation : IVolunteer
 
 
 
-    public IEnumerable<BO.VolunteerInList> GetVolunteersList(bool? filterByActive = null, BO.VolunteerInLIstFields? sortByField = null)
+    public IEnumerable<BO.VolunteerInList> GetVolunteersList( bool? filterByActive = null, BO.VolunteerInLIstFields? sortByField = null)
     {
         var volunteers = filterByActive == null
         ? _dal.Volunteer.ReadAll()
@@ -89,7 +90,7 @@ internal class VolunteerImplementation : IVolunteer
 
         var volunteersInList = volunteers.Select(item => {
             var doAssignmentList = _dal.Assignment.ReadAll(a => a.VolunteerId == item.Id);
-            var (TotalHandledCalls, TotalCanceledCalls, TotalExpiredCalls) = VolunteerManager.GetTotalsCalls(doAssignmentList);
+            var (TotalCompletedCalls, TotalCanceledCalls, TotalExpiredCalls) = VolunteerManager.GetTotalsCalls(doAssignmentList);
             var doAssignment = _dal.Assignment.Read(a => a.CompletionTime == null);
 
             return new BO.VolunteerInList
@@ -97,7 +98,7 @@ internal class VolunteerImplementation : IVolunteer
                 Id = item.Id,
                 FullName = item.FullName,
                 IsActive = item.IsActive,
-                TotalHandledCalls = TotalHandledCalls,
+                TotalHandledCalls = TotalCompletedCalls,
                 TotalCanceledCalls = TotalCanceledCalls,
                 TotalExpiredCalls = TotalExpiredCalls,
                 CurrentCallId = doAssignment != null ? doAssignment.CallId : null,
@@ -117,43 +118,49 @@ internal class VolunteerImplementation : IVolunteer
 
         return volunteersInList;
 
-        #region  //if (sortByField != null)
-        //{
-        //    volunteersInList = sortByField switch
-        //    {
-        //        BO.VolunteerInLIstFields.Id => volunteersInList
-        //            .OrderByDescending(v => v.Id).ToList(),
-        //        BO.VolunteerInLIstFields.FullName => volunteersInList
-        //            .OrderByDescending(v => v.FullName).ToList(),
-        //        BO.VolunteerInLIstFields.IsActive => volunteersInList
-        //            .OrderByDescending(v => v.IsActive).ToList(),
-        //        BO.VolunteerInLIstFields.TotalHandledCalls => volunteersInList
-        //       .OrderByDescending(v => v.TotalHandledCalls).ToList(),
-        //        BO.VolunteerInLIstFields.TotalCancelledCalls => volunteersInList
-        //            .OrderByDescending(v => v.TotalCancelledCalls).ToList(),
-        //        BO.VolunteerInLIstFields.TotalExpiredSelectedCalls => volunteersInList
-        //       .OrderByDescending(v => v.TotalExpiredSelectedCalls).ToList(),
-        //        BO.VolunteerInLIstFields.CallId => volunteersInList
-        //       .OrderByDescending(v => v.CallId).ToList(),
-        //        BO.VolunteerInLIstFields.TypeCall => volunteersInList
-        //       .OrderByDescending(v => v.TypeCall).ToList(),
-        //        _ => volunteersInList
-        //    };
+        
 
-        //}
-        //else
-        //{
-        //    volunteersInList.OrderByDescending(v => v.Id).ToList();
-        //} 
-        #endregion
-    }
+
+
+
+
+            #region  //if (sortByField != null)
+            //{
+            //    volunteersInList = sortByField switch
+            //    {
+            //        BO.VolunteerInLIstFields.Id => volunteersInList
+            //            .OrderByDescending(v => v.Id).ToList(),
+            //        BO.VolunteerInLIstFields.FullName => volunteersInList
+            //            .OrderByDescending(v => v.FullName).ToList(),
+            //        BO.VolunteerInLIstFields.IsActive => volunteersInList
+            //            .OrderByDescending(v => v.IsActive).ToList(),
+            //        BO.VolunteerInLIstFields.TotalHandledCalls => volunteersInList
+            //       .OrderByDescending(v => v.TotalHandledCalls).ToList(),
+            //        BO.VolunteerInLIstFields.TotalCancelledCalls => volunteersInList
+            //            .OrderByDescending(v => v.TotalCancelledCalls).ToList(),
+            //        BO.VolunteerInLIstFields.TotalExpiredSelectedCalls => volunteersInList
+            //       .OrderByDescending(v => v.TotalExpiredSelectedCalls).ToList(),
+            //        BO.VolunteerInLIstFields.CallId => volunteersInList
+            //       .OrderByDescending(v => v.CallId).ToList(),
+            //        BO.VolunteerInLIstFields.TypeCall => volunteersInList
+            //       .OrderByDescending(v => v.TypeCall).ToList(),
+            //        _ => volunteersInList
+            //    };
+
+            //}
+            //else
+            //{
+            //    volunteersInList.OrderByDescending(v => v.Id).ToList();
+            //} 
+            #endregion
+        }
 
     public BO.Volunteer Read(int id)
     {
         var doVolunteer = _dal.Volunteer.Read(id) ??
         throw new BO.BlDoesNotExistException($"Volunteer with ID={id} does Not exist");
         var doAssignmentList = _dal.Assignment.ReadAll(a => a.VolunteerId == id);
-        var (totalHandledCalls, totalCancelledCalls, totalExpiredSelectedCalls) = VolunteerManager.GetTotalsCalls(doAssignmentList);
+        var (TotalCompletedCalls, totalCancelledCalls, totalExpiredSelectedCalls) = VolunteerManager.GetTotalsCalls(doAssignmentList);
         var doAssignment = doAssignmentList.LastOrDefault();
         BO.CallInProgress? callInProgress;
         if (doAssignment != null && doAssignment.CompletionTime == null)
@@ -168,8 +175,8 @@ internal class VolunteerImplementation : IVolunteer
                 FullAddress = doCall.FullAddress,
                 OpeningTime = doCall.OpenTime,
                 StartHandlingTime = doAssignment.EntryTime,
-                DistanceFromVolunteer = CallManager.GetDistanceBetweenAddresses(doVolunteer.Address, doCall.FullAddress),
-                Status = CallManager.GetStatusCall(doAssignment.CallId) == BO.CallStatus.InProgress ? BO.CallInProgressStatus.InProgress : BO.CallInProgressStatus.AtRisk
+                DistanceFromVolunteer = CallManager.GetDistanceBetweenAddresses(doVolunteer.CurrentAddress, doCall.FullAddress),
+                Status = CallManager.GetStatusCall(doAssignment.CallId) == BO.CallStatus.InProgress ? BO.CallProgress.InTreatment : BO.CallProgress.AtRisk
             };
         }
         else
@@ -190,10 +197,11 @@ internal class VolunteerImplementation : IVolunteer
             IsActive = doVolunteer.IsActive,
             MaxCallDistance = doVolunteer.MaxDistance,
             DistanceType = (BO.DistanceType)doVolunteer.DistanceType,
-            TotalCompletedCalls = totalHandledCalls,
+            TotalCompletedCalls = TotalCompletedCalls,
             TotalCanceledCalls = totalCancelledCalls,
             TotalExpiredCalls = totalExpiredSelectedCalls,
-            CurrentCall = callInProgress
+            CurrentCall = callInProgress?.Status
+
         };
     }
 
