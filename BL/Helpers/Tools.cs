@@ -1,8 +1,7 @@
-﻿
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Linq.Expressions;
 using System.Reflection;
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using System.Reflection;
 namespace Helpers;
 
@@ -18,7 +17,7 @@ internal static class Tools
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="TEnum"></typeparam>
@@ -73,4 +72,6 @@ internal static class Tools
         return list;
     }
 }
+
+
 

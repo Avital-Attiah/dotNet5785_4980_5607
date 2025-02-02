@@ -82,7 +82,7 @@ internal class VolunteerImplementation : IVolunteer
 
 
 
-    public IEnumerable<BO.VolunteerInList> GetVolunteersList( bool? filterByActive = null, BO.VolunteerInLIstFields? sortByField = null)
+    public IEnumerable<BO.VolunteerInList> GetVolunteersList(bool? filterByActive = null, BO.VolunteerInLIstFields? sortByField = null)
     {
         var volunteers = filterByActive == null
         ? _dal.Volunteer.ReadAll()
@@ -118,7 +118,7 @@ internal class VolunteerImplementation : IVolunteer
 
         return volunteersInList;
 
-        }
+    }
 
     public BO.Volunteer Read(int id)
     {
@@ -140,7 +140,7 @@ internal class VolunteerImplementation : IVolunteer
                 FullAddress = doCall.FullAddress,
                 OpeningTime = doCall.OpenTime,
                 StartHandlingTime = doAssignment.EntryTime,
-                DistanceFromVolunteer = CallManager.GetDistanceBetweenAddresses(doVolunteer.CurrentAddress, doCall.FullAddress),
+                DistanceFromVolunteer = CallManager.CalculateDistance(id, doCall.Latitude, doCall.Longitude),
                 Status = CallManager.GetStatusCall(doAssignment.CallId) == BO.CallStatus.InProgress ? BO.CallProgress.InTreatment : BO.CallProgress.AtRisk
             };
         }
@@ -176,7 +176,7 @@ internal class VolunteerImplementation : IVolunteer
         var volunteer = _dal.Volunteer.Read(v => v.FullName == fullName && v.Password == password);
         if (volunteer == null)
         {
-           throw new BO.BlDoesNotExistException("Incorrect username or password");
+            throw new BO.BlDoesNotExistException("Incorrect username or password");
         }
         return (BO.Role)volunteer.Role;
     }
@@ -224,3 +224,5 @@ internal class VolunteerImplementation : IVolunteer
     }
 
 }
+
+

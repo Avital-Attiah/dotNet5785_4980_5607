@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
@@ -22,7 +23,7 @@ internal static class CallManager
                 if (assignment == null)
                 {
                     DO.Assignment doAssignment =
-                     new(doCall.Id, 0,0, ClockManager.Now, ClockManager.Now, DO.Enums.TreatmentStatus.Expired);
+                     new(doCall.Id, 0, 0, ClockManager.Now, ClockManager.Now, DO.Enums.TreatmentStatus.Expired);
                     s_dal.Assignment.Create(doAssignment);
                 }
                 else
@@ -91,6 +92,47 @@ internal static class CallManager
             .ToList();
     }
 
+    internal static double CalculateDistance(int volunteerId, double callLat, double callLong)
+    {
+        var call = s_dal.Call.Read(volunteerId);
+        if (call == null)
+            throw new BO.BlDoesNotExistException($"Tutor with ID {volunteerId} not found");
+
+        return GetDistance(call.Latitude, call.Longitude, callLat, callLong);
+    }
+
+    /// <summary>
+    /// Calculates the distance between two geographical coordinates.
+    /// </summary>
+    /// <param name="lat1">Latitude of the first point.</param>
+    /// <param name="lon1">Longitude of the first point.</param>
+    /// <param name="lat2">Latitude of the second point.</param>
+    /// <param name="lon2">Longitude of the second point.</param>
+    /// <returns>The distance between the two points in kilometers.</returns>
+    private static double GetDistance(double lat1, double lon1, double lat2, double lon2)
+    {
+        // Haversine formula to calculate distance between two coordinates on Earth.
+        double earthRadiusKm = 6371;
+        double dLat = DegreesToRadians(lat2 - lat1);
+        double dLon = DegreesToRadians(lon2 - lon1);
+        double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                   Math.Cos(DegreesToRadians(lat1)) * Math.Cos(DegreesToRadians(lat2)) *
+                   Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+        double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+        return earthRadiusKm * c;
+    }
+
+    /// <summary>
+    /// Converts degrees to radians.
+    /// </summary>
+    /// <param name="degrees">The angle in degrees.</param>
+    /// <returns>The angle in radians.</returns>
+    private static double DegreesToRadians(double degrees)
+    {
+        return degrees * Math.PI / 180;
+    }
+
+
     #region check address
     /// <summary>
     /// Retrieves the geographical coordinates (latitude and longitude) for a given address.
@@ -148,45 +190,6 @@ internal static class CallManager
     }
     #endregion
 
-
-    public static double CalculateHaversineDistance(double lat1, double lon1, double lat2, double lon2)
-    {
-        double EarthRadiusKm = 6371.0;
-        double dLat = DegreesToRadians(lat2 - lat1);
-        double dLon = DegreesToRadians(lon2 - lon1);
-
-        double a = Math.Pow(Math.Sin(dLat / 2), 2) +
-                   Math.Cos(DegreesToRadians(lat1)) * Math.Cos(DegreesToRadians(lat2)) *
-                   Math.Pow(Math.Sin(dLon / 2), 2);
-
-        double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-        return EarthRadiusKm * c;
-    }
-
-    private static double DegreesToRadians(double degrees)
-    {
-        return degrees * Math.PI / 180;
-    }
-
-    public static double GetDistanceBetweenAddresses(string address1, string address2)
-    {
-        try
-        {
-            var coords1 = GetCoordinates(address1);
-            var coords2 = GetCoordinates(address2);
-
-            if (coords1 == null || coords2 == null)
-            {
-                throw new Exception("Unable to calculate distance - one or two of the addresses is invalid");
-            }
-
-            return CalculateHaversineDistance(coords1.Item1, coords1.Item2, coords2.Item1, coords2.Item2);
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
-    }
 
     public static bool IsValidNumber(string input)
     {

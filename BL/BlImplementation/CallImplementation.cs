@@ -1,4 +1,5 @@
-﻿namespace BlImplementation;
+﻿
+namespace BlImplementation;
 using BlApi;
 using BO;
 using Helpers;
@@ -16,7 +17,7 @@ internal class CallImplementation : ICall
         CallManager.ValidateCall(boCall);
 
         // Create DO.Call object
-        DO.Call doCall = new(boCall.Id,(DO.Enums.CallType)boCall.CallType, boCall.FullAddress, boCall.OpenTime,false, boCall.Description, boCall.Latitude, boCall.Longitude, 
+        DO.Call doCall = new(boCall.Id, (DO.Enums.CallType)boCall.CallType, boCall.FullAddress, boCall.OpenTime, false, boCall.Description, boCall.Latitude, boCall.Longitude,
         boCall.MaxCompletionTime);
 
         try
@@ -189,7 +190,7 @@ internal class CallImplementation : ICall
         {
             callsInList = Tools.FilterList(callsInList, filterByField, value).ToList();
         }
-       
+
         if (sortByField != null)
         {
             callsInList = Tools.SortByEnum<BO.CallInList, BO.CallInListFieldSor>(callsInList, sortByField);
@@ -256,7 +257,7 @@ internal class CallImplementation : ICall
                 FullAddress = item.FullAddress,
                 OpenTime = item.OpenTime,
                 MaxCompletionTime = item.MaxCompletionTime,
-                DistanceFromVolunteer = CallManager.GetDistanceBetweenAddresses(volunteerDistance, item.FullAddress)
+                DistanceFromVolunteer = CallManager.CalculateDistance(volunteerId, item.Latitude, item.Longitude)
             };
         }
 

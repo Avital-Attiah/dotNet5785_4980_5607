@@ -9,22 +9,34 @@ internal static class VolunteerManager
 {
     private static IDal s_dal = Factory.Get;
 
+    /// <summary>
+    /// Validates if the provided email is in the correct format.
+    /// </summary>
     public static bool IsValidEmail(string email)
     {
         var emailRegex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
         return emailRegex.IsMatch(email);
     }
 
+    /// <summary>
+    /// Validates if the provided phone number is numeric.
+    /// </summary>
     public static bool IsValidPhoneNumber(string phoneNumber)
     {
         return long.TryParse(phoneNumber, out _);
     }
 
+    /// <summary>
+    /// Validates if the input string is within the specified length range.
+    /// </summary>
     public static bool IsValidLength(string input, int minLength, int maxLength)
     {
         return input.Length >= minLength && input.Length <= maxLength;
     }
 
+    /// <summary>
+    /// Validates if the provided ID is a valid ID according to a specific checksum algorithm.
+    /// </summary>
     public static bool IsValidId(int id)
     {
         if (id < 100000000 || id > 999999999) return false;
@@ -54,6 +66,9 @@ internal static class VolunteerManager
         return (sum % 10 == checkDigit);
     }
 
+    /// <summary>
+    /// Validates if the password is strong based on specific criteria (length, uppercase, lowercase, number, special character).
+    /// </summary>
     public static bool IsStrongPassword(string password)
     {
         if (password.Length < 8)
@@ -70,6 +85,9 @@ internal static class VolunteerManager
         return true;
     }
 
+    /// <summary>
+    /// Hashes the password using SHA-256.
+    /// </summary>
     public static string HashPassword(string password)
     {
         using (SHA256 sha256 = SHA256.Create())
@@ -82,18 +100,28 @@ internal static class VolunteerManager
         }
     }
 
+    /// <summary>
+    /// Returns the totals for handled calls, cancelled calls by volunteer/manager, and expired selected calls.
+    /// </summary>
     public static Tuple<int, int, int> GetTotalsCalls(IEnumerable<DO.Assignment> doAssignments)
     {
         int totalHandledCalls = doAssignments.Count(a => a.Status == DO.Enums.TreatmentStatus.CompletedOnTime);
         int totalCancelledVCalls = doAssignments.Count(a => a.Status == DO.Enums.TreatmentStatus.CanceledByVolunteer || a.Status == DO.Enums.TreatmentStatus.CanceledByManager);
         int totalExpiredSelectedCalls = doAssignments.Count(a => a.Status == DO.Enums.TreatmentStatus.Expired);
-        return new Tuple<int, int, int>(totalHandledCalls, totalCancelledVCalls,  totalExpiredSelectedCalls);
+        return new Tuple<int, int, int>(totalHandledCalls, totalCancelledVCalls, totalExpiredSelectedCalls);
     }
+
+    /// <summary>
+    /// Validates if the given value is a valid enum value of the specified type.
+    /// </summary>
     public static bool IsValidEnum<T>(int value) where T : Enum
     {
         return Enum.IsDefined(typeof(T), value);
     }
 
+    /// <summary>
+    /// Validates the volunteer properties and ensures that required fields are correctly set.
+    /// </summary>
     public static void ValidateVolunteer(BO.Volunteer boVolunteer, bool isUpdate = false)
     {
         // validation
@@ -135,6 +163,9 @@ internal static class VolunteerManager
         }
     }
 
+    /// <summary>
+    /// Updates a DO (Data Object) volunteer if needed by comparing with BO volunteer data.
+    /// </summary>
     public static DO.Volunteer updateDoVolunteerIfNeeded(DO.Volunteer doVolunteer, BO.Volunteer boVolunteer)
     {
         var copyDoVolunteer = doVolunteer;
@@ -216,5 +247,4 @@ internal static class VolunteerManager
         }
         return copyDoVolunteer;
     }
-
 }

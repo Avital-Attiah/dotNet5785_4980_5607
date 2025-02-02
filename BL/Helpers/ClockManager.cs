@@ -1,5 +1,4 @@
-﻿
-using BlImplementation;
+﻿using BlImplementation;
 using BO;
 namespace Helpers;
 
@@ -22,9 +21,7 @@ internal static class ClockManager //stage 4
     /// <param name="newClock">updated clock value</param>
     internal static void UpdateClock(DateTime newClock) //stage 4-7
     {
-        // new Thread(() => { // stage 7 - not sure - still under investigation - see stage 7 instructions after it will be released        
-        updateClock(newClock);//stage 4-6
-        // }).Start(); // stage 7 as above
+        updateClock(newClock); //stage 4-6
     }
 
     private static void updateClock(DateTime newClock) // prepared for stage 7 as DRY to eliminate needless repetition
@@ -39,12 +36,7 @@ internal static class ClockManager //stage 4
         //Go through all students to update properties that are affected by the clock update
         //(students becomes not active after 5 years etc.)
 
-        //StudentCallManager.PeriodicStudentCallsUpdates(oldClock, newClock); //stage 4
         CallManager.UpdateExpiredOpenCalls();
-        //etc ...
-
-        //Calling all the observers of clock update
-        //ClockUpdatedObservers?.Invoke(); //prepared for stage 5
     }
     #endregion Stage 4
 
@@ -95,10 +87,6 @@ internal static class ClockManager //stage 4
             #region Stage 7
             //TO_DO:
             //Add calls here to any logic simulation that was required in stage 7
-            //for example: course registration simulation
-            //StudentCManager.SimulateCourseRegistrationAndGrade(); //stage 7
-
-            //etc...
             #endregion Stage 7
 
             try
