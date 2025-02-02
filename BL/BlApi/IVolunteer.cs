@@ -20,7 +20,7 @@ namespace BlApi
         void Delete(int id);
 
         void Create(BO.Volunteer boVolunteer);
-
+        BO.Role Login(string fullName, string password);
 
 
 

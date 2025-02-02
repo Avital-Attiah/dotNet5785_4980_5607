@@ -170,6 +170,16 @@ internal class VolunteerImplementation : IVolunteer
         };
     }
 
+    public BO.Role Login(string fullName, string password)
+    {
+
+        var volunteer = _dal.Volunteer.Read(v => v.FullName == fullName && v.Password == password);
+        if (volunteer == null)
+        {
+           throw new BO.BlDoesNotExistException("Incorrect username or password");
+        }
+        return (BO.Role)volunteer.Role;
+    }
 
     public void Update(int id, BO.Volunteer updateVolunteerObj)
     {
