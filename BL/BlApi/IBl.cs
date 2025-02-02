@@ -6,11 +6,16 @@ using System.Threading.Tasks;
 
 namespace BlApi
 {
+    // Defines the main interface for the business logic layer (BL)
     public interface IBl
     {
+        // Provides access to volunteer-related operations
         IVolunteer Volunteer { get; }
-        ICall Call { get; }
-        IAdmin Admin { get; }
 
+        // Provides access to call-related operations
+        ICall Call { get; }
+
+        // Provides access to administrative operations
+        IAdmin Admin { get; }
     }
 }

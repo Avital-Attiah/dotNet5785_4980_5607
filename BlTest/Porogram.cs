@@ -1,7 +1,5 @@
 ﻿using System.Security.Principal;
 
-
-
 namespace BlTest
 {
     internal class Program

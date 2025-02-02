@@ -1,5 +1,6 @@
 ﻿using DalApi;
 using Newtonsoft.Json.Linq;
+using System.Net;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
@@ -90,35 +91,63 @@ internal static class CallManager
             .ToList();
     }
 
-    private static readonly HttpClient client = new HttpClient();
-    public static Tuple<double, double> GetCoordinates(string address)
+    #region check address
+    /// <summary>
+    /// Retrieves the geographical coordinates (latitude and longitude) for a given address.
+    /// </summary>
+    /// <param name="address">The address to get the coordinates for.</param>
+    /// <returns>A tuple containing the latitude and longitude of the address.</returns>
+    /// <exception cref="BO.BlValidationException">Thrown when the address is invalid.</exception>
+    public static (double Latitude, double Longitude) GetCoordinates(string address)
     {
-        string apiKey = "pk.7b9710ee906be07d6f48368feb81ddd4";
-        string url = $"https://us1.locationiq.com/v1/search.php?key={apiKey}&q={address}&format=json";
+        if (string.IsNullOrWhiteSpace(address))
+        {
+            throw new BO.BlValidationException("The address is invalid.");
+        }
+
+        string url = $"https://geocode.maps.co/search?q={Uri.EscapeDataString(address)}&api_key=679a8da6c01a6853187846vomb04142";
 
         try
         {
-            HttpResponseMessage response = client.GetAsync(url).Result;
-            response.EnsureSuccessStatusCode();
-            string responseBody = response.Content.ReadAsStringAsync().Result;
-            var data = JArray.Parse(responseBody);
+            using (WebClient client = new WebClient())
+            {
+                string response = client.DownloadString(url);
 
-            if (data.Count > 0)
-            {
-                double lat = Convert.ToDouble(data[0]["lat"]);
-                double lon = Convert.ToDouble(data[0]["lon"]);
-                return new Tuple<double, double>(lat, lon);
-            }
-            else
-            {
-                throw new BO.BlValidationException("Incorrect Address");
+                var result = JsonSerializer.Deserialize<GeocodeResponse[]>(response);
+
+                if (result == null || result.Length == 0)
+                {
+                    throw new BO.BlValidationException("The address is invalid.");
+                }
+
+                double latitude = double.Parse(result[0].Latitude);
+                double longitude = double.Parse(result[0].Longitude);
+
+                return (latitude, longitude);
             }
         }
-        catch (BO.BlValidationException ex)
+        catch (Exception ex)
         {
-            throw;
+            throw new Exception("Error retrieving coordinates" + ex.Message);
         }
     }
+
+    /// <summary>
+    /// Represents the structure of a geocoding response.
+    /// </summary>
+    private class GeocodeResponse
+    {
+        [JsonPropertyName("lat")]
+        public string Latitude { get; set; } // Latitude as string
+
+        [JsonPropertyName("lon")]
+        public string Longitude { get; set; } // Longitude as string
+
+        [JsonPropertyName("display_name")]
+        public string DisplayName { get; set; } // Full address representation
+    }
+    #endregion
+
 
     public static double CalculateHaversineDistance(double lat1, double lon1, double lat2, double lon2)
     {
