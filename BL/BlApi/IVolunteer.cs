@@ -1,4 +1,4 @@
-﻿using BO; // Imports the Business Objects (BO) namespace
+﻿using BO; 
 
 using System;
 using System.Collections.Generic;

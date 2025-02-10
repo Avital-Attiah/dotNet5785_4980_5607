@@ -20,7 +20,9 @@ internal class VolunteerImplementation : IVolunteer
     {
         // Validate the volunteer object
         VolunteerManager.ValidateVolunteer(boVolunteer);
-
+        string password = VolunteerManager.GeneratePassword();
+        // Get geographic coordinates based on the volunteer's address
+        var (latitude, longitude) = CallManager.GetCoordinates(boVolunteer.Address);
         try
         {
             // Create a new volunteer in the DAL
@@ -73,8 +75,9 @@ internal class VolunteerImplementation : IVolunteer
             // Retrieve the user from the DAL based on their username
             var user = _dal.Volunteer.Read(v => v.FullName == userName) ?? throw new BO.BlDoesNotExistException($"Volunteer with UserName={userName} does not exist.");
 
+            string hashedPassword = VolunteerManager.HashPassword(password);
             // Check if the password matches
-            if (user.Password != password)
+            if (user.Password != hashedPassword)
             {
                 throw new BO.BlValidationException("Incorrect password");
             }

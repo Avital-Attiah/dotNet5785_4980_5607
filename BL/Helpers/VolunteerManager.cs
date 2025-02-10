@@ -1,7 +1,6 @@
 ﻿using DalApi;
 using System.Text;
 using System.Text.RegularExpressions;
-using System;
 using System.Security.Cryptography;
 namespace Helpers;
 
@@ -39,20 +38,19 @@ internal static class VolunteerManager
     /// </summary>
     public static bool IsValidId(int id)
     {
-        if (id < 100000000 || id > 999999999) return false;
+        string idStr = id.ToString().PadLeft(9, '0'); // משלימים ל-9 ספרות במקרה שחסרות
 
         int sum = 0;
-        bool isOddPosition = false;
+        bool isOddPosition = true;  // מתחילים מהספרה הימנית ביותר
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 8; i >= 0; i--)  // לולאה מימין לשמאל
         {
-            int digit = id % 10;
-            id /= 10;
+            int digit = idStr[i] - '0';  // המרה למספר
 
-            if (isOddPosition)
+            if (!isOddPosition)  // כל ספרה שנייה מוכפלת ב-2
             {
                 int doubled = digit * 2;
-                sum += doubled > 9 ? doubled - 9 : doubled;
+                sum += (doubled > 9) ? (doubled - 9) : doubled;
             }
             else
             {
@@ -62,8 +60,7 @@ internal static class VolunteerManager
             isOddPosition = !isOddPosition;
         }
 
-        int checkDigit = id % 10;
-        return (sum % 10 == checkDigit);
+        return (sum % 10 == 0);
     }
 
     /// <summary>
@@ -79,9 +76,6 @@ internal static class VolunteerManager
             return false;
         if (!Regex.IsMatch(password, "[0-9]"))
             return false;
-        if (!Regex.IsMatch(password, "[^a-zA-Z0-9]"))
-            return false;
-
         return true;
     }
 
@@ -137,30 +131,21 @@ internal static class VolunteerManager
         if (!IsValidEmail(boVolunteer.Email))
             throw new BO.BlValidationException($"Invalid email address: {boVolunteer.Email}.");
 
-        if (!isUpdate && string.IsNullOrWhiteSpace(boVolunteer.Password))
-            throw new BO.BlNullPropertyException("A password must have a value.");
 
-        if (!string.IsNullOrEmpty(boVolunteer.Password))
+        if (isUpdate)
         {
-            if (!IsStrongPassword(boVolunteer.Password))
-                throw new BO.BlValidationException("The provided password is not strong enough.");
+            if (string.IsNullOrWhiteSpace(boVolunteer.Password))
+                throw new BO.BlNullPropertyException("A password must have a value.");
 
-            boVolunteer.Password = HashPassword(boVolunteer.Password);
+            if (!string.IsNullOrEmpty(boVolunteer.Password))
+            {
+                if (!IsStrongPassword(boVolunteer.Password))
+                    throw new BO.BlValidationException("The provided password is not strong enough.");
+            }
         }
 
         if (string.IsNullOrEmpty(boVolunteer.Address))
-            throw new BO.BlNullPropertyException("Address cannot be empty.");
-
-        try
-        {
-            var (latitude, longitude) = CallManager.GetCoordinates(boVolunteer.Address);
-            boVolunteer.Latitude = latitude;
-            boVolunteer.Longitude = longitude;
-        }
-        catch (BO.BlValidationException ex)
-        {
-            throw;
-        }
+            return;
     }
 
     /// <summary>
@@ -171,12 +156,11 @@ internal static class VolunteerManager
         var copyDoVolunteer = doVolunteer;
         if (doVolunteer.FullName != boVolunteer.FullName)
         {
-            // Validate name length
             copyDoVolunteer = copyDoVolunteer with { FullName = boVolunteer.FullName };
         }
 
         // Validate and update password
-        if (boVolunteer.Password != null && doVolunteer.Password != boVolunteer.Password)
+        if (boVolunteer.Password != null && doVolunteer.Password != HashPassword(boVolunteer.Password))
         {
             var EncryptedPassword = HashPassword(boVolunteer.Password);
             copyDoVolunteer = copyDoVolunteer with { Password = EncryptedPassword };
@@ -207,6 +191,7 @@ internal static class VolunteerManager
                 throw;
             }
         }
+
         // Update role (admin only)
         if ((BO.Role)doVolunteer.Role != boVolunteer.Role)
         {
@@ -245,6 +230,22 @@ internal static class VolunteerManager
         {
             throw new BO.BlValidationException($"Invalid TypeDistance value: {boVolunteer.DistanceType}");
         }
+
         return copyDoVolunteer;
     }
+    private static readonly Random random = new Random();
+
+    public static string GeneratePassword()
+    {
+        int length = 20;
+        const string lowerCase = "abcdefghijklmnopqrstuvwxyz";
+        const string upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const string digits = "0123456789";
+        string allChars = lowerCase + upperCase + digits;
+
+        string password = new string(allChars.OrderBy(_ => random.Next()).Take(length).ToArray());
+
+        return password;
+    }
+
 }

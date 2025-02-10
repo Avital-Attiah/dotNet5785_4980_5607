@@ -37,6 +37,7 @@ internal static class ClockManager //stage 4
         //(students becomes not active after 5 years etc.)
 
         CallManager.UpdateExpiredOpenCalls();
+        ClockUpdatedObservers?.Invoke(); //prepared for stage 5
     }
     #endregion Stage 4
 

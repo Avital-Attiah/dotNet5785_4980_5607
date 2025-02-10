@@ -256,7 +256,7 @@ namespace BlTest
                     case "9":
                         Console.WriteLine("Enter volunteerID:");
                         volunteerId = int.Parse(Console.ReadLine());
-                        Console.WriteLine("Enter volunteerID:");
+                        Console.WriteLine("Enter CallID:");
                         callId = int.Parse(Console.ReadLine());
                         s_bl.Call.SelectCall(volunteerId, callId);
                         break;
@@ -373,7 +373,7 @@ namespace BlTest
                     Console.Write("Enter Email: ");
                     string email = Console.ReadLine();
 
-                    Console.Write("Enter Address (optional): ");
+                    Console.Write("Enter Address: ");
                     string? address = Console.ReadLine();
                     if (string.IsNullOrWhiteSpace(address)) address = null;
 
@@ -388,7 +388,7 @@ namespace BlTest
                     string typeDistanceInput = Console.ReadLine();
                     BO.DistanceType typeDistance = string.IsNullOrWhiteSpace(typeDistanceInput) ? BO.DistanceType.Air : Enum.Parse<BO.DistanceType>(typeDistanceInput);
 
-                    Console.Write("Enter Max Distance (optional): ");
+                    Console.Write("Enter Max Distance ");
                     string input = Console.ReadLine();
 
                     double? maxDistance = string.IsNullOrWhiteSpace(input) ? null : double.Parse(input);
@@ -455,10 +455,10 @@ namespace BlTest
                     Console.Write("Enter Open Date (yyyy-MM-dd): ");
                     DateTime openDate = DateTime.Parse(Console.ReadLine());
 
-                    Console.Write("Enter Description (optional): ");
+                    Console.Write("Enter Description : ");
                     string description = Console.ReadLine();
 
-                    Console.Write("Enter Max Time to Finish (yyyy-MM-dd, optional): ");
+                    Console.Write("Enter Max Time to Finish (yyyy-MM-dd): ");
                     DateTime? maxTimeFinish = string.IsNullOrWhiteSpace(Console.ReadLine()) ? null : DateTime.Parse(Console.ReadLine());
 
                     if (isCreate)

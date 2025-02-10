@@ -1,10 +1,14 @@
 ﻿using DalApi;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using DO;
+using System.Globalization;
+
 
 namespace Helpers
 {
@@ -19,20 +23,26 @@ namespace Helpers
         internal static void UpdateExpiredOpenCalls()
         {
             var list = s_dal.Call.ReadAll().ToList(); // Get all calls
+         
             foreach (var doCall in list)
             {
-                if (doCall.MaxCompletionTime <= ClockManager.Now) // Check if call's max completion time has passed
+
+                if (doCall.MaxCompletionTime <= ClockManager.Now)
                 {
-                    var assignment = s_dal.Assignment.Read(a => a.CallId == doCall.Id); // Get the assignment of the call
+                    var assignment = s_dal.Assignment.Read(a => a.CallId == doCall.Id);
+
                     if (assignment == null)
                     {
-                        DO.Assignment doAssignment = new(doCall.Id, 0, 0, ClockManager.Now, ClockManager.Now, DO.Enums.TreatmentStatus.Expired);
-                        s_dal.Assignment.Create(doAssignment); // Create a new assignment if none exists
+                        // If no assignment exists, create a new expired assignment
+                        DO.Assignment doAssignment =
+                         new(0,doCall.Id, 0, ClockManager.Now, ClockManager.Now, DO.Enums.TreatmentStatus.Expired);
+                        s_dal.Assignment.Create(doAssignment);
                     }
                     else
                     {
+                        // If assignment exists, update it to expired
                         DO.Assignment updatedAssignment = assignment with { CompletionTime = ClockManager.Now, Status = DO.Enums.TreatmentStatus.Expired };
-                        s_dal.Assignment.Update(updatedAssignment); // Update the assignment to "Expired"
+                        s_dal.Assignment.Update(updatedAssignment);
                     }
                 }
             }
@@ -49,37 +59,29 @@ namespace Helpers
             DO.Assignment? doAssignment = s_dal.Assignment.Read(a => a.CallId == id);
             DateTime now = ClockManager.Now;
 
-            TimeSpan? timeDifference = doCall.MaxCompletionTime.HasValue
-                ? doCall.MaxCompletionTime.Value - now
-                : (TimeSpan?)null;
+            TimeSpan? timeDifference = doCall.MaxCompletionTime - now;
+            bool isExpired = doCall.MaxCompletionTime <= now;
+            bool isAtRisk = timeDifference.HasValue && timeDifference <= s_dal.Config.RiskRange;
 
-            if (doAssignment == null)
+            if (doAssignment?.Status == DO.Enums.TreatmentStatus.Expired)
+                return BO.CallStatus.Expired;
+            if (doAssignment?.Status == DO.Enums.TreatmentStatus.CompletedOnTime)
+                return BO.CallStatus.Closed;
+
+            if (doAssignment == null ||
+                doAssignment.Status == DO.Enums.TreatmentStatus.CanceledByVolunteer ||
+                doAssignment.Status == DO.Enums.TreatmentStatus.CanceledByManager)
             {
-                if (doCall.MaxCompletionTime <= now)
-                {
+                if (isExpired)
                     return BO.CallStatus.Expired;
-                }
-
-                if (timeDifference.HasValue && timeDifference <= s_dal.Config.RiskRange)
-                {
-                    return BO.CallStatus.OpenAtRisk;
-                }
-
-                return BO.CallStatus.Open;
+                return isAtRisk ? BO.CallStatus.OpenAtRisk : BO.CallStatus.Open;
             }
 
-            if (timeDifference.HasValue)
-            {
-                if (timeDifference <= TimeSpan.Zero)
-                {
-                    return BO.CallStatus.Expired;
-                }
+            if (isExpired)
+                return BO.CallStatus.Expired;
+            if (isAtRisk)
+                return BO.CallStatus.InProgressAtRisk;
 
-                if (timeDifference <= s_dal.Config.RiskRange)
-                {
-                    return BO.CallStatus.InProgressAtRisk;
-                }
-            }
 
             return BO.CallStatus.InProgress;
         }
@@ -146,7 +148,7 @@ namespace Helpers
         /// <returns>The angle in radians.</returns>
         private static double DegreesToRadians(double degrees)
         {
-            return degrees * Math.PI / 180; // Conversion formula
+            return degrees * (Math.PI / 180.0);// Conversion formula
         }
 
         #region check address
@@ -296,5 +298,41 @@ namespace Helpers
             }
             return copyDoCall; // Return updated DO.Call object
         }
+
+
+        public static double CalculateHaversineDistance(double? lat1, double? lon1, double lat2, double lon2)
+        {
+            // Ensure that the first set of coordinates is not null
+            if (lat1 == null || lon1 == null)
+            {
+                throw new BO.BlValidationException("Latitude and longitude of volunteer address cannot be null.");
+            }
+
+            const double EarthRadiusKm = 6371.0; // Radius of the Earth in kilometers
+
+            // Convert latitude and longitude differences from degrees to radians
+            double dLat = DegreesToRadians(lat2 - lat1.Value);
+            double dLon = DegreesToRadians(lon2 - lon1.Value);
+
+            // Apply the Haversine formula
+            double a = Math.Pow(Math.Sin(dLat / 2), 2) +
+                       Math.Cos(DegreesToRadians(lat1.Value)) * Math.Cos(DegreesToRadians(lat2)) *
+                       Math.Pow(Math.Sin(dLon / 2), 2);
+            double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+
+            return EarthRadiusKm * c; // Return the calculated distance in kilometers
+        }
+
+        public static bool IsValidDateTime(DateTime? input)
+        {
+            if (!input.HasValue) return false;
+            string formattedDate = input.Value.ToString("yyyy-MM-dd HH:mm:ss");
+            return DateTime.TryParseExact(formattedDate, "yyyy-MM-dd HH:mm:ss",
+                                          CultureInfo.InvariantCulture,
+                                          DateTimeStyles.None,
+                                          out _);
+        }
+
+
     }
 }

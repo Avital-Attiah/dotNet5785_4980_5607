@@ -12,24 +12,29 @@ namespace DO
     /// <param name="EntryTime">The time the volunteer started handling the call.</param>
     /// <param name="CompletionTime">The actual time the call was completed.</param>
     /// <param name="Status">The type of completion status for the call.</param>
+
+
     public record Assignment
     (
         int Id,
         int CallId,
         int VolunteerId,
-        DateTime EntryTime,
+        DateTime EntryTime = default,
         DateTime? CompletionTime = null,
         TreatmentStatus? Status = null
     )
     {
-        /// Default constructor - no parameters
-        private static int nextId = 1;
+
+        public override string ToString()
+        {
+            return $"Assignment [Id={Id}, CallId={CallId}, VolunteerId={VolunteerId}, " +
+                   $"EntryTime={EntryTime}, CompletionTime={CompletionTime}, TreatmentStatus={Status}]";
+        }
 
         // קונסטרקטור שלא מקבל ID - יוצר אוטומטית מספר רץ
-        public Assignment()
-            : this(0, 0, 0, DateTime.Now) { }
+        public Assignment() : this(0, 0, 0) { }
 
-      
+
     }
 }
 
