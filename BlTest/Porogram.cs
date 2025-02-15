@@ -1,4 +1,5 @@
-﻿using System.Security.Principal;
+﻿using BO;
+using System.Security.Principal;
 
 namespace BlTest
 {
@@ -175,15 +176,21 @@ namespace BlTest
                 Console.WriteLine("7. Complete Call Treatment");
                 Console.WriteLine("8. Cancel Call Treatment");
                 Console.WriteLine("9. Assign Call To Volunteer");
-                Console.WriteLine("10. Back to Main Menu");
+                Console.WriteLine("10. get open calls in list");
+                Console.WriteLine("11.get closed calls in list");
+                Console.WriteLine("12. Back to Main Menu");
                 Console.Write("Enter your choice: ");
 
                 string choice = Console.ReadLine();
                 switch (choice)
                 {
                     case "1":
+                        CallStatus[] statuses = (CallStatus[])Enum.GetValues(typeof(CallStatus));
                         int[] callCount = s_bl.Call.GetCallCounts();
-                        foreach (int i in callCount) Console.WriteLine(i + " ");
+                        for (int i = 0; i < callCount.Length; i++)
+                        {
+                            Console.WriteLine($"{statuses[i]}: {callCount[i]}");
+                        }
                         break;
                     case "2":
 
@@ -197,15 +204,17 @@ namespace BlTest
                         Console.WriteLine("7. Total Handling Time");
                         Console.WriteLine("8. Call Status");
                         Console.WriteLine("9. Total Assignments");
-
-                        int filterOption = int.Parse(Console.ReadLine());
-                        BO.CallInListFieldSor? filterField = (BO.CallInListFieldSor?)filterOption;
-
+                        BO.CallInListFieldSor? filterField = null;
                         object filterValue = null;
-                        if (filterField.HasValue)
+                        if (int.TryParse(Console.ReadLine(), out int filterOption))
                         {
-                            Console.Write("Enter filter value: ");
-                            filterValue = Console.ReadLine();
+                            filterField = (BO.CallInListFieldSor?)filterOption;
+
+                            if (filterField.HasValue)
+                            {
+                                Console.Write("Enter filter value: ");
+                                filterValue = Console.ReadLine();
+                            }
                         }
 
                         Console.WriteLine("Sort by:");
@@ -222,8 +231,12 @@ namespace BlTest
                         int sortOption = int.Parse(Console.ReadLine());
                         BO.CallInListFieldSor? sortField = (BO.CallInListFieldSor?)sortOption;
 
-                        s_bl.Call.GetCallsList(filterField, filterValue, sortField);
+                        var sortedItems = s_bl.Call.GetCallsList(filterField, filterValue, sortField);
+                        foreach (var item in sortedItems)
+                            Console.WriteLine(item);
                         break;
+
+
 
                     case "3":
                         Console.WriteLine("insert callId to read");
@@ -261,11 +274,86 @@ namespace BlTest
                         s_bl.Call.SelectCall(volunteerId, callId);
                         break;
                     case "10":
-                        back = true;
+                        Console.Write("Enter Volunteer ID: ");
+                        if (!int.TryParse(Console.ReadLine(), out volunteerId))
+                        {
+                            Console.WriteLine("Invalid input. Please enter a valid Volunteer ID.");
+                            break;
+                        }
+
+                        Console.Write("Enter Call Type (optional, press Enter to skip): ");
+                        string callTypeInput = Console.ReadLine();
+                        BO.CallType? callType = null;
+
+                        if (!string.IsNullOrWhiteSpace(callTypeInput) && Enum.TryParse(callTypeInput, out BO.CallType parsedCallType))
+                        {
+                            callType = parsedCallType;
+                        }
+
+                        Console.Write("Enter Sorting Field (optional, press Enter to skip): ");
+                        string sortByInput = Console.ReadLine();
+                        BO.OpenCallInListFields? sortByField = null;
+
+                        if (!string.IsNullOrWhiteSpace(sortByInput) && Enum.TryParse(sortByInput, out BO.OpenCallInListFields parsedSortField))
+                        {
+                            sortByField = parsedSortField;
+                        }
+
+                        // Fetch open calls based on user input
+                        var openCalls = s_bl.Call.GetOpenCalls(volunteerId, callType, sortByField);
+
+                        // Display the retrieved open calls
+                        Console.WriteLine("\nOpen Calls:");
+                        foreach (var call in openCalls)
+                        {
+                            Console.WriteLine(call);
+                        }
+
+
+
                         break;
-                    default:
-                        Console.WriteLine("Invalid choice, please try again.");
+                    case "11":
+                    Console.Write("Enter Volunteer ID: ");
+                    if (!int.TryParse(Console.ReadLine(), out volunteerId))
+                    {
+                        Console.WriteLine("Invalid input. Please enter a valid Volunteer ID.");
                         break;
+                    }
+
+                    Console.Write("Enter Call Type (optional, press Enter to skip): ");
+                    callTypeInput = Console.ReadLine();
+                    callType = null;
+
+                    if (!string.IsNullOrWhiteSpace(callTypeInput) && Enum.TryParse(callTypeInput, out parsedCallType))
+                    {
+                        callType = parsedCallType;
+                    }
+
+                    Console.Write("Enter Sorting Field (optional, press Enter to skip): ");
+                    sortByInput = Console.ReadLine();
+                    BO.ClosedCallInListFields? sortByClosedField = null;
+
+                    if (!string.IsNullOrWhiteSpace(sortByInput) && Enum.TryParse(sortByInput, out BO.ClosedCallInListFields parsedClosedSortFieldC))
+                    {
+                        sortByClosedField = parsedClosedSortFieldC;
+                    }
+
+                    var closedCalls = s_bl.Call.GetClosedCallsByVolunteer(volunteerId, callType, sortByClosedField);
+
+                    Console.WriteLine("\nClosed Calls:");
+                    foreach (var call in closedCalls)
+                    {
+                        Console.WriteLine(call);
+                    }
+
+                    break;
+
+                case "12":
+                    back = true;
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice, please try again.");
+                    break;
                 }
                 if (!back) Console.ReadKey();
             }
@@ -435,7 +523,7 @@ namespace BlTest
                             Password = password ?? volunteer.Password
                         };
 
-                        // עדכון הוולונטר עם המידע החדש
+                        
                         s_bl.Volunteer!.Update(Idvolunteer, updatedVolunteer);
                     }
 
@@ -511,9 +599,11 @@ namespace BlTest
             {
                 case "volunteer":
                     s_bl.Volunteer!.Delete(Id);
+                    Console.WriteLine($"volunteer with id{Id} deleted successfully");
                     break;
                 case "call":
                     s_bl.Call!.DeleteCall(Id);
+                    Console.WriteLine($"call with id {Id} deleted successfully");
                     break;
                 default:
                     Console.WriteLine("NO SUCH ENTITY");
