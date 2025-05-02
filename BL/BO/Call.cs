@@ -1,4 +1,5 @@
 ﻿using BO;
+using Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,5 +35,6 @@ namespace BO
         public DateTime? MaxCompletionTime { get; set; } // Nullable
         public CallStatus Status { get; set; } // ENUM, non-nullable
         public List<CallAssignInList>? ListAssignments { get; set; } // Nullable if no assignments exist
+        public override string ToString() => Tools.ToStringProperty(this);
     }
 }

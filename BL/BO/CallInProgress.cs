@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,7 +33,8 @@ namespace BO
         public DateTime? MaxCompletionTime { get; set; } 
         public DateTime StartHandlingTime { get; set; }
         public double DistanceFromVolunteer { get; set; }
-        public CallProgress Status { get; set; } 
+        public CallProgress Status { get; set; }
+        public override string ToString() => Tools.ToStringProperty(this);
     }
 
 }

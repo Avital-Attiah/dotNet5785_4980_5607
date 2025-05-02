@@ -119,9 +119,12 @@ internal static class VolunteerManager
     public static void ValidateVolunteer(BO.Volunteer boVolunteer, bool isUpdate = false)
     {
         // validation
-        if (!IsValidId(boVolunteer.Id))
-            throw new BO.BlValidationException($"Invalid ID: {boVolunteer.Id}.");
-
+        if (!isUpdate)
+        {
+            if (!IsValidId(boVolunteer.Id))
+                throw new BO.BlValidationException($"Invalid ID: {boVolunteer.Id}.");
+        }
+           
         if (!IsValidLength(boVolunteer.FullName, 2, 50))
             throw new BO.BlValidationException($"Invalid name length: {boVolunteer.FullName}.");
 
@@ -131,18 +134,15 @@ internal static class VolunteerManager
         if (!IsValidEmail(boVolunteer.Email))
             throw new BO.BlValidationException($"Invalid email address: {boVolunteer.Email}.");
 
+        if (string.IsNullOrWhiteSpace(boVolunteer.Password))
+            throw new BO.BlNullPropertyException("A password must have a value.");
 
-        if (isUpdate)
+        if (!string.IsNullOrEmpty(boVolunteer.Password))
         {
-            if (string.IsNullOrWhiteSpace(boVolunteer.Password))
-                throw new BO.BlNullPropertyException("A password must have a value.");
-
-            if (!string.IsNullOrEmpty(boVolunteer.Password))
-            {
-                if (!IsStrongPassword(boVolunteer.Password))
-                    throw new BO.BlValidationException("The provided password is not strong enough.");
-            }
+            if (!IsStrongPassword(boVolunteer.Password))
+            throw new BO.BlValidationException("The provided password is not strong enough.");
         }
+        
 
         if (string.IsNullOrEmpty(boVolunteer.Address))
             return;

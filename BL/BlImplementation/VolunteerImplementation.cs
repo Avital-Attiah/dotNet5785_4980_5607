@@ -204,12 +204,7 @@ internal class VolunteerImplementation : IVolunteer
     // Updates an existing volunteer's details
     public void Update(int id, BO.Volunteer updateVolunteerObj)
     {
-        // Validate the ID
-        if (!VolunteerManager.IsValidId(id))
-        {
-            throw new BO.BlValidationException("Invalid ID number.");
-        }
-
+        
         var doVolunteer = _dal.Volunteer.Read(id)
                           ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={id} does not exist");
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,5 +27,6 @@ namespace BO
         public DateTime StartHandlingTime { get; set; }
         public DateTime? EndHandlingTime { get; set; } // Nullable if not closed
         public ClosureType? ClosureType { get; set; }  // Nullable if closure type is not defined
+        public override string ToString() => Tools.ToStringProperty(this);
     }
 }

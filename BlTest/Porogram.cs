@@ -1,5 +1,11 @@
 ﻿using BO;
+using DalApi;
+using DO;
+using Microsoft.VisualBasic;
+using System.Net;
+using System.Numerics;
 using System.Security.Principal;
+using static DO.Enums;
 
 namespace BlTest
 {
@@ -135,16 +141,26 @@ namespace BlTest
                     case "3":
                         Console.WriteLine("Enter your Id:");
                         int Id = int.Parse(Console.ReadLine());
-                        s_bl.Volunteer.Read(Id);
+                        var volunteerRead = s_bl.Volunteer.Read(Id);
+
+                        // עכשיו נדפיס את הפרטים:
+                        Console.WriteLine($"ID: {volunteerRead.Id}");
+                        Console.WriteLine($"Name: {volunteerRead.FullName}");
+                        Console.WriteLine($"Phone: {volunteerRead.Phone}");
+                        Console.WriteLine($"Email: {volunteerRead.Email}");
+                        Console.WriteLine($"Is Active: {volunteerRead.IsActive}");
+                        Console.WriteLine($"Total Completed Calls: {volunteerRead.TotalCompletedCalls}");
+                        Console.WriteLine($"Current Call Status: {volunteerRead.CurrentCall}");
+
                         break;
                     case "4":
-                        CreateOrUpdate("volunteer", false);
+                        UpdateEninty("volunteer");
                         break;
                     case "5":
                         DeletObject("volunteer");
                         break;
                     case "6":
-                        CreateOrUpdate("volunteer", true);
+                        CreateEninty("volunteer");
                         break;
                     case "7":
                         back = true;
@@ -193,7 +209,6 @@ namespace BlTest
                         }
                         break;
                     case "2":
-
                         Console.WriteLine("Filter by:");
                         Console.WriteLine("1. ID");
                         Console.WriteLine("2. CallId");
@@ -203,17 +218,71 @@ namespace BlTest
                         Console.WriteLine("6. Last Volunteer Name");
                         Console.WriteLine("7. Total Handling Time");
                         Console.WriteLine("8. Call Status");
-                        Console.WriteLine("9. Total Assignments");
+                        Console.WriteLine("9. nothing");
+
                         BO.CallInListFieldSor? filterField = null;
                         object filterValue = null;
+
                         if (int.TryParse(Console.ReadLine(), out int filterOption))
                         {
-                            filterField = (BO.CallInListFieldSor?)filterOption;
+                            filterField = (BO.CallInListFieldSor?)(filterOption-1);
 
-                            if (filterField.HasValue)
+                            if (filterField.HasValue && filterOption != 9) // אם לא בחר "nothing"
                             {
                                 Console.Write("Enter filter value: ");
-                                filterValue = Console.ReadLine();
+                                string inputValue = Console.ReadLine();
+
+                                // המרת הערך בהתאם לסוג השדה
+                                switch (filterField)
+                                {
+                                    case BO.CallInListFieldSor.Id:
+                                    case BO.CallInListFieldSor.CallId:
+                                        if (int.TryParse(inputValue, out int intValue))
+                                            filterValue = intValue;
+                                        break;
+
+                                    case BO.CallInListFieldSor.CallType:
+                                        if (Enum.TryParse<BO.CallType>(inputValue, true, out BO.CallType enumValue))  // הוספתי 'true' כדי להתעלם מהתאמה בין רגישות לאותיות
+                                            filterValue = enumValue;
+                                        else
+                                            // אם לא הצלחנו להמיר, ניתן להוסיף טיפול בשגיאה
+                                            filterValue = BO.CallType.None;  // לדוגמה, להציב את הערך None אם לא נמצא התאמה
+                                        break;
+
+                                    case BO.CallInListFieldSor.TimeOpen:
+                                        // המרה ל-DateTime אם יש צורך
+                                        if (DateTime.TryParse(inputValue, out DateTime dateValue))
+                                        {
+                                            filterValue = dateValue;
+                                        }
+                                        break;
+
+                                    case BO.CallInListFieldSor.RemainingTime:
+                                        // המרה ל-TimeSpan אם יש צורך
+                                        if (TimeSpan.TryParse(inputValue, out TimeSpan timeValue))
+                                        {
+                                            filterValue = timeValue;
+                                        }
+                                        break;
+
+                                    case BO.CallInListFieldSor.LastVolunteerName:
+                                        
+                                        filterValue = inputValue;
+                                        break;
+
+                                    case BO.CallInListFieldSor.Status:
+                                        // המרת הקלט לערך המתאים ב־CallStatus (אם הקלט תקין)
+                                        if (Enum.TryParse<BO.CallStatus>(inputValue, true, out BO.CallStatus statusValue))
+                                        {
+                                            filterValue = statusValue;  // שומר את הערך המומר
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("Invalid status value. Please enter a valid status.");
+                                        }
+                                        break;
+
+                                }
                             }
                         }
 
@@ -229,7 +298,7 @@ namespace BlTest
                         Console.WriteLine("9. Total Assignments");
 
                         int sortOption = int.Parse(Console.ReadLine());
-                        BO.CallInListFieldSor? sortField = (BO.CallInListFieldSor?)sortOption;
+                        BO.CallInListFieldSor? sortField = (BO.CallInListFieldSor?)(sortOption-1);
 
                         var sortedItems = s_bl.Call.GetCallsList(filterField, filterValue, sortField);
                         foreach (var item in sortedItems)
@@ -238,19 +307,28 @@ namespace BlTest
 
 
 
+
+
                     case "3":
-                        Console.WriteLine("insert callId to read");
+                        Console.WriteLine("insert call Id to read");
                         callId = int.Parse(Console.ReadLine());
-                        s_bl.Call.Read(callId);
+                        var callRead = s_bl.Call.Read(callId);
+
+                        Console.WriteLine($"ID: {callRead.Id}");
+                        Console.WriteLine($"Status: {callRead.Status}");
+                        Console.WriteLine($"OpenTime: {callRead.OpenTime}");
+                        Console.WriteLine($"CallType: {callRead.CallType}");
+                        Console.WriteLine($"MaxCompletionTime: {callRead.MaxCompletionTime}");
+                        Console.WriteLine($"Total adress: {callRead.FullAddress}");
                         break;
                     case "4":
-                        CreateOrUpdate("call", false);
+                        UpdateEninty("call");
                         break;
                     case "5":
                         DeletObject("call");
                         break;
                     case "6":
-                        CreateOrUpdate("call", true);
+                        CreateEninty("call");
                         break;
                     case "7":
                         Console.WriteLine("Enter volunteerID:");
@@ -443,94 +521,66 @@ namespace BlTest
             }
         }
 
-        static void CreateOrUpdate(string type, bool isCreate)
+
+        static void CreateEninty(string type)
         {
             switch (type)
             {
                 case "volunteer":
-                    // Gather volunteer details from user input
+                    // יצירת מתנדב חדש
                     Console.WriteLine("Enter ID:");
-                    int Idvolunteer = int.Parse(Console.ReadLine());
+                    if (!int.TryParse(Console.ReadLine(), out int Idvolunteer))
+                    {
+                        Console.WriteLine("Invalid ID input.");
+                        return;
+                    }
 
-                    Console.Write("Enter Full Name: ");
-                    string fullName = Console.ReadLine();
+                    string prompt(string fieldName)
+                    {
+                        Console.Write($"{fieldName}: ");
+                        return Console.ReadLine();
+                    }
 
-                    Console.Write("Enter Phone Number: ");
-                    string phone = Console.ReadLine();
+                    string fullName = prompt("Enter Full Name");
+                    string phone = prompt("Enter Phone Number");
+                    string email = prompt("Enter Email");
+                    string address = prompt("Enter Address");
+                    string isAvailableInput = prompt("Is Available (true/false, default is false): ");
+                    bool isAvailable = string.IsNullOrWhiteSpace(isAvailableInput) ? false : bool.Parse(isAvailableInput);
 
-                    Console.Write("Enter Email: ");
-                    string email = Console.ReadLine();
-
-                    Console.Write("Enter Address: ");
-                    string? address = Console.ReadLine();
-                    if (string.IsNullOrWhiteSpace(address)) address = null;
-
-                    Console.Write("Is Available (true/false, default is false): ");
-                    bool isAvailable = bool.Parse(Console.ReadLine() ?? "false");
-
-                    Console.Write("Enter Role (default is Role.Volunteer): ");
-                    string roleInput = Console.ReadLine();
+                    string roleInput = prompt("Enter Role (default is Volunteer)");
                     BO.Role role = string.IsNullOrWhiteSpace(roleInput) ? BO.Role.Volunteer : Enum.Parse<BO.Role>(roleInput);
 
-                    Console.Write("Enter Type Distance (default is TypeDistance.AERIAL): ");
-                    string typeDistanceInput = Console.ReadLine();
-                    BO.DistanceType typeDistance = string.IsNullOrWhiteSpace(typeDistanceInput) ? BO.DistanceType.Air : Enum.Parse<BO.DistanceType>(typeDistanceInput);
+                    string distanceTypeInput = prompt("Enter Distance Type (default is Air)");
+                    BO.DistanceType distanceType = string.IsNullOrWhiteSpace(distanceTypeInput) ? BO.DistanceType.Air : Enum.Parse<BO.DistanceType>(distanceTypeInput);
 
-                    Console.Write("Enter Max Distance ");
-                    string input = Console.ReadLine();
+                    string maxDistanceInput = prompt("Enter Max Distance");
+                    double? maxDistance = string.IsNullOrWhiteSpace(maxDistanceInput) ? null : double.Parse(maxDistanceInput);
 
-                    double? maxDistance = string.IsNullOrWhiteSpace(input) ? null : double.Parse(input);
+                    string password = prompt("Enter Password");
 
-                    Console.Write("Enter your password: ");
-                    string password = Console.ReadLine();
-                    if (isCreate)
+                    BO.Volunteer volunteerToSave = new BO.Volunteer
                     {
-                        // Create a new volunteer.
-                        BO.Volunteer newVolunteer = new BO.Volunteer
-                        {
-                            Id = Idvolunteer,
-                            FullName = fullName,
-                            Phone = phone,
-                            Email = email,
-                            Address = address,
-                            IsActive = isAvailable,
-                            Role = role,
-                            DistanceType = typeDistance,
-                            MaxCallDistance = maxDistance,
-                            Latitude = 0.0,
-                            Longitude = 0.0,
-                            Password = password
-                        };
-                        s_bl.Volunteer!.Create(newVolunteer);
-                    }
-                    else
-                    {
-                        // Update existing volunteer details.
-                        BO.Volunteer volunteer = s_bl.Volunteer.Read(Idvolunteer);
-                        BO.Volunteer updatedVolunteer = new BO.Volunteer
-                        {
-                            Id = volunteer.Id,
-                            FullName = fullName ?? volunteer.FullName,
-                            Phone = phone ?? volunteer.Phone,
-                            Email = email ?? volunteer.Email,
-                            Address = address ?? volunteer.Address,
-                            IsActive = isAvailable,
-                            Role = role,
-                            DistanceType = typeDistance,
-                            MaxCallDistance = maxDistance ?? volunteer.MaxCallDistance,
-                            Latitude = volunteer.Latitude,
-                            Longitude = volunteer.Longitude,
-                            Password = password ?? volunteer.Password
-                        };
+                        Id = Idvolunteer,
+                        FullName = fullName,
+                        Phone = phone,
+                        Email = email,
+                        Address = address,
+                        IsActive = isAvailable,
+                        Role = role,
+                        DistanceType = distanceType,
+                        MaxCallDistance = maxDistance,
+                        Latitude = 0.0,
+                        Longitude = 0.0,
+                        Password = password
+                    };
 
-                        
-                        s_bl.Volunteer!.Update(Idvolunteer, updatedVolunteer);
-                    }
-
+                    s_bl.Volunteer!.Create(volunteerToSave);
+                    Console.WriteLine("Volunteer successfully created!");
                     break;
 
                 case "call":
-                    // Gather call details from user input
+                    // יצירת שיחה חדשה
                     Console.Write("Enter Call Id: ");
                     int idCall = int.Parse(Console.ReadLine());
 
@@ -549,47 +599,178 @@ namespace BlTest
                     Console.Write("Enter Max Time to Finish (yyyy-MM-dd): ");
                     DateTime? maxTimeFinish = string.IsNullOrWhiteSpace(Console.ReadLine()) ? null : DateTime.Parse(Console.ReadLine());
 
-                    if (isCreate)
+                    BO.Call newCall = new BO.Call
                     {
-                        // Create a new call
-                        BO.Call newCall = new BO.Call
-                        {
-                            Id = idCall,
-                            CallType = callType,
-                            FullAddress = addressCall,
-                            Latitude = 0.0,
-                            Longitude = 0.0,
-                            OpenTime = openDate,
-                            Description = description,
-                            MaxCompletionTime = maxTimeFinish,
-                            Status = BO.CallStatus.Open
-                        };
-                        s_bl.Call!.Create(newCall);
-                    }
-                    else
-                    {
-                        // Update existing call details
-                        BO.Call call = s_bl.Call.Read(idCall);
-                        BO.Call updatedCall = new BO.Call
-                        {
-                            Id = call.Id, // שימור ה-ID הקיים
-                            CallType = callType,
-                            FullAddress = addressCall ?? call.FullAddress,
-                            Latitude = call.Latitude,
-                            Longitude = call.Longitude,
-                            OpenTime = openDate,
-                            Description = description ?? call.Description,
-                            MaxCompletionTime = maxTimeFinish ?? call.MaxCompletionTime,
-                            Status = call.Status, // שימור הסטטוס הקיים
-                            ListAssignments = call.ListAssignments // שימור הרשימה של המשימות הקיימות
-                        };
+                        Id = idCall,
+                        CallType = callType,
+                        FullAddress = addressCall,
+                        Latitude = 0.0,
+                        Longitude = 0.0,
+                        OpenTime = openDate,
+                        Description = description,
+                        MaxCompletionTime = maxTimeFinish,
+                        Status = BO.CallStatus.Open
+                    };
 
-                        // עדכון השיחה ב-DB
-                        s_bl.Call!.UpdateCallDetails(updatedCall);
-                    }
+                    s_bl.Call!.Create(newCall);
+                    Console.WriteLine("Call successfully created!");
                     break;
             }
         }
+
+        private static void UpdateEninty(string entityName)
+        {
+            try
+            {
+                int id;
+                if (entityName == "volunteer")
+                {
+                    Console.WriteLine("Enter the ID of the volunteer to update:");
+                    id = int.Parse(Console.ReadLine());
+                    BO.Volunteer volunteer = s_bl!.Volunteer.Read(id);
+                    if (volunteer == null)
+                    {
+                        Console.WriteLine("Volunteer not found.");
+                        return;
+                    }
+
+                    // Requesting new values from the user and updating the volunteer object
+                    Console.WriteLine("Enter new full name (leave empty to keep current):");
+                    string newFullName = Console.ReadLine();
+                    volunteer.FullName = string.IsNullOrEmpty(newFullName) ? volunteer.FullName : newFullName;
+
+                    Console.WriteLine("Enter new phone number (leave empty to keep current):");
+                    string newPhone = Console.ReadLine();
+                    volunteer.Phone = string.IsNullOrEmpty(newPhone) ? volunteer.Phone : newPhone;
+
+                    Console.WriteLine("Enter new email (leave empty to keep current):");
+                    string newEmail = Console.ReadLine();
+                    volunteer.Email = string.IsNullOrEmpty(newEmail) ? volunteer.Email : newEmail;
+
+                    Console.WriteLine("Enter new password (leave empty to keep current):");
+                    string newPassword = Console.ReadLine();
+                    volunteer.Password = string.IsNullOrEmpty(newPassword) ? volunteer.Password: newPassword;
+
+                    Console.WriteLine("Enter new current address (leave empty to keep current):");
+                    string newCurrentAddress = Console.ReadLine();
+                    volunteer.Address = string.IsNullOrEmpty(newCurrentAddress) ? volunteer.Address : newCurrentAddress;
+
+                    Console.WriteLine("Enter new latitude (leave empty to keep current):");
+                    string newLatitude = Console.ReadLine();
+                    if (double.TryParse(newLatitude, out double latitude))
+                    {
+                        volunteer.Latitude = latitude;
+                    }
+
+                    Console.WriteLine("Enter new longitude (leave empty to keep current):");
+                    string newLongitude = Console.ReadLine();
+                    if (double.TryParse(newLongitude, out double longitude))
+                    {
+                        volunteer.Longitude = longitude;
+                    }
+
+                    Console.WriteLine("Enter new maximum distance (leave empty to keep current):");
+                    string newMaxDistance = Console.ReadLine();
+                    if (double.TryParse(newMaxDistance, out double maxDistance))
+                    {
+                        volunteer.MaxCallDistance = maxDistance;
+                    }
+
+                    Console.WriteLine("Enter new distance type (leave empty to keep current):");
+                    string newDistanceType = Console.ReadLine();
+                    if (!string.IsNullOrEmpty(newDistanceType))
+                    {
+                        volunteer.DistanceType = (BO.DistanceType)Enum.Parse(typeof(BO.DistanceType), newDistanceType);
+                    }
+
+                    Console.WriteLine("Enter new role (leave empty to keep current):");
+                    string newRole = Console.ReadLine();
+                    if (!string.IsNullOrEmpty(newRole))
+                    {
+                        volunteer.Role = (BO.Role)Enum.Parse(typeof(BO.Role), newRole);
+                    }
+
+                    Console.WriteLine("Enter new active status (leave empty to keep current):");
+                    string newIsActive = Console.ReadLine();
+                    if (!string.IsNullOrEmpty(newIsActive) && bool.TryParse(newIsActive, out bool isActive))
+                    {
+                        volunteer.IsActive = isActive;
+                    }
+
+                    // Save updated volunteer
+                    s_bl!.Volunteer.Update(id, volunteer);
+                    Console.WriteLine("Volunteer updated successfully.");
+                }
+
+                else if (entityName == "call")
+                {
+                    Console.WriteLine("Enter the ID of the call to update:");
+                    id = int.Parse(Console.ReadLine());
+                    var call = s_bl!.Call.Read(id);
+                    if (call == null)
+                    {
+                        Console.WriteLine("Call not found.");
+                        return;
+                    }
+
+                    // Requesting new values for the call
+                    Console.WriteLine("Enter new full address (leave empty to keep current):");
+                    string newFullAddress = Console.ReadLine();
+                    call.FullAddress = string.IsNullOrEmpty(newFullAddress) ? call.FullAddress : newFullAddress;
+
+                    Console.WriteLine("Enter new description (leave empty to keep current):");
+                    string newDescription = Console.ReadLine();
+                    call.Description = string.IsNullOrEmpty(newDescription) ? call.Description : newDescription;
+
+                    Console.WriteLine("Enter new latitude (leave empty to keep current):");
+                    string newLatitude = Console.ReadLine();
+                    if (double.TryParse(newLatitude, out double latitude))
+                    {
+                        call.Latitude = latitude;
+                    }
+
+                    Console.WriteLine("Enter new longitude (leave empty to keep current):");
+                    string newLongitude = Console.ReadLine();
+                    if (double.TryParse(newLongitude, out double longitude))
+                    {
+                        call.Longitude = longitude;
+                    }
+
+                    Console.WriteLine("Enter new emergency status (leave empty to keep current):");
+                    string newCallStatus = Console.ReadLine();
+                    if (!string.IsNullOrEmpty(newCallStatus))
+                    {
+                        call.Status = (BO.CallStatus)Enum.Parse(typeof(BO.CallStatus), newCallStatus);
+                    }
+
+                    Console.WriteLine("Enter new Call Type (leave empty to keep current):");
+                    string newCallType = Console.ReadLine();
+                    if (!string.IsNullOrEmpty(newCallType))
+                    {
+                        call.CallType = (BO.CallType)Enum.Parse(typeof(BO.CallType), newCallType);
+                    }
+
+                   
+
+                    Console.WriteLine("Enter new max completion time (leave empty to keep current):");
+                    string newMaxCompletionTime = Console.ReadLine();
+                    if (DateTime.TryParse(newMaxCompletionTime, out DateTime maxCompletionTime))
+                    {
+                        call.MaxCompletionTime = maxCompletionTime;
+                    }
+
+                    // Save updated call
+                    s_bl!.Call.UpdateCallDetails(call);
+                    Console.WriteLine("Call updated successfully.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
+
+
 
         static void DeletObject(string entityType)
         {

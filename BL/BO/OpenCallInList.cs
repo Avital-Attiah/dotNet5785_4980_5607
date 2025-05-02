@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,5 +27,6 @@ namespace BO
         public DateTime OpenTime { get; set; }
         public DateTime? MaxCompletionTime { get; set; } // Nullable if no maximum completion time is set
         public double DistanceFromVolunteer { get; set; } // Calculated value
+        public override string ToString() => Tools.ToStringProperty(this);
     }
 }

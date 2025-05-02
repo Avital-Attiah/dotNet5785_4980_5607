@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,5 +23,6 @@ namespace BO
         public DateTime StartTime { get; set; } // Time when the treatment started
         public DateTime? EndTime { get; set; } // Nullable if the treatment is not completed
         public CompletionType? CompletionType { get; set; } // Nullable if treatment is not completed
+        public override string ToString() => Tools.ToStringProperty(this);
     }
 }

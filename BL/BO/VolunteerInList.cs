@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,5 +29,6 @@ namespace BO
         public int TotalExpiredCalls { get; set; }
         public int? CurrentCallId { get; set; } // Nullable if no call is currently being handled
         public CallType CurrentCallType { get; set; } // ENUM, default to None if no call is being handled
+        public override string ToString() => Tools.ToStringProperty(this);
     }
 }

@@ -793,7 +793,7 @@ internal class Program
                 Call c = s_dal!.Call.Read(id);
                 s_dal!.Call.Print(c);
             }
-            if (entityName == "Assignment")
+            if (entityName == "Assignments")
             {
                 Console.WriteLine("enter the id of the Assignment");
                 id = int.Parse(Console.ReadLine());
