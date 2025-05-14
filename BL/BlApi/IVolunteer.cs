@@ -5,12 +5,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Helpers;
 
 namespace BlApi
 {
+
     // Defines an interface for handling volunteer-related operations
-    public interface IVolunteer
+    public interface IVolunteer : IObservable //stage 5 הרחבת ממשק
+
     {
+
         // Retrieves the role of a user based on their name and password
         Role GetUserRole(string Name, string password);
 

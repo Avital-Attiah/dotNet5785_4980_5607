@@ -7,8 +7,16 @@ using System.Threading.Tasks;
 namespace BlApi
 {
     // Defines an interface for administrative operations
-    public interface IAdmin
+    public interface IAdmin :IObservable //stage 5 הרחבת ממשק
+
     {
+        #region Stage 5
+        void AddConfigObserver(Action configObserver);
+        void RemoveConfigObserver(Action configObserver);
+        void AddClockObserver(Action clockObserver);
+        void RemoveClockObserver(Action clockObserver);
+        #endregion Stage 5
+
         // Updates the system clock with a new time unit
         void UpdateClock(BO.TimeUnit timeUnit);
 

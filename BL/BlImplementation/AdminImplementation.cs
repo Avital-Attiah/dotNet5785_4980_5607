@@ -4,6 +4,7 @@ using BlApi; // Imports the Business Logic API interface
 using Helpers; // Imports helper utilities
 using System;
 
+
 internal class AdminImplementation : IAdmin // Implements the IAdmin interface
 {
     // Reference to the Data Access Layer (DAL) instance
@@ -21,19 +22,19 @@ internal class AdminImplementation : IAdmin // Implements the IAdmin interface
         switch (timeUnit)
         {
             case BO.TimeUnit.MINUTE:
-                ClockManager.UpdateClock(ClockManager.Now.AddMinutes(1)); // Adds 1 minute
+                AdminManager.UpdateClock(AdminManager.Now.AddMinutes(1)); // Adds 1 minute
                 break;
             case BO.TimeUnit.HOUR:
-                ClockManager.UpdateClock(ClockManager.Now.AddHours(1)); // Adds 1 hour
+                AdminManager.UpdateClock(AdminManager.Now.AddHours(1)); // Adds 1 hour
                 break;
             case BO.TimeUnit.DAY:
-                ClockManager.UpdateClock(ClockManager.Now.AddDays(1)); // Adds 1 day
+                AdminManager.UpdateClock(AdminManager.Now.AddDays(1)); // Adds 1 day
                 break;
             case BO.TimeUnit.MONTH:
-                ClockManager.UpdateClock(ClockManager.Now.AddMonths(1)); // Adds 1 month
+                AdminManager.UpdateClock(AdminManager.Now.AddMonths(1)); // Adds 1 month
                 break;
             case BO.TimeUnit.YEAR:
-                ClockManager.UpdateClock(ClockManager.Now.AddYears(1)); // Adds 1 year
+                AdminManager.UpdateClock(AdminManager.Now.AddYears(1)); // Adds 1 year
                 break;
             default:
                 break;
@@ -56,13 +57,25 @@ internal class AdminImplementation : IAdmin // Implements the IAdmin interface
     void IAdmin.ResetDB()
     {
         _dal.ResetDB(); // Calls the DAL method to reset the database
-        ClockManager.UpdateClock(ClockManager.Now); // Updates the system clock
+        AdminManager.UpdateClock(AdminManager.Now); // Updates the system clock
     }
 
     // Initializes the database with test data and updates the clock
     void IAdmin.InitializeDB()
     {
         DalTest.Initialization.Do(); // Calls the DAL test initialization
-        ClockManager.UpdateClock(ClockManager.Now); // Updates the system clock
+        AdminManager.UpdateClock(AdminManager.Now); // Updates the system clock
     }
+
+    #region Stage 5
+    public void AddClockObserver(Action clockObserver) =>
+    AdminManager.ClockUpdatedObservers += clockObserver;
+    public void RemoveClockObserver(Action clockObserver) =>
+    AdminManager.ClockUpdatedObservers -= clockObserver;
+    public void AddConfigObserver(Action configObserver) =>
+   AdminManager.ConfigUpdatedObservers += configObserver;
+    public void RemoveConfigObserver(Action configObserver) =>
+    AdminManager.ConfigUpdatedObservers -= configObserver;
+    #endregion Stage 5
+
 }

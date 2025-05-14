@@ -15,6 +15,7 @@ namespace Helpers
     // Static class responsible for managing calls, assignments, and validations
     internal static class CallManager
     {
+        internal static ObserverManager Observers = new(); //stage 5 
         private static IDal s_dal = Factory.Get; // Data access layer
 
         /// <summary>
@@ -27,7 +28,7 @@ namespace Helpers
             foreach (var doCall in list)
             {
 
-                if (doCall.MaxCompletionTime <= ClockManager.Now)
+                if (doCall.MaxCompletionTime <= AdminManager.Now)
                 {
                     var assignment = s_dal.Assignment.Read(a => a.CallId == doCall.Id);
 
@@ -35,13 +36,13 @@ namespace Helpers
                     {
                         // If no assignment exists, create a new expired assignment
                         DO.Assignment doAssignment =
-                         new(0,doCall.Id, 0, ClockManager.Now, ClockManager.Now, DO.Enums.TreatmentStatus.Expired);
+                         new(0,doCall.Id, 0, AdminManager.Now, AdminManager.Now, DO.Enums.TreatmentStatus.Expired);
                         s_dal.Assignment.Create(doAssignment);
                     }
                     else
                     {
                         // If assignment exists, update it to expired
-                        DO.Assignment updatedAssignment = assignment with { CompletionTime = ClockManager.Now, Status = DO.Enums.TreatmentStatus.Expired };
+                        DO.Assignment updatedAssignment = assignment with { CompletionTime = AdminManager.Now, Status = DO.Enums.TreatmentStatus.Expired };
                         s_dal.Assignment.Update(updatedAssignment);
                     }
                 }
@@ -57,7 +58,7 @@ namespace Helpers
         {
             DO.Call? doCall = s_dal.Call.Read(id)!;
             DO.Assignment? doAssignment = s_dal.Assignment.Read(a => a.CallId == id);
-            DateTime now = ClockManager.Now;
+            DateTime now = AdminManager.Now;
 
             TimeSpan? timeDifference = doCall.MaxCompletionTime - now;
             bool isExpired = doCall.MaxCompletionTime <= now;

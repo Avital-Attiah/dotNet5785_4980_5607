@@ -9,6 +9,17 @@ using System.Linq;
 internal class CallImplementation : ICall
 {
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
+    #region Stage 5
+    public void AddObserver(Action listObserver) =>
+    CallManager.Observers.AddListObserver(listObserver); //stage 5
+    public void AddObserver(int id, Action observer) =>
+    CallManager.Observers.AddObserver(id, observer); //stage 5
+    public void RemoveObserver(Action listObserver) =>
+    CallManager.Observers.RemoveListObserver(listObserver); //stage 5
+    public void RemoveObserver(int id, Action observer) =>
+    CallManager.Observers.RemoveObserver(id, observer); //stage 5
+    #endregion Stage 5
+
     // Create a new call
     public void Create(BO.Call boCall)
     {
@@ -23,6 +34,9 @@ internal class CallImplementation : ICall
         {
             // Attempt to create the call in the data layer
             _dal.Call.Create(doCall);
+            CallManager.Observers.NotifyListUpdated(); //stage 5                                                    
+
+
         }
         catch (DO.DalAlreadyExistsException ex)
         {
@@ -92,6 +106,7 @@ internal class CallImplementation : ICall
 
             // Attempt to delete the call
             _dal.Call.Delete(callId);
+            CallManager.Observers.NotifyListUpdated();  //stage 5  	
         }
         catch (DO.DalDoesNotExistException ex)
         {
@@ -384,6 +399,8 @@ internal class CallImplementation : ICall
             // Map any necessary changes from the business object to the data object
             var copyDoCall = CallManager.updateIfNeededDoCall(doCall, updateCallObj);
             _dal.Call.Update(copyDoCall);
+            CallManager.Observers.NotifyItemUpdated(doCall.Id);  //stage 5
+            CallManager.Observers.NotifyListUpdated();  //stage 5
         }
         catch (DO.DalDoesNotExistException ex)
         {

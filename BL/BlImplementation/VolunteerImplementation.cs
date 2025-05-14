@@ -6,12 +6,23 @@ using System.Data;
 using static DO.Enums;
 using System.Net;
 using System;
-
+using System.Linq;
 namespace BlImplementation;
 
 // Implementation of IVolunteer interface for managing Volunteer-related operations
 internal class VolunteerImplementation : IVolunteer
 {
+    #region Stage 5
+    public void AddObserver(Action listObserver) =>
+    VolunteerManager.Observers.AddListObserver(listObserver); //stage 5
+    public void AddObserver(int id, Action observer) =>
+    VolunteerManager.Observers.AddObserver(id, observer); //stage 5
+    public void RemoveObserver(Action listObserver) =>
+    VolunteerManager.Observers.RemoveListObserver(listObserver); //stage 5
+    public void RemoveObserver(int id, Action observer) =>
+    VolunteerManager.Observers.RemoveObserver(id, observer); //stage 5
+    #endregion Stage 5
+
     // Reference to the Data Access Layer (DAL) to interact with data storage
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
 
@@ -31,6 +42,8 @@ internal class VolunteerImplementation : IVolunteer
                 boVolunteer.Email, boVolunteer.Password, boVolunteer.Address,
                 boVolunteer.Latitude, boVolunteer.Longitude, (DO.Enums.Role)boVolunteer.Role,
                 boVolunteer.IsActive, boVolunteer.MaxCallDistance, (DO.Enums.DistanceType)boVolunteer.DistanceType));
+            VolunteerManager.Observers.NotifyListUpdated(); //stage 5   
+
         }
         catch (DO.DalAlreadyExistsException ex)
         {
@@ -55,6 +68,8 @@ internal class VolunteerImplementation : IVolunteer
 
             // Delete the volunteer from the DAL
             _dal.Volunteer.Delete(id);
+            VolunteerManager.Observers.NotifyListUpdated();  //stage 5  
+
         }
         catch (DO.DalDoesNotExistException ex)
         {
@@ -204,7 +219,7 @@ internal class VolunteerImplementation : IVolunteer
     // Updates an existing volunteer's details
     public void Update(int id, BO.Volunteer updateVolunteerObj)
     {
-        
+       
         var doVolunteer = _dal.Volunteer.Read(id)
                           ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={id} does not exist");
 
@@ -217,6 +232,9 @@ internal class VolunteerImplementation : IVolunteer
                 VolunteerManager.ValidateVolunteer(updateVolunteerObj, isUpdate: true);
                 var copyDoVolunteer = VolunteerManager.updateDoVolunteerIfNeeded(doVolunteer, updateVolunteerObj);
                 _dal.Volunteer.Update(copyDoVolunteer);
+                VolunteerManager.Observers.NotifyItemUpdated(doVolunteer.Id);  //stage 5
+                VolunteerManager.Observers.NotifyListUpdated();  //stage 5
+
             }
             catch (DO.DalDoesNotExistException ex)
             {

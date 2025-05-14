@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace BlApi
 {
     // Defines the main interface for the business logic layer (BL)
-    public interface IBl
+    public interface IBl : IObservable //stage 5 הרחבת ממשק
+
     {
         // Provides access to volunteer-related operations
         IVolunteer Volunteer { get; }
