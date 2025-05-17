@@ -58,6 +58,8 @@ internal class AdminImplementation : IAdmin // Implements the IAdmin interface
     {
         _dal.ResetDB(); // Calls the DAL method to reset the database
         AdminManager.UpdateClock(AdminManager.Now); // Updates the system clock
+        AdminManager.ResetDB();
+
     }
 
     // Initializes the database with test data and updates the clock
@@ -65,6 +67,8 @@ internal class AdminImplementation : IAdmin // Implements the IAdmin interface
     {
         DalTest.Initialization.Do(); // Calls the DAL test initialization
         AdminManager.UpdateClock(AdminManager.Now); // Updates the system clock
+        AdminManager.InitializeDB();
+
     }
 
     #region Stage 5
@@ -76,6 +80,26 @@ internal class AdminImplementation : IAdmin // Implements the IAdmin interface
    AdminManager.ConfigUpdatedObservers += configObserver;
     public void RemoveConfigObserver(Action configObserver) =>
     AdminManager.ConfigUpdatedObservers -= configObserver;
+
+    public void AddObserver(Action listObserver)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void AddObserver(int id, Action observer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RemoveObserver(Action listObserver)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RemoveObserver(int id, Action observer)
+    {
+        throw new NotImplementedException();
+    }
     #endregion Stage 5
 
 }

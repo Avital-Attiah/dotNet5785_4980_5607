@@ -1,6 +1,7 @@
 ﻿using BlImplementation;
 using BO;
 using DalApi;
+using System.Threading;
 namespace Helpers;
 
 /// <summary>
@@ -21,16 +22,45 @@ internal static class AdminManager //stage 4
     /// <summary>
     /// Property for providing/setting current configuration variable value for any BL class that may need it
     /// </summary>
-    internal static int MaxRange
+    internal static DateTime Clock
     {
-        get => s_dal.Config.MaxRange;
+        get => s_dal.Config.Clock;
         set
         {
-            s_dal.Config.MaxRange = value;
+            s_dal.Config.Clock = value;
             ConfigUpdatedObservers?.Invoke(); // stage 5
         }
     }
 
+
+    internal static TimeSpan RiskRange
+    {
+        get => s_dal.Config.RiskRange;
+        set
+        {
+            s_dal.Config.RiskRange = value;
+            ConfigUpdatedObservers?.Invoke(); // stage 5
+        }
+    }
+    internal static void InitializeDB()
+    {
+        //lock (BlMutex) //stage 7
+        //{
+        DalTest.Initialization.Do();
+        UpdateClock(Now);  // stage 5 - needed for update the PL
+        RiskRange = RiskRange; // stage 5 - needed for update the PL
+                               //}
+    }
+    internal static void ResetDB()
+    {
+        //lock (BlMutex) //stage 7
+        //{
+        s_dal.ResetDB();
+        UpdateClock(Now); //stage 5 - needed for update PL
+        RiskRange = AdminManager.RiskRange; //stage 5 - needed for update PL
+                                            //}
+    }
+   
     /// <summary>
     /// Property for providing current application's clock value for any BL class that may need it
     /// </summary>
@@ -59,7 +89,7 @@ internal static class AdminManager //stage 4
         //Go through all students to update properties that are affected by the clock update
         //(students becomes not active after 5 years etc.)
 
-        StudentManager.PeriodicStudentsUpdates(oldClock, newClock); //stage 4
+        AssignmentManager.PeriodicAssignmentsUpdates(oldClock, newClock); //stage 4
         //etc ...
 
         //Calling all the observers of clock update
@@ -107,7 +137,7 @@ internal static class AdminManager //stage 4
             //TO_DO:
             //Add calls here to any logic simulation that was required in stage 7
             //for example: course registration simulation
-            StudentManager.SimulateCourseRegistrationAndGrade(); //stage 7
+            //StudentManager.SimulateCourseRegistrationAndGrade(); //stage 7
 
             //etc...
             #endregion Stage 7
@@ -121,3 +151,10 @@ internal static class AdminManager //stage 4
     }
     #endregion Stage 7 base
 }
+
+
+
+
+
+
+

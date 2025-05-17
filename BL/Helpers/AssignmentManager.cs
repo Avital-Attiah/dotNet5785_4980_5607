@@ -25,4 +25,22 @@ internal static class AssignmentManager
             })
             .ToList();
     }
+    internal static void PeriodicAssignmentsUpdates(DateTime oldClock, DateTime newClock)
+    {
+        bool assignmentUpdated;
+        assignmentUpdated = false;
+        var list = _dal.Assignment.ReadAll().ToList();
+        foreach (var doAssignment in list)
+        {
+            if (doAssignment.CompletionTime.HasValue && newClock >= doAssignment.CompletionTime.Value)
+            {
+                assignmentUpdated = true;
+                _dal.Assignment.Update(doAssignment with { Status = DO.Enums.TreatmentStatus.Expired });
+                Observers.NotifyItemUpdated(doAssignment.Id);
+            }
+        }
+        bool yearChanged = oldClock.Year != newClock.Year;
+        if (yearChanged || assignmentUpdated)
+            Observers.NotifyListUpdated();
+    }
 }
