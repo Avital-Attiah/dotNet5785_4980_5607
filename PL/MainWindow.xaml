@@ -1,38 +1,53 @@
 ﻿<Window x:Class="PL.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow"
+        Height="640" Width="800"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40*"/>
-            <RowDefinition Height="500*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- גריד פנימי עליון -->
-        <Grid HorizontalAlignment="Stretch" Height="Auto" Grid.Row="0" VerticalAlignment="Stretch" Width="Auto">
+        <!-- אזור שעון המערכת -->
+        <Grid Grid.Row="0" Margin="10">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Label לסינון -->
-            <Label Content="Select Semester:" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+            <Label Grid.Column="0"
+                   Content="{Binding CurrentTime, StringFormat='HH:mm:ss dd/MM/yyyy'}"
+                   FontWeight="Bold"
+                   FontSize="20"
+                   VerticalAlignment="Center"/>
 
-            <!-- ComboBox לסינון -->
-            <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <Button Grid.Column="1" Content="+1 דקות" Click="advance_minute"/>
+            <Button Grid.Column="2" Content="+1 שעה"  Click="advance_hour"/>
+            <Button Grid.Column="3" Content="+1 יום"  Click="advance_day"/>
+            <Button Grid.Column="4" Content="+1 שנה" Click="advance_year"/>
         </Grid>
 
-        <!-- פקד ListView להצגת הרשימה -->
-        <ListView Grid.Row="1">
-            <!-- אפשר להוסיף כאן תבנית עמודות מתקדמת -->
-        </ListView>
+        <!-- אזור משתנה התצורה: RiskRange -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10" >
+            <TextBlock VerticalAlignment="Center" Text="Risk Range (דקות):"/>
+            <TextBox Width="60"
+                     Text="{Binding RiskRangeMinutes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,  TargetNullValue=0}"/>
+            <Button Content="עדכן Risk Range" Click="btnUpdateRiskRange_Click"/>
+        </StackPanel>
 
-        <!-- כפתור הוספה -->
-        <Button Content="Add" Grid.Row="2" HorizontalAlignment="Center" Height="50" Width="100"/>
+        <!-- כפתורי ניווט / DB -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10" >
+            <Button Content="View List"      Width="120" Click="View_VolunteerList"/>
+            <Button Content="Initialize DB"  Width="120" Click="Initialize_DB"/>
+            <Button Content="Reset DB"       Width="120" Click="Reset_DB"/>
+        </StackPanel>
     </Grid>
 </Window>

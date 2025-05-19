@@ -57,7 +57,7 @@ internal class AdminImplementation : IAdmin // Implements the IAdmin interface
     void IAdmin.ResetDB()
     {
         _dal.ResetDB(); // Calls the DAL method to reset the database
-        AdminManager.UpdateClock(AdminManager.Now); // Updates the system clock
+        AdminManager.UpdateClock(DateTime.Now); // Updates the system clock
         AdminManager.ResetDB();
 
     }

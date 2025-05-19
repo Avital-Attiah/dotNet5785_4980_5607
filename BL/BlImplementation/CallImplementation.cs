@@ -65,7 +65,7 @@ internal class CallImplementation : ICall
             {
                 // Update assignment status to canceled
                 DO.Enums.TreatmentStatus finishType = doVolunteer.Role == DO.Enums.Role.Volunteer ? DO.Enums.TreatmentStatus.CanceledByVolunteer : DO.Enums.TreatmentStatus.CanceledByManager;
-                DO.Assignment copyAssignment = doAssignment with { CompletionTime = ClockManager.Now, Status = finishType };
+                DO.Assignment copyAssignment = doAssignment with { CompletionTime = AdminManager.Now, Status = finishType };
                 _dal.Assignment.Update(copyAssignment);
             }
         }
@@ -138,7 +138,7 @@ internal class CallImplementation : ICall
             else
             {
                 // Mark the assignment as completed on time
-                DO.Assignment copyAssignment = doAssignment with { CompletionTime = ClockManager.Now, Status = DO.Enums.TreatmentStatus.CompletedOnTime };
+                DO.Assignment copyAssignment = doAssignment with { CompletionTime = AdminManager.Now, Status = DO.Enums.TreatmentStatus.CompletedOnTime };
                 _dal.Assignment.Update(copyAssignment);
             }
         }
@@ -204,7 +204,7 @@ internal class CallImplementation : ICall
         {
             var doAssignment = _dal.Assignment.Read(a => a.CallId == item.Id);
             TimeSpan? remainingTime = item.MaxCompletionTime.HasValue
-            ? item.MaxCompletionTime.Value - ClockManager.Now
+            ? item.MaxCompletionTime.Value - AdminManager.Now
             : (TimeSpan?)null;
             remainingTime = remainingTime.HasValue && remainingTime > TimeSpan.Zero
                           ? remainingTime
@@ -359,7 +359,7 @@ internal class CallImplementation : ICall
             // Check if the call cannot be selected due to its finish state, progress, or expiration
             if ((doAssignment?.Status is DO.Enums.TreatmentStatus.CompletedOnTime or DO.Enums.TreatmentStatus.Expired) ||
                statusCall is BO.CallStatus.InProgress or BO.CallStatus.InProgressAtRisk ||
-               (doCall.MaxCompletionTime <= ClockManager.Now))
+               (doCall.MaxCompletionTime <= AdminManager.Now))
             {
                 throw new BO.InvalidCallSelectionException($"Call with ID={callId} cannot be selected.");
             }
@@ -371,7 +371,7 @@ internal class CallImplementation : ICall
                 {
                     CallId = callId,
                    VolunteerId = volunteerId,
-                    EntryTime = ClockManager.Now
+                    EntryTime = AdminManager.Now
                 };
                 _dal.Assignment.Create(newAssignment);
             }
