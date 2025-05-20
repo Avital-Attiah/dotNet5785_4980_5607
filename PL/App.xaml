@@ -6,5 +6,8 @@
     <Application.Resources>
         <!-- אוסף של BO.CallType לשימוש ב־ComboBox -->
         <local:CallTypesCollection x:Key="CallTypesCollectionKey"/>
+        <local:DistanceTypesCollection x:Key="DistanceTypesCollectionKey"/>
+        <local:RolesCollection x:Key="RolesCollectionKey"/>
+         
     </Application.Resources>
 </Application>

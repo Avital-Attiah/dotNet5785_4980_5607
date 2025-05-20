@@ -16,4 +16,20 @@ namespace PL
         public IEnumerator<CallType> GetEnumerator() => s_values.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => s_values.GetEnumerator();
     }
+    internal class RolesCollection : IEnumerable<Role>
+    {
+        static readonly IEnumerable<Role> s_values =
+            (Role[])Enum.GetValues(typeof(Role));
+
+        public IEnumerator<Role> GetEnumerator() => s_values.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => s_values.GetEnumerator();
+    }
+    internal class DistanceTypesCollection : IEnumerable<DistanceType>
+    {
+        static readonly IEnumerable<DistanceType> s_values =
+            (DistanceType[])Enum.GetValues(typeof(DistanceType));
+
+        public IEnumerator<DistanceType> GetEnumerator() => s_values.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => s_values.GetEnumerator();
+    }
 }

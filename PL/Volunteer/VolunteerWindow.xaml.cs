@@ -9,7 +9,7 @@ namespace PL.Volunteer
     {
         static readonly IBl s_bl = Factory.Get();
 
-        // 1. DependencyProperty עבור האובייקט שמוצג/ערוך
+        // 1. DependencyProperty עבור הפריט שמוצג/ערוך
         public BO.Volunteer Volunteer
         {
             get => (BO.Volunteer)GetValue(VolunteerProperty);
@@ -23,57 +23,70 @@ namespace PL.Volunteer
                 new PropertyMetadata(null)
             );
 
-        // 2. DependencyProperty עבור טקסט הכפתור ("Add" או "Update")
-        public string ButtonText
-        {
-            get => (string)GetValue(ButtonTextProperty);
-            set => SetValue(ButtonTextProperty, value);
-        }
-        public static readonly DependencyProperty ButtonTextProperty =
-            DependencyProperty.Register(
-                nameof(ButtonText),
-                typeof(string),
-                typeof(VolunteerWindow),
-                new PropertyMetadata("Add")
-            );
+        // 2. Property להפעלת טקסט הכפתור בהתאם למצב הוספה/עדכון
+        public string ButtonText { get; private set; }
 
-        // ה־ID של המתנדב – סופר כדי להחליט אם עדכון או הוספה
+        // 3. שמירה של ה־ID כדי לדעת אם מדובר בעדכון או בהוספה
         private readonly int _volunteerId;
 
-        // בנאי למצב הוספה
+        // 4. Constructor למצב הוספה (ID = 0)
         public VolunteerWindow()
         {
             _volunteerId = 0;
-            ButtonText = "Add";
-            Volunteer = new BO.Volunteer();  // ערכי ברירת מחדל
+            Volunteer = new BO.Volunteer();    // אובייקט חדש
+            ButtonText = "Create Volunteer";
             InitializeComponent();
+
+            this.Loaded += VolunteerWindow_Loaded;
+            this.Closed += VolunteerWindow_Closed;
         }
 
-        // בנאי למצב עדכון
-        public VolunteerWindow(int id)
+        // 5. Constructor למצב עריכה (ID != 0)
+        public VolunteerWindow(int volunteerId)
         {
-            _volunteerId = id;
-            ButtonText = "Update";
-            Volunteer = s_bl.Volunteer.Read(id)!;  // קריאה ל-BL כדי לקבל את הפרטים הקיימים
+            _volunteerId = volunteerId;
+            Volunteer = s_bl.Volunteer.Read(volunteerId)!;   // קריאה ראשונית
+            ButtonText = "Update Volunteer";
             InitializeComponent();
+
+            this.Loaded += VolunteerWindow_Loaded;
+            this.Closed += VolunteerWindow_Closed;
         }
 
-        // 3. Handler לכפתור Add/Update
+        // 6. מתודת המשקיף שתתפוס עדכון מה־BL
+        private void VolunteerObserver()
+        {
+            int id = Volunteer!.Id;
+            Volunteer = null;                              // כדי לגרום ל־Binding להתעדכן
+            Volunteer = s_bl.Volunteer.Read(id);
+        }
+
+        // 7. ברישום לאירוע Loaded – הוספה של המשקיף אם במצב עריכה
+        private void VolunteerWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (_volunteerId != 0)
+                s_bl.Volunteer.AddObserver(_volunteerId, VolunteerObserver);
+        }
+
+        // 8. ברישום לאירוע Closed – הסרת המשקיף
+        private void VolunteerWindow_Closed(object sender, EventArgs e)
+        {
+            if (_volunteerId != 0)
+                s_bl.Volunteer.RemoveObserver(_volunteerId, VolunteerObserver);
+        }
+
+        // 9. Handler לכפתור Create/Update
         private void btnAddUpdate_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (_volunteerId == 0)
-                {
                     s_bl.Volunteer.Create(Volunteer);
-                }
                 else
-                {
                     s_bl.Volunteer.Update(_volunteerId, Volunteer);
-                }
 
                 MessageBox.Show(
-                    $"{ButtonText} succeeded",
+                    $"{ButtonText} successfully",
                     "Success",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
