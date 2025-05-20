@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using PL.Volunteer;
+using PL.Call;
 
 namespace PL
 {
@@ -187,6 +188,16 @@ namespace PL
         private void btnUpdateRiskRange_Click(object sender, RoutedEventArgs e)
         {
             s_bl.Admin.SetRiskRange(TimeSpan.FromMinutes(RiskRangeMinutes));
+        }
+
+        private void View_CallList(object sender, RoutedEventArgs e)
+        {
+            var listWindow = new CallListWindow
+            {
+                Owner = this,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+            listWindow.Show();
         }
     }
 }

@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:PL"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <!-- אוסף של BO.CallType לשימוש ב־ComboBox -->
+        <local:CallTypesCollection x:Key="CallTypesCollectionKey"/>
     </Application.Resources>
 </Application>

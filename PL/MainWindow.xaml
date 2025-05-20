@@ -45,7 +45,8 @@
 
         <!-- כפתורי ניווט / DB -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10" >
-            <Button Content="View List"      Width="120" Click="View_VolunteerList"/>
+            <Button Content="View Volunteer List"      Width="120" Click="View_VolunteerList"/>
+            <Button Content="View Call List"      Width="120" Click="View_CallList"/>
             <Button Content="Initialize DB"  Width="120" Click="Initialize_DB"/>
             <Button Content="Reset DB"       Width="120" Click="Reset_DB"/>
         </StackPanel>
