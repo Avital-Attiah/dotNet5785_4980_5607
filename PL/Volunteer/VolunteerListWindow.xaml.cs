@@ -13,11 +13,8 @@ namespace PL.Volunteer
         static readonly IBl s_bl = Factory.Get();
         public BO.VolunteerInList? SelectedVolunteer { get; set; }
 
-
-        // 1. תכונה רגילה לאחסון ערך הסינון (SelectedCallType) ומתאם ל-None
         public CallType SelectedCallType { get; set; } = CallType.None;
 
-        // 2. DependencyProperty לאגירת הרשימה שמוצגת
         public IEnumerable<VolunteerInList> VolunteerList
         {
             get => (IEnumerable<VolunteerInList>)GetValue(VolunteerListProperty);
@@ -34,23 +31,16 @@ namespace PL.Volunteer
         public VolunteerListWindow()
         {
             InitializeComponent();
-
-            // אתחול ראשוני של הרשימה
             QueryVolunteerList();
-
-            // רישום לאירוע טעינת החלון
             this.Loaded += VolunteerListWindow_Loaded;
-            // רישום לאירוע סגירת החלון
             this.Closed += VolunteerListWindow_Closed;
         }
 
-        // 3. מתודת השקפה על הרשימה - קוראת מחדש את הרשימה המסוננת
         private void VolunteerListObserver()
         {
             QueryVolunteerList();
         }
 
-        // 4. שאילתת טעינת הרשימה (עם סינון)
         private void QueryVolunteerList()
         {
             var all = s_bl.Volunteer.GetVolunteersList();
@@ -60,28 +50,22 @@ namespace PL.Volunteer
                 VolunteerList = all.Where(v => v.CurrentCallType == SelectedCallType).ToList();
         }
 
-        // 5. אירוע Loaded - הוספת משקיף
-        private void VolunteerListWindow_Loaded(object sender, RoutedEventArgs e)
+        private void VolunteerListWindow_Loaded(object? sender, RoutedEventArgs e)
         {
             s_bl.Volunteer.AddObserver(VolunteerListObserver);
         }
 
-        // 6. אירוע Closed - הסרת משקיף
-        private void VolunteerListWindow_Closed(object sender, EventArgs e)
+        private void VolunteerListWindow_Closed(object? sender, EventArgs e)
         {
             s_bl.Volunteer.RemoveObserver(VolunteerListObserver);
         }
 
-        // 7. Handler לאירוע SelectionChanged של ה־ComboBox
-        private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // הערך SelectedCallType עודכן אוטומטית דרך Binding
             QueryVolunteerList();
         }
 
-        // 8. Handler לכפתור חזרה
-        private void btnBack_Click(object sender, RoutedEventArgs e)
-            => this.Close();
+        private void btnBack_Click(object sender, RoutedEventArgs e) => this.Close();
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
@@ -90,10 +74,8 @@ namespace PL.Volunteer
                 Owner = this,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
             };
-
             win.Show();
         }
-
 
         private void lsvCoursesList_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -101,15 +83,14 @@ namespace PL.Volunteer
             {
                 var win = new VolunteerWindow(SelectedVolunteer.Id)
                 {
-                    Owner = this    // אופציונלי, כדי ש-VolunteerListWindow יישאר הבעלים
+                    Owner = this
                 };
-                win.ShowDialog();  // <-- כאן במקום Show()
+                win.ShowDialog();
             }
-
         }
+
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-
             if (SelectedVolunteer == null)
                 return;
 
@@ -134,4 +115,3 @@ namespace PL.Volunteer
         }
     }
 }
-

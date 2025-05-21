@@ -1,2 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfVolunteer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+<ArrayOfVolunteer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Volunteer>
+    <Id>328275607</Id>
+    <FullName>שירה</FullName>
+    <Phone>0583210654</Phone>
+    <Email>c@gnail.com</Email>
+    <Password>ff7cf364cf5ef9281472c2ab90532904c8d320ddd540f3bbfd6bbac6d17c7ad7</Password>
+    <CurrentAddress> 16 שאולזון</CurrentAddress>
+    <Latitude>31.790426</Latitude>
+    <Longitude>35.1741524</Longitude>
+    <Role>Manager</Role>
+    <IsActive>true</IsActive>
+    <MaxDistance>123</MaxDistance>
+    <DistanceType>Air</DistanceType>
+  </Volunteer>
+</ArrayOfVolunteer>

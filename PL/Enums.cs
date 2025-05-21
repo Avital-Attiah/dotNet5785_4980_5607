@@ -5,28 +5,28 @@ using BO;
 
 namespace PL
 {
-    /// <summary>
-    /// אוסף של כל ערכי ה-CallType לשימוש ב-ComboBox
-    /// </summary>
-    internal class CallTypesCollection : IEnumerable<CallType>
+    public class CallTypesCollection : IEnumerable<CallType>  // שימי לב ל-public
     {
-        static readonly IEnumerable<CallType> s_values =
+        public static readonly IEnumerable<CallType> s_values =  // גם פה public
             (CallType[])Enum.GetValues(typeof(CallType));
 
         public IEnumerator<CallType> GetEnumerator() => s_values.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => s_values.GetEnumerator();
     }
-    internal class RolesCollection : IEnumerable<Role>
+
+    // אם צריך גם את השאר אז ככה:
+    public class RolesCollection : IEnumerable<Role>
     {
-        static readonly IEnumerable<Role> s_values =
+        public static readonly IEnumerable<Role> s_values =
             (Role[])Enum.GetValues(typeof(Role));
 
         public IEnumerator<Role> GetEnumerator() => s_values.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => s_values.GetEnumerator();
     }
-    internal class DistanceTypesCollection : IEnumerable<DistanceType>
+
+    public class DistanceTypesCollection : IEnumerable<DistanceType>
     {
-        static readonly IEnumerable<DistanceType> s_values =
+        public static readonly IEnumerable<DistanceType> s_values =
             (DistanceType[])Enum.GetValues(typeof(DistanceType));
 
         public IEnumerator<DistanceType> GetEnumerator() => s_values.GetEnumerator();
