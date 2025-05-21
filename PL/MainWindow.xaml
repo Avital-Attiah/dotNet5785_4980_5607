@@ -49,8 +49,8 @@
                          Background="White" BorderBrush="LightSkyBlue" BorderThickness="1" Margin="0,0,5,0"/>
                 <Button Content="עדכן" Click="btnUpdateRiskRange_Click" Padding="5,2" Background="#cce6ff" />
             </StackPanel>
-            <TextBlock Text="המספר המקסימלי של שנים ללימוד\nלאחר מכן הסטודנט הופך ללא פעיל"
-                       FontSize="12" Foreground="DarkMagenta" Margin="0,5,0,0" TextAlignment="Right"/>
+            <!-- <TextBlock Text="המספר המקסימלי של שנים ללימוד\nלאחר מכן הסטודנט הופך ללא פעיל"
+                       FontSize="12" Foreground="DarkMagenta" Margin="0,5,0,0" TextAlignment="Right"/> -->
         </StackPanel>
 
         <!-- תצוגת שעה וכפתורים -->

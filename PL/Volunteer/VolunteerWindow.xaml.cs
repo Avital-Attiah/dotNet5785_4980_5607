@@ -34,7 +34,7 @@ namespace PL.Volunteer
         {
             _volunteerId = 0;
             Volunteer = new BO.Volunteer();    // אובייקט חדש
-            ButtonText = "Create Volunteer";
+            ButtonText = "הוסף";
             InitializeComponent();
 
             this.Loaded += VolunteerWindow_Loaded;
@@ -46,7 +46,7 @@ namespace PL.Volunteer
         {
             _volunteerId = volunteerId;
             Volunteer = s_bl.Volunteer.Read(volunteerId)!;   // קריאה ראשונית
-            ButtonText = "Update Volunteer";
+            ButtonText = "עדכן";
             InitializeComponent();
 
             this.Loaded += VolunteerWindow_Loaded;

@@ -1,112 +1,121 @@
 ﻿<Window x:Class="PL.Volunteer.VolunteerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Volunteer Details"
+        Title="פרטי מתנדב"
         Height="600" Width="400"
+        Background="#E8F6FF"
+        WindowStartupLocation="CenterScreen"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
-    <Grid Margin="10">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <!-- שדות פרטי המתנדב -->
-            <RowDefinition Height="Auto"/>
-            <!-- Id -->
-            <RowDefinition Height="Auto"/>
+    <!-- מסגרת חיצונית עגולה עם רקע לבן -->
+    <Border CornerRadius="15" BorderBrush="#007ACC" BorderThickness="2"
+            Background="White" Padding="20" Margin="20">
+
+        <!-- התוכן המקורי של VolunteerWindow.xaml, רק עטוף בתוך ה-Border -->
+        <Grid Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- ID -->
+                <RowDefinition Height="Auto"/>
+                <!-- FullName -->
+                <RowDefinition Height="Auto"/>
+                <!-- Phone -->
+                <RowDefinition Height="Auto"/>
+                <!-- Email -->
+                <RowDefinition Height="Auto"/>
+                <!-- Address -->
+                <RowDefinition Height="Auto"/>
+                <!-- Role -->
+                <RowDefinition Height="Auto"/>
+                <!-- IsActive -->
+                <RowDefinition Height="Auto"/>
+                <!-- MaxCallDistance -->
+                <RowDefinition Height="Auto"/>
+                <!-- DistanceType -->
+                <RowDefinition Height="Auto"/>
+                <!-- Password -->
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <!-- Add/Update Button -->
+            </Grid.RowDefinitions>
+
+            <!-- ID -->
+            <Label Grid.Row="0" Grid.Column="0" Content="ID:" Margin="0,5"/>
+            <TextBox Grid.Row="0" Grid.Column="1"
+                     Text="{Binding Volunteer.Id, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="5"/>
+
             <!-- FullName -->
-            <RowDefinition Height="Auto"/>
+            <Label Grid.Row="1" Grid.Column="0" Content="Full Name:" Margin="0,5"/>
+            <TextBox Grid.Row="1" Grid.Column="1"
+                     Text="{Binding Volunteer.FullName, Mode=TwoWay}"
+                     Margin="5"/>
+
             <!-- Phone -->
-            <RowDefinition Height="Auto"/>
+            <Label Grid.Row="2" Grid.Column="0" Content="Phone:" Margin="0,5"/>
+            <TextBox Grid.Row="2" Grid.Column="1"
+                     Text="{Binding Volunteer.Phone, Mode=TwoWay}"
+                     Margin="5"/>
+
             <!-- Email -->
-            <RowDefinition Height="Auto"/>
+            <Label Grid.Row="3" Grid.Column="0" Content="Email:" Margin="0,5"/>
+            <TextBox Grid.Row="3" Grid.Column="1"
+                     Text="{Binding Volunteer.Email, Mode=TwoWay}"
+                     Margin="5"/>
+
             <!-- Address -->
-            <RowDefinition Height="Auto"/>
+            <Label Grid.Row="4" Grid.Column="0" Content="Address:" Margin="0,5"/>
+            <TextBox Grid.Row="4" Grid.Column="1"
+                     Text="{Binding Volunteer.Address, Mode=TwoWay}"
+                     Margin="5"/>
+
             <!-- Role -->
-            <RowDefinition Height="Auto"/>
-            <!-- Password -->
-            <RowDefinition Height="Auto"/>
+            <Label Grid.Row="5" Grid.Column="0" Content="Role:" Margin="0,5"/>
+            <ComboBox Grid.Row="5" Grid.Column="1"
+                      ItemsSource="{StaticResource RolesCollectionKey}"
+                      SelectedItem="{Binding Volunteer.Role, Mode=TwoWay}"
+                      Margin="5"/>
+
             <!-- IsActive -->
-            <RowDefinition Height="Auto"/>
+            <Label Grid.Row="6" Grid.Column="0" Content="פעיל:" Margin="0,5"/>
+            <CheckBox Grid.Row="6" Grid.Column="1"
+                      IsChecked="{Binding Volunteer.IsActive, Mode=TwoWay}"
+                      Margin="5"/>
+
             <!-- MaxCallDistance -->
-            <RowDefinition Height="Auto"/>
+            <Label Grid.Row="7" Grid.Column="0" Content="Max Call Distance:" Margin="0,5"/>
+            <TextBox Grid.Row="7" Grid.Column="1"
+                     Text="{Binding Volunteer.MaxCallDistance, Mode=TwoWay}"
+                     Margin="5"/>
+
             <!-- DistanceType -->
-            <RowDefinition Height="*"/>
-            <!-- spacer -->
-            <RowDefinition Height="Auto"/>
-            <!-- כפתור Add/Update -->
-        </Grid.RowDefinitions>
+            <Label Grid.Row="8" Grid.Column="0" Content="Distance Type:" Margin="0,5"/>
+            <ComboBox Grid.Row="8" Grid.Column="1"
+                      ItemsSource="{StaticResource DistanceTypesCollectionKey}"
+                      SelectedItem="{Binding Volunteer.DistanceType, Mode=TwoWay}"
+                      Margin="5"/>
 
-        <!-- Id -->
-        <Label   Grid.Row="0" Grid.Column="0" Content="ID:" Margin="0,5"/>
-        <TextBox Grid.Row="0" Grid.Column="1"
-         Text="{Binding Volunteer.Id, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-         IsReadOnly="False"
-         Margin="5"/>
+            <!-- Password -->
+            <Label Grid.Row="9" Grid.Column="0" Content="Password:" Margin="0,5"/>
+            <TextBox Grid.Row="9" Grid.Column="1"
+                     Text="{Binding Volunteer.Password, Mode=TwoWay}"
+                     Margin="5"/>
 
-        <!-- FullName -->
-        <Label   Grid.Row="1" Grid.Column="0" Content="Full Name:" Margin="0,5"/>
-        <TextBox Grid.Row="1" Grid.Column="1"
-             Text="{Binding Volunteer.FullName, Mode=TwoWay}"
-             Margin="5"/>
+            <!-- Add/Update Button -->
+            <Button Grid.Row="11" Grid.ColumnSpan="2"
+                    Content="{Binding ButtonText}"
+                    Click="btnAddUpdate_Click"
+                    Width="100"
+                    Height="35"
+                    HorizontalAlignment="Center"
+                    Margin="0,10,0,0"
+                    Style="{StaticResource MainButtonStyle}"/>
 
-        <!-- Phone -->
-        <Label   Grid.Row="2" Grid.Column="0" Content="Phone:" Margin="0,5"/>
-        <TextBox Grid.Row="2" Grid.Column="1"
-             Text="{Binding Volunteer.Phone, Mode=TwoWay}"
-             Margin="5"/>
+        </Grid>
 
-        <!-- Email -->
-        <Label   Grid.Row="3" Grid.Column="0" Content="Email:" Margin="0,5"/>
-        <TextBox Grid.Row="3" Grid.Column="1"
-             Text="{Binding Volunteer.Email, Mode=TwoWay}"
-             Margin="5"/>
-
-        <!-- Address -->
-        <Label   Grid.Row="4" Grid.Column="0" Content="Address:" Margin="0,5"/>
-        <TextBox Grid.Row="4" Grid.Column="1"
-             Text="{Binding Volunteer.Address, Mode=TwoWay}"
-             Margin="5"/>
-
-        <!-- Role (enum) -->
-        <Label   Grid.Row="5" Grid.Column="0" Content="Role:" Margin="0,5"/>
-        <ComboBox Grid.Row="5" Grid.Column="1"
-              ItemsSource="{Binding Source={StaticResource RolesCollectionKey}}"
-              SelectedItem="{Binding Volunteer.Role, Mode=TwoWay}"
-              Margin="5"/>
-
-        <!-- IsActive -->
-        <Label    Grid.Row="6" Grid.Column="0" Content="Is Active:" Margin="0,5"/>
-        <CheckBox Grid.Row="6" Grid.Column="1"
-              IsChecked="{Binding Volunteer.IsActive, Mode=TwoWay}"
-              Margin="5"/>
-
-        <!-- MaxCallDistance -->
-        <Label   Grid.Row="7" Grid.Column="0" Content="Max Call Distance:" Margin="0,5"/>
-        <TextBox Grid.Row="7" Grid.Column="1"
-             Text="{Binding Volunteer.MaxCallDistance, Mode=TwoWay}"
-             Margin="5"/>
-
-        <!-- DistanceType (enum) -->
-        <Label   Grid.Row="8" Grid.Column="0" Content="Distance Type:" Margin="0,5"/>
-        <ComboBox Grid.Row="8" Grid.Column="1"
-              ItemsSource="{Binding Source={StaticResource DistanceTypesCollectionKey}}"
-              SelectedItem="{Binding Volunteer.DistanceType, Mode=TwoWay}"
-              Margin="5"/>
-
-        <Label   Grid.Row="9" Grid.Column="0" Content="Password:" Margin="0,5"/>
-        <TextBox Grid.Row="9" Grid.Column="1"
-      Text="{Binding Volunteer.Password, Mode=TwoWay}"
-      Margin="5"/>
-
-
-        <!-- כפתור הוספה/עדכון -->
-        <Button Grid.Row="10" Grid.ColumnSpan="2"
-            Content="{Binding ButtonText}"
-            Click="btnAddUpdate_Click"
-            Width="100"
-            HorizontalAlignment="Center"
-            Margin="0,10,0,0"/>
-    </Grid>
+    </Border>
 </Window>

@@ -8,6 +8,15 @@
         <local:CallTypesCollection x:Key="CallTypesCollectionKey"/>
         <local:DistanceTypesCollection x:Key="DistanceTypesCollectionKey"/>
         <local:RolesCollection x:Key="RolesCollectionKey"/>
-         
+
+        <Style x:Key="MainButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#E0F0FF"/>
+            <Setter Property="BorderBrush" Value="#007ACC"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="0,5"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Foreground" Value="#004A7F"/>
+        </Style>
     </Application.Resources>
 </Application>
