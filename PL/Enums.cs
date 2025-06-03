@@ -5,16 +5,15 @@ using BO;
 
 namespace PL
 {
-    public class CallTypesCollection : IEnumerable<CallType>  // שימי לב ל-public
+    public class CallTypesCollection : IEnumerable<CallType>
     {
-        public static readonly IEnumerable<CallType> s_values =  // גם פה public
+        public static readonly IEnumerable<CallType> s_values =
             (CallType[])Enum.GetValues(typeof(CallType));
 
         public IEnumerator<CallType> GetEnumerator() => s_values.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => s_values.GetEnumerator();
     }
 
-    // אם צריך גם את השאר אז ככה:
     public class RolesCollection : IEnumerable<Role>
     {
         public static readonly IEnumerable<Role> s_values =
@@ -32,4 +31,6 @@ namespace PL
         public IEnumerator<DistanceType> GetEnumerator() => s_values.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => s_values.GetEnumerator();
     }
+
+
 }

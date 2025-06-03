@@ -1,75 +1,174 @@
 ﻿<Window x:Class="PL.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="500" Width="850"
+        Title="ניהול ראשי"
+        MinHeight="450" MinWidth="700"
+        Background="#E8F6FF"
         WindowStartupLocation="CenterScreen"
-        Background="#f0faff">
-    <Window.Resources>
-        <Style x:Key="BlueButton" TargetType="Button">
-            <Setter Property="Background" Value="#e6f2ff"/>
-            <Setter Property="Foreground" Value="Navy"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="Padding" Value="8,4"/>
-            <Setter Property="BorderBrush" Value="#99ccff"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Cursor" Value="Hand"/>
-        </Style>
+        DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
-        <Style x:Key="GrayButton" TargetType="Button">
-            <Setter Property="Background" Value="#f5f5f5"/>
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="FontWeight" Value="Normal"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="Padding" Value="8,4"/>
-            <Setter Property="BorderBrush" Value="Gray"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Cursor" Value="Hand"/>
-        </Style>
-    </Window.Resources>
+    <!-- Border חיצוני עגול לבן עם גבול כחול -->
+    <Border CornerRadius="15"
+            BorderBrush="#007ACC"
+            BorderThickness="2"
+            Background="White"
+            Padding="15"
+            Margin="10">
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <!-- שעון והגדרות -->
+                    <ColumnDefinition Width="2*"/>
+                    <!-- מקום לפירוט עתידי -->
+                    <ColumnDefinition Width="2*"/>
+                    <!-- ניווט מהיר -->
+                </Grid.ColumnDefinitions>
 
-    <Grid Margin="10">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+                <!-- ==============================================
+                     1. שעון מערכת ומשתני תצורה (עמודה שמאלית)
+                     ============================================== -->
+                <StackPanel Grid.Column="0">
+                    <!-- כותרת השעון -->
+                    <TextBlock Text="שעון מערכת"
+                               FontSize="18" FontWeight="Bold"
+                               Foreground="#007ACC"
+                               Margin="0,0,0,10"/>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+                    <!-- תצוגת השעה הנוכחית -->
+                    <TextBlock x:Name="txtClock"
+                               Text="{Binding CurrentTime, StringFormat=HH\\:mm\\:ss dd/MM/yyyy}"
+                               FontSize="28" FontWeight="SemiBold"
+                               Foreground="#004A7F"
+                               HorizontalAlignment="Left"
+                               Margin="0,0,0,20"/>
 
-        <!-- הגדרת טווח זמן -->
-        <StackPanel Grid.Column="0" Grid.Row="1" Margin="10" VerticalAlignment="Top">
-            <TextBlock Text="טווח סיכון בדקות:" Foreground="DarkBlue" FontWeight="Bold" FontSize="14"/>
-            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                <TextBox Width="60" Text="{Binding RiskRangeMinutes}" 
-                         Background="White" BorderBrush="LightSkyBlue" BorderThickness="1" Margin="0,0,5,0"/>
-                <Button Content="עדכן" Click="btnUpdateRiskRange_Click" Padding="5,2" Background="#cce6ff" />
-            </StackPanel>
-            <!-- <TextBlock Text="המספר המקסימלי של שנים ללימוד\nלאחר מכן הסטודנט הופך ללא פעיל"
-                       FontSize="12" Foreground="DarkMagenta" Margin="0,5,0,0" TextAlignment="Right"/> -->
-        </StackPanel>
+                    <!-- כפתורי שליטה על השעון (WrapPanel יביא שורה חדשה אם רוחב לא יספיק) -->
+                    <WrapPanel HorizontalAlignment="Left"
+                              Margin="0,0,0,20"
+                              ItemHeight="40" ItemWidth="110">
+                        <Button Content="קדם בדקה"
+                                Style="{StaticResource MainButtonStyle}"
+                                Click="advance_minute"
+                                FontSize="14"
+                                Padding="5"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"/>
+                        <Button Content="קדם בשעה"
+                                Style="{StaticResource MainButtonStyle}"
+                                Click="advance_hour"
+                                FontSize="14"
+                                Padding="5"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"/>
+                        <Button Content="קדם ביום"
+                                Style="{StaticResource MainButtonStyle}"
+                                Click="advance_day"
+                                FontSize="14"
+                                Padding="5"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"/>
+                        <Button Content="קדם בשנה"
+                                Style="{StaticResource MainButtonStyle}"
+                                Click="advance_year"
+                                FontSize="14"
+                                Padding="5"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"/>
+                    </WrapPanel>
 
-        <!-- תצוגת שעה וכפתורים -->
-        <Border Grid.Column="1" Grid.Row="1" BorderBrush="DodgerBlue" BorderThickness="2" Padding="20" Margin="10" Background="White" CornerRadius="12">
-            <StackPanel HorizontalAlignment="Center">
-                <TextBlock Text="{Binding CurrentTime, StringFormat=dd/MM/yyyy HH:mm}" FontSize="20" FontWeight="Bold" Foreground="DarkCyan" HorizontalAlignment="Center" Margin="0,0,0,15"/>
-                <Button Content="הוסף דקה" Click="advance_minute" Style="{StaticResource BlueButton}" />
-                <Button Content="הוסף שעה" Click="advance_hour" Style="{StaticResource BlueButton}" />
-                <Button Content="הוסף יום" Click="advance_day" Style="{StaticResource BlueButton}" />
-                <Button Content="הוסף שנה" Click="advance_year" Style="{StaticResource BlueButton}" />
-            </StackPanel>
-        </Border>
+                    <!-- טווח זמן סיכון (RiskRangeMinutes) -->
+                    <TextBlock Text="טווח זמן סיכון (דקות)"
+                               FontSize="16" FontWeight="Bold"
+                               Foreground="#007ACC"
+                               Margin="0,0,0,10"/>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Left"
+                                Margin="0,0,0,20">
+                        <TextBox x:Name="txtRiskRange"
+                                 Text="{Binding RiskRangeMinutes, Mode=TwoWay}"
+                                 Width="80" Height="25"
+                                 Padding="4"
+                                 VerticalContentAlignment="Center"/>
+                        <Button Content="עדכן"
+                                Style="{StaticResource MainButtonStyle}"
+                                Click="btnUpdateRiskRange_Click"
+                                Margin="10,0,0,0"
+                                Width="80"
+                                Height="30"
+                                FontSize="14"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"/>
+                    </StackPanel>
 
-        <!-- כפתורי ניהול -->
-        <StackPanel Grid.Column="2" Grid.Row="1" Margin="10" VerticalAlignment="Top" HorizontalAlignment="Center">
-            <Button Content="איפוס מסד נתונים" Click="Reset_DB" Style="{StaticResource GrayButton}" />
-            <Button Content="אתחול מסד נתונים" Click="Initialize_DB" Style="{StaticResource GrayButton}" />
-            <Button Content="רשימת מתנדבים" Click="View_VolunteerList" Style="{StaticResource GrayButton}" />
-            <Button Content="רשימת שיחות" Click="View_CallList" Style="{StaticResource GrayButton}" />
-        </StackPanel>
-    </Grid>
+                    <!-- איפוס בסיס נתונים -->
+                    <Button Content="איפוס בסיס נתונים"
+                            Style="{StaticResource MainButtonStyle}"
+                            Click="Reset_DB"
+                            Margin="0,0,0,10"
+                            Height="40"
+                            Width="200"
+                            FontSize="14"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"/>
+
+                    <!-- אתחול בסיס נתונים לערכי התחלה -->
+                    <Button Content="אתחול בסיס נתונים"
+                            Style="{StaticResource MainButtonStyle}"
+                            Click="Initialize_DB"
+                            Height="40"
+                            Width="200"
+                            FontSize="14"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"/>
+                </StackPanel>
+
+                <!-- ===================================
+                     2. עמודה מרכזית (ריקה לעת עתה)
+                     =================================== -->
+                <StackPanel Grid.Column="1" 
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Top"
+                            Margin="0,0,20,0">
+                    <TextBlock Text="דוחות וסטטיסטיקות"
+                               FontSize="18" FontWeight="Bold"
+                               Foreground="#007ACC"
+                               Margin="0,0,0,10"/>
+                    <!-- ניתן למלא כאן בעתיד גרפים או טקסט סטטיסטי -->
+                </StackPanel>
+
+                <!-- ================================================
+                     3. ניווט מהיר: ניהול מתנדבים וניהול קריאות
+                     ================================================ -->
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="ניווט מהיר"
+                               FontSize="18" FontWeight="Bold"
+                               Foreground="#007ACC"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,10"/>
+
+                    <Button Content="ניהול מתנדבים"
+                            Style="{StaticResource MainButtonStyle}"
+                            Click="View_VolunteerList"
+                            Margin="0,0,0,15"
+                            Width="200"
+                            Height="50"
+                            FontSize="16"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"/>
+
+                    <Button Content="ניהול קריאות"
+                            Style="{StaticResource MainButtonStyle}"
+                            Click="View_CallList"
+                            Width="200"
+                            Height="50"
+                            FontSize="16"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"/>
+                </StackPanel>
+
+            </Grid>
+        </ScrollViewer>
+    </Border>
 </Window>

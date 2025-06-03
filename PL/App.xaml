@@ -8,7 +8,11 @@
         <local:CallTypesCollection x:Key="CallTypesCollectionKey"/>
         <local:DistanceTypesCollection x:Key="DistanceTypesCollectionKey"/>
         <local:RolesCollection x:Key="RolesCollectionKey"/>
+        <local:NullToVisibilityConverter x:Key="NullToVisibilityConverterKey"/>
+        <!-- עוטף אובייקט יחיד ל־IEnumerable כדי שאפשר יהיה לקשור ל־ItemsControl -->
+        <local:SingleToCollectionConverter x:Key="SingleToCollectionConverterKey"/>
 
+        <!-- סגנון כפתור ראשי לכל הפרויקט -->
         <Style x:Key="MainButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#E0F0FF"/>
             <Setter Property="BorderBrush" Value="#007ACC"/>

@@ -1,12 +1,151 @@
 ﻿<Window x:Class="PL.Call.CallWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:pl="clr-namespace:PL"
         xmlns:local="clr-namespace:PL.Call"
-        mc:Ignorable="d"
-        Title="CallWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="ניהול קריאה בודדת"
+        Height="650" Width="700"
+        WindowStartupLocation="CenterScreen"
+        DataContext="{Binding Call, RelativeSource={RelativeSource Self}}">
+
+    <Window.Resources>
+        <local:IdToButtonTextConverter x:Key="IdToButtonTextConverter"/>
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- שדות עיקריים -->
+            <RowDefinition Height="Auto"/>
+            <!-- היסטוריית הקצאות -->
+            <RowDefinition Height="*"/>
+            <!-- מרווח לשדות נוספים -->
+            <RowDefinition Height="Auto"/>
+            <!-- לחצנים בתחתית -->
+        </Grid.RowDefinitions>
+
+        <!-- שדה ת.ז. קריאה (Id) – לקריאה בלבד -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,5">
+            <TextBlock Text="ת.ז. קריאה:" Width="140" VerticalAlignment="Center"/>
+            <TextBox Text="{Binding Id}" Width="200" IsEnabled="False"/>
+        </StackPanel>
+
+        <!-- שדה תיאור (Description) – פעיל רק אם Status == Open או OpenAtRisk -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,35,0,5">
+            <TextBlock Text="תיאור:" Width="140" VerticalAlignment="Center"/>
+            <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" Width="400">
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
+                        <Setter Property="IsEnabled" Value="False"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Status}" Value="Open">
+                                <Setter Property="IsEnabled" Value="True"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Status}" Value="OpenAtRisk">
+                                <Setter Property="IsEnabled" Value="True"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+        </StackPanel>
+
+        <!-- שדה סוג קריאה (CallType) – ComboBox, פעיל רק אם Status == Open או OpenAtRisk -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,65,0,5">
+            <TextBlock Text="סוג קריאה:" Width="140" VerticalAlignment="Center"/>
+            <ComboBox SelectedItem="{Binding Type, UpdateSourceTrigger=PropertyChanged}" Width="200">
+                <ComboBox.ItemsSource>
+                    <pl:CallTypesCollection/>
+                </ComboBox.ItemsSource>
+                <ComboBox.Style>
+                    <Style TargetType="ComboBox">
+                        <Setter Property="IsEnabled" Value="False"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Status}" Value="Open">
+                                <Setter Property="IsEnabled" Value="True"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Status}" Value="OpenAtRisk">
+                                <Setter Property="IsEnabled" Value="True"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ComboBox.Style>
+            </ComboBox>
+        </StackPanel>
+
+        <!-- שדה כתובת (Address) – פעיל רק אם Status == Open או OpenAtRisk -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,95,0,5">
+            <TextBlock Text="כתובת:" Width="140" VerticalAlignment="Center"/>
+            <TextBox Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}" Width="400">
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
+                        <Setter Property="IsEnabled" Value="False"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Status}" Value="Open">
+                                <Setter Property="IsEnabled" Value="True"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Status}" Value="OpenAtRisk">
+                                <Setter Property="IsEnabled" Value="True"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+        </StackPanel>
+
+        <!-- שדה זמן פתיחה (OpenTime) – לקריאה בלבד -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,125,0,5">
+            <TextBlock Text="זמן פתיחה:" Width="140" VerticalAlignment="Center"/>
+            <TextBox Text="{Binding OpenTime, StringFormat=G}" Width="200" IsEnabled="False"/>
+        </StackPanel>
+
+        <!-- שדה זמן מקסימום לסיום (MaxTimeToFinish) – פעיל רק אם Status == InProgress או InProgressAtRisk -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,155,0,5">
+            <TextBlock Text="זמן מקסימום לסיום (דק'):" Width="200" VerticalAlignment="Center"/>
+            <TextBox Text="{Binding MaxTimeToFinish, UpdateSourceTrigger=PropertyChanged}" Width="100">
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
+                        <Setter Property="IsEnabled" Value="False"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Status}" Value="InProgress">
+                                <Setter Property="IsEnabled" Value="True"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Status}" Value="InProgressAtRisk">
+                                <Setter Property="IsEnabled" Value="True"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+        </StackPanel>
+
+        <!-- היסטוריית הקצאות – מופיעה תמיד, גם אם אין פריטים -->
+        <GroupBox Grid.Row="1" Header="היסטוריית הקצאות" Margin="0,195,0,5">
+            <DataGrid ItemsSource="{Binding Assignments}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="True"
+                      Height="150">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="מתנדב" Binding="{Binding VolunteerName}" Width="200"/>
+                    <DataGridTextColumn Header="זמן הקצאה" Binding="{Binding AssignedTime}" Width="150"/>
+                    <DataGridTextColumn Header="סטטוס בהקצאה" Binding="{Binding AssignmentStatus}" Width="120"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </GroupBox>
+
+        <!-- לחצנים בתחתית – הוסף/עדכן + סגור -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
+            <Button x:Name="btnAddUpdate"
+                    Content="{Binding Id, Converter={StaticResource IdToButtonTextConverter}}"
+                    Width="100" Margin="0,0,10,0"
+                    Click="btnAddUpdate_Click"/>
+            <Button x:Name="btnCancel"
+                    Content="סגור"
+                    Width="100"
+                    Click="btnCancel_Click"/>
+        </StackPanel>
     </Grid>
 </Window>

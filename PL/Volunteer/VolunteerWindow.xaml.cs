@@ -36,6 +36,7 @@ namespace PL.Volunteer
             Volunteer = new BO.Volunteer();    // אובייקט חדש
             ButtonText = "הוסף";
             InitializeComponent();
+            DataContext = this;  // ← שורה חדשה שפותחת את ה־DataContext ל־this
 
             this.Loaded += VolunteerWindow_Loaded;
             this.Closed += VolunteerWindow_Closed;
@@ -48,6 +49,7 @@ namespace PL.Volunteer
             Volunteer = s_bl.Volunteer.Read(volunteerId)!;   // קריאה ראשונית
             ButtonText = "עדכן";
             InitializeComponent();
+            DataContext = this;  // ← שורה חדשה
 
             this.Loaded += VolunteerWindow_Loaded;
             this.Closed += VolunteerWindow_Closed;
@@ -101,6 +103,12 @@ namespace PL.Volunteer
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
+        }
+
+        // 10. Handler לכפתור ביטול/סגירה (במידה וקיים XAML שמכוון לכפתור בשם btnCancel)
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }
