@@ -32,5 +32,13 @@ namespace PL
         IEnumerator IEnumerable.GetEnumerator() => s_values.GetEnumerator();
     }
 
+    public class VolunteerInLIstFieldsCollection : IEnumerable<VolunteerInLIstFields>
+    {
+        public static readonly IEnumerable<VolunteerInLIstFields> s_values =
+            (VolunteerInLIstFields[])Enum.GetValues(typeof(VolunteerInLIstFields));
+
+        public IEnumerator<VolunteerInLIstFields> GetEnumerator() => s_values.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => s_values.GetEnumerator();
+    }
 
 }

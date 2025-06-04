@@ -131,10 +131,7 @@
                             HorizontalAlignment="Center" 
                             VerticalAlignment="Top"
                             Margin="0,0,20,0">
-                    <TextBlock Text="דוחות וסטטיסטיקות"
-                               FontSize="18" FontWeight="Bold"
-                               Foreground="#007ACC"
-                               Margin="0,0,0,10"/>
+                   
                     <!-- ניתן למלא כאן בעתיד גרפים או טקסט סטטיסטי -->
                 </StackPanel>
 

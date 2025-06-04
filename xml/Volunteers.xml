@@ -1,19 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfVolunteer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Volunteer>
-    <Id>377999563</Id>
-    <FullName>John Doe</FullName>
-    <Phone>0501234567</Phone>
-    <Email>john@example.com</Email>
-    <CurrentAddress>Tel Aviv</CurrentAddress>
-    <Latitude>32.0853</Latitude>
-    <Longitude>34.7818</Longitude>
-    <Role>Manager</Role>
-    <IsActive>true</IsActive>
-    <MaxDistance>34</MaxDistance>
-    <DistanceType>Air</DistanceType>
-  </Volunteer>
-  <Volunteer>
     <Id>270483792</Id>
     <FullName>Jane Smith</FullName>
     <Phone>0529876543</Phone>
@@ -193,6 +180,20 @@
     <Role>Volunteer</Role>
     <IsActive>true</IsActive>
     <MaxDistance>10</MaxDistance>
+    <DistanceType>Air</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>377999563</Id>
+    <FullName>John Doe</FullName>
+    <Phone>0501234567</Phone>
+    <Email>john@example.com</Email>
+    <Password>1243b15c6670942bae2d8baea21ea64c8f39c326740c8386c1fbe9352be36119</Password>
+    <CurrentAddress>Tel Aviv</CurrentAddress>
+    <Latitude>32.0853</Latitude>
+    <Longitude>34.7818</Longitude>
+    <Role>Volunteer</Role>
+    <IsActive>true</IsActive>
+    <MaxDistance>37</MaxDistance>
     <DistanceType>Air</DistanceType>
   </Volunteer>
 </ArrayOfVolunteer>

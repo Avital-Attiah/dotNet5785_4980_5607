@@ -70,7 +70,7 @@
             <Label Grid.Row="0" Grid.Column="0" Content="ID:" Margin="0,5"/>
             <TextBox Grid.Row="0" Grid.Column="1"
                      Text="{Binding Volunteer.Id}"
-                     IsEnabled="False"
+                     IsEnabled="{Binding IsIdEnabled}"
                      Margin="5"/>
 
             <!-- FullName -->

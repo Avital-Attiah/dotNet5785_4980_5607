@@ -9,14 +9,6 @@
     <Status>CanceledByManager</Status>
   </Assignment>
   <Assignment>
-    <Id>2009</Id>
-    <CallId>1095</CallId>
-    <VolunteerId>385501370</VolunteerId>
-    <EntryTime>2025-06-04T08:16:00</EntryTime>
-    <CompletionTime>2025-06-04T09:22:00</CompletionTime>
-    <Status>Expired</Status>
-  </Assignment>
-  <Assignment>
     <Id>2013</Id>
     <CallId>1029</CallId>
     <VolunteerId>365467058</VolunteerId>
@@ -31,22 +23,6 @@
     <EntryTime>2025-06-03T18:57:00</EntryTime>
     <CompletionTime xsi:nil="true" />
     <Status>CanceledByVolunteer</Status>
-  </Assignment>
-  <Assignment>
-    <Id>2019</Id>
-    <CallId>1015</CallId>
-    <VolunteerId>385501370</VolunteerId>
-    <EntryTime>2025-06-03T23:24:00</EntryTime>
-    <CompletionTime>2025-06-04T00:39:00</CompletionTime>
-    <Status>Expired</Status>
-  </Assignment>
-  <Assignment>
-    <Id>2023</Id>
-    <CallId>1025</CallId>
-    <VolunteerId>312369715</VolunteerId>
-    <EntryTime>2025-06-04T05:40:00</EntryTime>
-    <CompletionTime>2025-06-04T06:36:00</CompletionTime>
-    <Status>Expired</Status>
   </Assignment>
   <Assignment>
     <Id>2025</Id>
@@ -217,22 +193,6 @@
     <Status>CanceledByVolunteer</Status>
   </Assignment>
   <Assignment>
-    <Id>2089</Id>
-    <CallId>1015</CallId>
-    <VolunteerId>211890752</VolunteerId>
-    <EntryTime>2025-06-03T23:36:00</EntryTime>
-    <CompletionTime>2025-06-04T00:56:00</CompletionTime>
-    <Status>Expired</Status>
-  </Assignment>
-  <Assignment>
-    <Id>2091</Id>
-    <CallId>1087</CallId>
-    <VolunteerId>265020194</VolunteerId>
-    <EntryTime>2025-06-04T10:40:00</EntryTime>
-    <CompletionTime>2025-06-04T12:06:00</CompletionTime>
-    <Status>Expired</Status>
-  </Assignment>
-  <Assignment>
     <Id>2093</Id>
     <CallId>1051</CallId>
     <VolunteerId>312369715</VolunteerId>
@@ -263,6 +223,46 @@
     <EntryTime>2025-06-03T01:49:00</EntryTime>
     <CompletionTime xsi:nil="true" />
     <Status>CanceledByVolunteer</Status>
+  </Assignment>
+  <Assignment>
+    <Id>2091</Id>
+    <CallId>1087</CallId>
+    <VolunteerId>265020194</VolunteerId>
+    <EntryTime>2025-06-04T10:40:00</EntryTime>
+    <CompletionTime>2025-06-04T12:06:00</CompletionTime>
+    <Status>Expired</Status>
+  </Assignment>
+  <Assignment>
+    <Id>2009</Id>
+    <CallId>1095</CallId>
+    <VolunteerId>385501370</VolunteerId>
+    <EntryTime>2025-06-04T08:16:00</EntryTime>
+    <CompletionTime>2025-06-04T09:22:00</CompletionTime>
+    <Status>Expired</Status>
+  </Assignment>
+  <Assignment>
+    <Id>2023</Id>
+    <CallId>1025</CallId>
+    <VolunteerId>312369715</VolunteerId>
+    <EntryTime>2025-06-04T05:40:00</EntryTime>
+    <CompletionTime>2025-06-04T06:36:00</CompletionTime>
+    <Status>Expired</Status>
+  </Assignment>
+  <Assignment>
+    <Id>2019</Id>
+    <CallId>1015</CallId>
+    <VolunteerId>385501370</VolunteerId>
+    <EntryTime>2025-06-03T23:24:00</EntryTime>
+    <CompletionTime>2025-06-04T00:39:00</CompletionTime>
+    <Status>Expired</Status>
+  </Assignment>
+  <Assignment>
+    <Id>2089</Id>
+    <CallId>1015</CallId>
+    <VolunteerId>211890752</VolunteerId>
+    <EntryTime>2025-06-03T23:36:00</EntryTime>
+    <CompletionTime>2025-06-04T00:56:00</CompletionTime>
+    <Status>Expired</Status>
   </Assignment>
   <Assignment>
     <Id>2003</Id>

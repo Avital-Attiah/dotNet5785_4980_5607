@@ -29,6 +29,9 @@ namespace PL.Volunteer
         // 3. שמירה של ה־ID כדי לדעת אם מדובר בעדכון או בהוספה
         private readonly int _volunteerId;
 
+        // ** פרופרטי חדש: יחזיר true אם אנחנו במצב הוספה (_volunteerId == 0), אחרת false **
+        public bool IsIdEnabled => _volunteerId == 0;
+
         // 4. Constructor למצב הוספה (ID = 0)
         public VolunteerWindow()
         {
