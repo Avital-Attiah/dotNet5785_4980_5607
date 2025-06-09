@@ -1,107 +1,84 @@
 ﻿<Window x:Class="PL.Volunteer.VolunteerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-         xmlns:local="clr-namespace:PL"
+        xmlns:local="clr-namespace:PL"
         Title="פרטי מתנדב"
-        Height="600" Width="400"
+        Height="700" Width="400"
         Background="#E8F6FF"
         WindowStartupLocation="CenterScreen"
         DataContext="{Binding Volunteer, RelativeSource={RelativeSource Self}}">
 
-    <!-- מגדירים את ה־Converters על מפתחות לשימוש ב־Visibility ו־ItemsSource -->
     <Window.Resources>
         <local:NullToVisibilityConverter x:Key="NullToVisibilityConverterKey"/>
         <local:SingleToCollectionConverter x:Key="SingleToCollectionConverterKey"/>
     </Window.Resources>
 
-    <!-- מסגרת חיצונית עגולה עם רקע לבן -->
     <Border CornerRadius="15" BorderBrush="#007ACC" BorderThickness="2"
             Background="White" Padding="20" Margin="20">
-
-        <!-- התוכן בתוך ה־Border -->
         <Grid Margin="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <!--  0 -->
                 <RowDefinition Height="Auto"/>
                 <!-- ID -->
-                <!--  1 -->
                 <RowDefinition Height="Auto"/>
                 <!-- FullName -->
-                <!--  2 -->
                 <RowDefinition Height="Auto"/>
                 <!-- Phone -->
-                <!--  3 -->
                 <RowDefinition Height="Auto"/>
                 <!-- Email -->
-                <!--  4 -->
                 <RowDefinition Height="Auto"/>
                 <!-- Address -->
-                <!--  5 -->
                 <RowDefinition Height="Auto"/>
                 <!-- Role -->
-                <!--  6 -->
                 <RowDefinition Height="Auto"/>
                 <!-- IsActive -->
-                <!--  7 -->
                 <RowDefinition Height="Auto"/>
                 <!-- MaxCallDistance -->
-                <!--  8 -->
                 <RowDefinition Height="Auto"/>
                 <!-- DistanceType -->
-                <!--  9 -->
                 <RowDefinition Height="Auto"/>
                 <!-- Password -->
-                <!-- 10 -->
                 <RowDefinition Height="Auto"/>
-                <!-- כותרת “קריאה בטיפול נוכחי” -->
-                <!-- 11 -->
+                <!-- Current Call Label -->
                 <RowDefinition Height="Auto"/>
-                <!-- פרטי CallInProgress -->
-                <!-- 12 -->
+                <!-- Current Call Details -->
                 <RowDefinition Height="Auto"/>
-                <!-- כפתור Add/Update -->
+                <!-- Update Button -->
+                <RowDefinition Height="Auto"/>
+                <!-- Finish Treatment Button -->
+                <RowDefinition Height="Auto"/>
+                <!-- Cancel Treatment Button -->
             </Grid.RowDefinitions>
 
             <!-- ID -->
             <Label Grid.Row="0" Grid.Column="0" Content="ID:" Margin="0,5"/>
-            <TextBox Grid.Row="0" Grid.Column="1"
-                     Text="{Binding Volunteer.Id}"
-                     IsEnabled="{Binding IsIdEnabled}"
-                     Margin="5"/>
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Volunteer.Id}" IsEnabled="{Binding IsIdEnabled}" Margin="5"/>
 
             <!-- FullName -->
             <Label Grid.Row="1" Grid.Column="0" Content="Full Name:" Margin="0,5"/>
-            <TextBox Grid.Row="1" Grid.Column="1"
-                     Text="{Binding Volunteer.FullName, Mode=TwoWay}"
-                     Margin="5"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Volunteer.FullName, Mode=TwoWay}" Margin="5"/>
 
             <!-- Phone -->
             <Label Grid.Row="2" Grid.Column="0" Content="Phone:" Margin="0,5"/>
-            <TextBox Grid.Row="2" Grid.Column="1"
-                     Text="{Binding Volunteer.Phone, Mode=TwoWay}"
-                     Margin="5"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Volunteer.Phone, Mode=TwoWay}" Margin="5"/>
 
             <!-- Email -->
             <Label Grid.Row="3" Grid.Column="0" Content="Email:" Margin="0,5"/>
-            <TextBox Grid.Row="3" Grid.Column="1"
-                     Text="{Binding Volunteer.Email, Mode=TwoWay}"
-                     Margin="5"/>
+            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Volunteer.Email, Mode=TwoWay}" Margin="5"/>
 
             <!-- Address -->
             <Label Grid.Row="4" Grid.Column="0" Content="Address:" Margin="0,5"/>
-            <TextBox Grid.Row="4" Grid.Column="1"
-                     Text="{Binding Volunteer.Address, Mode=TwoWay}"
-                     Margin="5"/>
+            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Volunteer.Address, Mode=TwoWay}" Margin="5"/>
 
             <!-- Role -->
             <Label Grid.Row="5" Grid.Column="0" Content="Role:" Margin="0,5"/>
             <ComboBox Grid.Row="5" Grid.Column="1"
                       ItemsSource="{StaticResource RolesCollectionKey}"
                       SelectedItem="{Binding Volunteer.Role, Mode=TwoWay}"
+                      IsEnabled="{Binding IsRoleEditable}"
                       Margin="5"/>
 
             <!-- IsActive -->
@@ -110,7 +87,6 @@
                       IsChecked="{Binding Volunteer.IsActive, UpdateSourceTrigger=PropertyChanged}"
                       IsEnabled="{Binding Path=CanDeactivate, Mode=OneWay}"
                       Margin="5"/>
-
 
             <!-- MaxCallDistance -->
             <Label Grid.Row="7" Grid.Column="0" Content="Max Call Distance:" Margin="0,5"/>
@@ -131,7 +107,7 @@
                      Text="{Binding Volunteer.Password, Mode=TwoWay}"
                      Margin="5"/>
 
-            <!-- ↓ כותרת “קריאה בטיפול נוכחי” (Grid.Row=10) ↓ -->
+            <!-- Current Call Label -->
             <TextBlock Grid.Row="10" Grid.ColumnSpan="2"
                        Text="קריאה בטיפול נוכחי"
                        FontSize="16" FontWeight="Bold"
@@ -139,28 +115,29 @@
                        Margin="0,10,0,5"
                        Visibility="{Binding Volunteer.CurrentCall, Converter={StaticResource NullToVisibilityConverterKey}}"/>
 
-            <!-- ↓ פרטי CallInProgress (Grid.Row=11) ↓ -->
+            <!-- Current Call Details -->
             <ItemsControl Grid.Row="11" Grid.ColumnSpan="2"
                           ItemsSource="{Binding Volunteer.CurrentCall, Converter={StaticResource SingleToCollectionConverterKey}}"
                           Margin="0,0,0,10">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="5,0,0,0">
-                            <TextBlock Text="{Binding Id, StringFormat=קוד קריאה: {0}}"/>
+                            <TextBlock Text="{Binding CurrentCall, StringFormat=סטטוסקריאה: {0}}" />
                             <TextBlock Text="{Binding Description, StringFormat=תיאור: {0}}"/>
                             <TextBlock Text="{Binding Status, StringFormat=סטטוס: {0}}"/>
-                            <TextBlock Text="{Binding Date, StringFormat=תאריך: {0:dd/MM/yyyy HH:mm}}"/>
-
-                            <!-- המרחק מהמתנדב -->
-                            <TextBlock
-                                Text="{Binding DistanceFromVolunteer,
-                                               StringFormat='מרחק מהמתנדב: {0} ק&quot;מ'}"/>
+                            <TextBlock Text="{Binding OpeningTime, StringFormat=נפתחה: {0:dd/MM/yyyy HH:mm}}"/>
+                            <!-- Distance TextBlock מתוקן -->
+                            <TextBlock>
+                                <Run Text="מרחק מהמתנדב: "/>
+                                <Run Text="{Binding DistanceFromVolunteer}"/>
+                                <Run Text=" ק״מ"/>
+                            </TextBlock>
                         </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <!-- ↓ כפתור Add/Update (Grid.Row=12) ↓ -->
+            <!-- Update Button -->
             <Button Grid.Row="12" Grid.ColumnSpan="2"
                     Content="{Binding ButtonText}"
                     Click="btnAddUpdate_Click"
@@ -169,6 +146,26 @@
                     HorizontalAlignment="Center"
                     Margin="0,10,0,0"
                     Style="{StaticResource MainButtonStyle}"/>
+
+            <!-- Finish Treatment Button -->
+            <Button Grid.Row="13" Grid.ColumnSpan="2"
+                    Content="סיום טיפול"
+                    Click="btnCompleteCall_Click"
+                    Width="120"
+                    Height="35"
+                    HorizontalAlignment="Center"
+                    Margin="0,5,0,0"
+                    Visibility="{Binding Volunteer.CurrentCall, Converter={StaticResource NullToVisibilityConverterKey}, ConverterParameter=Inverse}"/>
+
+            <!-- Cancel Treatment Button -->
+            <Button Grid.Row="14" Grid.ColumnSpan="2"
+                    Content="ביטול טיפול"
+                    Click="btnCancelCall_Click"
+                    Width="120"
+                    Height="35"
+                    HorizontalAlignment="Center"
+                    Margin="0,5,0,0"
+                    Visibility="{Binding Volunteer.CurrentCall, Converter={StaticResource NullToVisibilityConverterKey}, ConverterParameter=Inverse}"/>
 
         </Grid>
     </Border>

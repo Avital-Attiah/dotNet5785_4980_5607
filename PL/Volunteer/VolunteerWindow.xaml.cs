@@ -29,8 +29,14 @@ namespace PL.Volunteer
         // 3. שמירה של ה־ID כדי לדעת אם מדובר בעדכון או בהוספה
         private readonly int _volunteerId;
 
-        // ** פרופרטי חדש: יחזיר true אם אנחנו במצב הוספה (_volunteerId == 0), אחרת false **
+        // פרופרטי חדש: יחזיר true אם אנחנו במצב הוספה (_volunteerId == 0), אחרת false
         public bool IsIdEnabled => _volunteerId == 0;
+
+        // פרופרטי חדש: האם ניתן לערוך Role
+        public bool IsRoleEditable => Volunteer?.Role != BO.Role.Manager;
+
+        // פרופרטי חדש: האם ניתן לבטל פעיל (רק אם אין CurrentCall)
+        public bool CanDeactivate => Volunteer?.CurrentCall == null;
 
         // 4. Constructor למצב הוספה (ID = 0)
         public VolunteerWindow()
@@ -39,7 +45,7 @@ namespace PL.Volunteer
             Volunteer = new BO.Volunteer();    // אובייקט חדש
             ButtonText = "הוסף";
             InitializeComponent();
-            DataContext = this;  // ← שורה חדשה שפותחת את ה־DataContext ל־this
+            DataContext = this;
 
             this.Loaded += VolunteerWindow_Loaded;
             this.Closed += VolunteerWindow_Closed;
@@ -49,10 +55,10 @@ namespace PL.Volunteer
         public VolunteerWindow(int volunteerId)
         {
             _volunteerId = volunteerId;
-            Volunteer = s_bl.Volunteer.Read(volunteerId)!;   // קריאה ראשונית
+            Volunteer = s_bl.Volunteer.Read(volunteerId)!;
             ButtonText = "עדכן";
             InitializeComponent();
-            DataContext = this;  // ← שורה חדשה
+            DataContext = this;
 
             this.Loaded += VolunteerWindow_Loaded;
             this.Closed += VolunteerWindow_Closed;
@@ -62,7 +68,7 @@ namespace PL.Volunteer
         private void VolunteerObserver()
         {
             int id = Volunteer!.Id;
-            Volunteer = null;                              // כדי לגרום ל־Binding להתעדכן
+            Volunteer = null;
             Volunteer = s_bl.Volunteer.Read(id);
         }
 
@@ -108,10 +114,44 @@ namespace PL.Volunteer
             }
         }
 
-        // 10. Handler לכפתור ביטול/סגירה (במידה וקיים XAML שמכוון לכפתור בשם btnCancel)
+        // 10. Handler לכפתור ביטול/סגירה
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        // 11. Handler לכפתור סיום טיפול
+        private void btnCompleteCall_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                s_bl.Call.FinishCall(Volunteer.Id, Volunteer.CurrentCallId.Value);
+
+                MessageBox.Show("הטיפול הסתיים בהצלחה", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                VolunteerObserver();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"שגיאה: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // 12. Handler לכפתור ביטול טיפול
+        private void btnCancelCall_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                s_bl.Call.FinishCall(Volunteer.Id, Volunteer.CurrentCallId.Value);
+
+                MessageBox.Show("הטיפול בוטל", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                VolunteerObserver();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"שגיאה: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

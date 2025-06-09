@@ -47,7 +47,8 @@ namespace BO
        public int TotalCanceledCalls { get; set; }
        public int TotalExpiredCalls { get; set; }
        public CallProgress? CurrentCall { get; set; }
-        public override string ToString() => Tools.ToStringProperty(this);
+       public int? CurrentCallId { get; set; }
+       public override string ToString() => Tools.ToStringProperty(this);
     };
 
   

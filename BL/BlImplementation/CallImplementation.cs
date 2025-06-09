@@ -386,6 +386,7 @@ internal class CallImplementation : ICall
         }
     }
     
+
     
     public void UpdateCallDetails(BO.Call updateCallObj)
     {
@@ -415,5 +416,17 @@ internal class CallImplementation : ICall
             throw;
         }
     }
+    public void CancelAssignment(int callId)
+    {
+        // לוגיקה לביטול הקצאת קריאה
+        // לדוגמה: הסרת ההקצאה מהמאגר או עדכון סטטוס
+    }
+
+    public void SendAssignmentCancellationEmail(int callId)
+    {
+        // שליחת מייל במקרה של ביטול הקצאה
+        // אפשר להשאיר ריק אם לא בשימוש עדיין
+    }
+
 }
 

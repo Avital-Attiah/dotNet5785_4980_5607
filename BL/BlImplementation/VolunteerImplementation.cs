@@ -201,7 +201,9 @@ internal class VolunteerImplementation : IVolunteer
             TotalCompletedCalls = TotalCompletedCalls,
             TotalCanceledCalls = totalCancelledCalls,
             TotalExpiredCalls = totalExpiredSelectedCalls,
+            CurrentCallId = callInProgress?.CallId,
             CurrentCall = callInProgress?.Status
+
         };
     }
 

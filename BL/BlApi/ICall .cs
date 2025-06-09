@@ -45,6 +45,10 @@ namespace BlApi
 
         // Assigns a volunteer to handle a specific call
         void SelectCall(int volunteerId, int callId);
+
+        void CancelAssignment(int callId);
+
+        void SendAssignmentCancellationEmail(int callId);
     }
 
    
