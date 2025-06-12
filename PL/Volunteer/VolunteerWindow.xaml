@@ -78,7 +78,7 @@
             <ComboBox Grid.Row="5" Grid.Column="1"
                       ItemsSource="{StaticResource RolesCollectionKey}"
                       SelectedItem="{Binding Volunteer.Role, Mode=TwoWay}"
-                      IsEnabled="{Binding IsRoleEditable}"
+                      IsEnabled="True"
                       Margin="5"/>
 
             <!-- IsActive -->
@@ -126,7 +126,6 @@
                             <TextBlock Text="{Binding Description, StringFormat=תיאור: {0}}"/>
                             <TextBlock Text="{Binding Status, StringFormat=סטטוס: {0}}"/>
                             <TextBlock Text="{Binding OpeningTime, StringFormat=נפתחה: {0:dd/MM/yyyy HH:mm}}"/>
-                            <!-- Distance TextBlock מתוקן -->
                             <TextBlock>
                                 <Run Text="מרחק מהמתנדב: "/>
                                 <Run Text="{Binding DistanceFromVolunteer}"/>

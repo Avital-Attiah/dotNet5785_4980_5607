@@ -1,53 +1,49 @@
 ﻿using BlApi;
 using BO;
 using System;
+using System.Globalization;
 using System.Windows;
+using System.Windows.Data;
 
 namespace PL.Call
 {
-    /// <summary>
-    /// Interaction logic for CallWindow.xaml
-    /// </summary>
     public partial class CallWindow : Window
     {
         static readonly IBl s_bl = Factory.Get();
 
-        // DependencyProperty עבור אובייקט ה־Call שמוצג/נערך
         public BO.Call Call
         {
             get => (BO.Call)GetValue(CallProperty);
             set => SetValue(CallProperty, value);
         }
+
         public static readonly DependencyProperty CallProperty =
-            DependencyProperty.Register(
-                nameof(Call),
-                typeof(BO.Call),
-                typeof(CallWindow),
-                new PropertyMetadata(null)
-            );
+            DependencyProperty.Register(nameof(Call), typeof(BO.Call), typeof(CallWindow), new PropertyMetadata(null));
+
+        public string ButtonLabel => _callId == 0 ? "➕ הוספה" : "✏️ עדכון";
 
         private readonly int _callId;
 
-        // Constructor מצב הוספה
         public CallWindow()
         {
             _callId = 0;
-            Call = new BO.Call();
-            Call.Status = CallStatus.Open;
+            Call = new BO.Call
+            {
+                Status = CallStatus.Open,
+                OpenTime = DateTime.Now
+            };
             InitializeComponent();
-            DataContext = this; // ← שורה חיונית ל־Bindings ב־XAML
+            DataContext = this;
         }
 
-        // Constructor מצב עריכה (ID != 0)
         public CallWindow(int callId)
         {
             _callId = callId;
-            Call = s_bl.Call.Read(callId)!; // קריאה ראשונית ל־BL
+            Call = s_bl.Call.Read(callId);
             InitializeComponent();
-            DataContext = this; // ← שורה חיונית
+            DataContext = this;
         }
 
-        // Handler לכפתור Create/Update
         private void btnAddUpdate_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -57,28 +53,26 @@ namespace PL.Call
                 else
                     s_bl.Call.UpdateCallDetails(Call);
 
-                MessageBox.Show(
-                    $"{(_callId == 0 ? "הוספה" : "עדכון")} בוצע בהצלחה",
-                    "Success",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
-
-                this.Close();
+                MessageBox.Show("הפעולה בוצעה בהצלחה", "✔", MessageBoxButton.OK, MessageBoxImage.Information);
+                Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Error: {ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show($"שגיאה: {ex.Message}", "⚠", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // Handler לכפתור ביטול/סגירה
-        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        private void btnCancel_Click(object sender, RoutedEventArgs e) => Close();
+    }
+
+    public class IdToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            this.Close();
+            return (value is int id && id > 0) ? Visibility.Visible : Visibility.Collapsed;
         }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
     }
 }

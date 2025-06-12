@@ -49,7 +49,9 @@ namespace BlApi
         void CancelAssignment(int callId);
 
         void SendAssignmentCancellationEmail(int callId);
+
+        IEnumerable<ClosedCallInList> GetClosedCalls(int volunteerId);
     }
 
-   
+
 }

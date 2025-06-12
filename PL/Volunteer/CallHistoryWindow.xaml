@@ -1,0 +1,35 @@
+﻿<Window x:Class="PL.Volunteer.CallHistoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="היסטוריית קריאות" Height="450" Width="700"
+        FlowDirection="RightToLeft" WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="9*"/>
+            <ColumnDefinition Width="671*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- טבלת קריאות סגורות -->
+        <ListView x:Name="lvHistory" Grid.Row="0" Grid.ColumnSpan="2">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="מזהה" DisplayMemberBinding="{Binding Id}" Width="60"/>
+                    <GridViewColumn Header="סוג קריאה" DisplayMemberBinding="{Binding CallType}" Width="120"/>
+                    <GridViewColumn Header="כתובת" DisplayMemberBinding="{Binding FullAddress}" Width="200"/>
+                    <GridViewColumn Header="תוצאה" DisplayMemberBinding="{Binding CloseStatus}" Width="100"/>
+                    <GridViewColumn Header="תאריך סיום" DisplayMemberBinding="{Binding CloseDate}" Width="120"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <!-- כפתור סגור -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0" Grid.Column="1">
+            <Button Content="סגור" Width="80" Click="btnClose_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

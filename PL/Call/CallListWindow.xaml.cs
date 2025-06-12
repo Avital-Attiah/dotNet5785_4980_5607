@@ -1,137 +1,91 @@
-﻿using BlApi;
-using BO;
-using System.Collections.Generic;
+﻿using System.ComponentModel;
 using System.Windows;
-using System.Windows.Input;
-using System.ComponentModel;
+using System.Windows.Controls;
 using System.Windows.Data;
+using BO;
 
 namespace PL.Call
 {
     public partial class CallListWindow : Window
     {
-        static readonly IBl s_bl = Factory.Get();
-
         private ICollectionView _callsView;
 
         public CallListWindow()
         {
             InitializeComponent();
-            DataContext = this;
-
             LoadCalls();
         }
 
-        public IEnumerable<CallInList> CallList
-        {
-            get => (IEnumerable<CallInList>)GetValue(CallListProperty);
-            set => SetValue(CallListProperty, value);
-        }
-
-        public static readonly DependencyProperty CallListProperty =
-            DependencyProperty.Register(nameof(CallList), typeof(IEnumerable<CallInList>), typeof(CallListWindow), new PropertyMetadata(null));
-
         private void LoadCalls()
         {
-            CallList = s_bl.Call.GetCallsList();
-            _callsView = CollectionViewSource.GetDefaultView(CallList);
+            var allCalls = BlApi.Factory.Get().Call.GetCallsList();
+            _callsView = CollectionViewSource.GetDefaultView(allCalls);
             dgCalls.ItemsSource = _callsView;
         }
 
-        private void btnBack_Click(object sender, RoutedEventArgs e)
+        private void cbStatusFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            this.Close();
+            if (_callsView == null) return;
+            string selected = (cbStatusFilter.SelectedItem as ComboBoxItem)?.Content.ToString();
+            _callsView.Filter = c => selected == "הכל" || ((CallInList)c).Status.ToString() == selected;
         }
 
-        private void DeleteCall_Click(object sender, RoutedEventArgs e)
+        private void cbSortField_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (dgCalls.SelectedItem is CallInList selected)
+            if (_callsView == null) return;
+            _callsView.SortDescriptions.Clear();
+            string selected = (cbSortField.SelectedItem as ComboBoxItem)?.Content.ToString();
+            switch (selected)
             {
-                var result = MessageBox.Show($"האם אתה בטוח שברצונך למחוק את הקריאה {selected.Id}?", "אישור מחיקה", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
-                if (result == MessageBoxResult.Yes)
-                {
-                    try
-                    {
-                        s_bl.Call.DeleteCall((int)selected.Id);
-                        MessageBox.Show("הקריאה נמחקה בהצלחה.", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
-                        LoadCalls();
-                    }
-                    catch (System.Exception ex)
-                    {
-                        MessageBox.Show($"שגיאה במחיקת הקריאה: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
+                case "סטטוס":
+                    _callsView.SortDescriptions.Add(new SortDescription(nameof(CallInList.Status), ListSortDirection.Ascending));
+                    break;
+                case "תאריך פתיחה":
+                    _callsView.SortDescriptions.Add(new SortDescription(nameof(CallInList.OpenTime), ListSortDirection.Ascending));
+                    break;
+                case "סוג קריאה":
+                    _callsView.SortDescriptions.Add(new SortDescription(nameof(CallInList.CallType), ListSortDirection.Ascending));
+                    break;
+                case "מספר הקצאות":
+                    _callsView.SortDescriptions.Add(new SortDescription(nameof(CallInList.AssignmentsCount), ListSortDirection.Descending));
+                    break;
             }
         }
 
-        private void CancelAssignment_Click(object sender, RoutedEventArgs e)
+        private void cbGroupField_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (dgCalls.SelectedItem is CallInList selected)
+            if (_callsView == null) return;
+            _callsView.GroupDescriptions.Clear();
+            string selected = (cbGroupField.SelectedItem as ComboBoxItem)?.Content.ToString();
+            switch (selected)
             {
-                var result = MessageBox.Show($"האם אתה בטוח שברצונך לבטל את ההקצאה לקריאה {selected.Id}?", "אישור ביטול הקצאה", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-                if (result == MessageBoxResult.Yes)
-                {
-                    try
-                    {
-                        s_bl.Call.CancelAssignment((int)selected.Id);
-                        // מותר להשאיר פה שליחה של מייל אם כבר יש פונקציה — אפשר גם להסיר אם רוצים לפי דרישה
-                        // s_bl.Call.SendAssignmentCancellationEmail((int)selected.Id);
-                        MessageBox.Show("ההקצאה בוטלה בהצלחה.", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
-                        LoadCalls();
-                    }
-                    catch (System.Exception ex)
-                    {
-                        MessageBox.Show($"שגיאה בביטול ההקצאה: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
+                case "סטטוס":
+                    _callsView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CallInList.Status)));
+                    break;
+                case "סוג קריאה":
+                    _callsView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CallInList.CallType)));
+                    break;
             }
         }
 
         private void btnAddCall_Click(object sender, RoutedEventArgs e)
         {
-            var win = new CallWindow()
-            {
-                Owner = this,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
-            };
-            win.ShowDialog();
+            new CallWindow().ShowDialog();
             LoadCalls();
         }
 
-        private void dgCalls_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void btnBack_Click(object sender, RoutedEventArgs e) => Close();
+
+        private void dgCalls_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (dgCalls.SelectedItem is CallInList selected)
+            if (dgCalls.SelectedItem is CallInList selectedCall)
             {
-                var win = new CallWindow()
-                {
-                    Owner = this,
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner
-                };
-                win.ShowDialog();
+                new CallWindow(selectedCall.CallId).ShowDialog();
                 LoadCalls();
             }
         }
 
-        private void cbStatusFilter_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            if (_callsView == null) return;
-
-            string selectedStatus = (cbStatusFilter.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Content as string;
-
-            if (selectedStatus == "הכל")
-            {
-                _callsView.Filter = null;
-            }
-            else
-            {
-                _callsView.Filter = item =>
-                {
-                    var call = item as CallInList;
-                    return call != null && call.Status.ToString() == selectedStatus;
-                };
-            }
-        }
+        private void DeleteCall_Click(object sender, RoutedEventArgs e) { /* לפי תנאים */ }
+        private void CancelAssignment_Click(object sender, RoutedEventArgs e) { /* לפי תנאים */ }
     }
 }

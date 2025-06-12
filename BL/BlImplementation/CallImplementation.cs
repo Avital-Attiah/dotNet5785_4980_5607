@@ -428,5 +428,35 @@ internal class CallImplementation : ICall
         // אפשר להשאיר ריק אם לא בשימוש עדיין
     }
 
+    public IEnumerable<ClosedCallInList> GetClosedCalls(int volunteerId)
+    {
+        var assignments = _dal.Assignment.ReadAll(a =>
+            a.VolunteerId == volunteerId && a.CompletionTime != null
+        );
+
+        var closedCalls = assignments
+            .Select(a =>
+            {
+                var call = _dal.Call.Read(a.CallId);
+                if (call == null) return null;
+
+                return new ClosedCallInList
+                {
+                    Id = call.Id,
+                    CallType = (CallType)call.CallType,
+                    FullAddress = call.FullAddress,
+                    OpenTime = call.OpenTime,
+                    StartHandlingTime = a.EntryTime,
+                    EndHandlingTime = a.CompletionTime,
+                    ClosureType = (ClosureType?)a.Status
+                };
+            })
+            .Where(c => c != null)
+            .ToList();
+
+        return closedCalls!;
+    }
+
+
 }
 

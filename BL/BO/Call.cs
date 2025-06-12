@@ -1,40 +1,30 @@
-﻿using BO;
-using Helpers;
+﻿using Helpers;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BO
 {
     public class Call
     {
-        /// <summary>
-        /// Represents a logical data entity for a call, including details such as 
-        /// its unique identifier, type, address, description, status, and a list of assignments.
-        /// </summary>
-        /// <param name="Id">Unique identifier for the call (cannot be null).</param>
-        /// <param name="CallType">Type of the call (e.g., Regular or Emergency) (cannot be null).</param>
-        /// <param name="Description">A descriptive text about the call (optional, can be null).</param>
-        /// <param name="FullAddress">Full address of the call (cannot be null).</param>
-        /// <param name="Latitude">Latitude of the call's location (cannot be null).</param>
-        /// <param name="Longitude">Longitude of the call's location (cannot be null).</param>
-        /// <param name="OpenTime">The time the call was opened (cannot be null).</param>
-        /// <param name="MaxCompletionTime">The maximum time allowed for the call's completion (optional, can be null).</param>
-        /// <param name="Status">The current status of the call (cannot be null).</param>
-        /// <param name="Assignments">A list of call assignments related to this call (optional, can be null).</param>
+        public int Id { get; init; }
 
-        public int Id { get; init; } // Non-nullable
-        public CallType CallType { get; set; } // ENUM, non-nullable
-        public string? Description { get; set; } // Nullable
-        public string FullAddress { get; set; } // Non-nullable
-        public double Latitude { get; set; } // Non-nullable
-        public double Longitude { get; set; } // Non-nullable
-        public DateTime OpenTime { get; init; } // Non-nullable, set once
-        public DateTime? MaxCompletionTime { get; set; } // Nullable
-        public CallStatus Status { get; set; } // ENUM, non-nullable
-        public List<CallAssignInList>? ListAssignments { get; set; } // Nullable if no assignments exist
+        public CallType CallType { get; set; } // סוג הקריאה
+        public string FullAddress { get; set; } // כתובת מלאה
+        public string? Address { get; set; } // ✅ כתובת נוספת לצורך תצוגה
+        public string? Description { get; set; } // תיאור מילולי
+        public string? Type { get; set; } // ✅ סוג נוסף לצורך binding ב־XAML
+
+        public DateTime OpenTime { get; set; } // מתי נפתחה הקריאה
+        public DateTime? MaxCompletionTime { get; set; } // זמן מקסימלי לסיום
+        public DateTime? MaxTimeToFinish { get; set; } // ✅ תאום לשם אחר שמופיע ב־XAML
+
+        public CallStatus Status { get; set; }
+
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+
+        public List<CallAssignInList>? ListAssignments { get; set; }
+
         public override string ToString() => Tools.ToStringProperty(this);
     }
 }

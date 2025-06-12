@@ -42,10 +42,9 @@ namespace PL.Volunteer
 
             if (volunteer != null)
             {
-                // 3. במקום IsManager(), נשווה את volunteer.Role לערך Role.Manager
+                // 3. בדיקת תפקיד
                 if (volunteer.Role == Role.Manager)
                 {
-                    // בחרת מנהל – תן למנהל לבחור מסך ניהול או מסך מתנדב
                     var result = MessageBox.Show(
                         "שלום מנהל!\n\nהאם תרצה להיכנס למסך ניהול ראשי?",
                         "בחירת מסך",
@@ -54,7 +53,6 @@ namespace PL.Volunteer
 
                     if (result == MessageBoxResult.Yes)
                     {
-                        // כניסה למסך הניהול הראשי (MainWindow)
                         var adminWin = new MainWindow();
                         adminWin.Show();
                         this.Close();
@@ -62,31 +60,26 @@ namespace PL.Volunteer
                     }
                     else
                     {
-                        // כניסה למסך המתנדב (VolunteerWindow) כמתנדב מנהל
-                        var volWin = new VolunteerWindow(userId)
-                        {
-                            Owner = this,
-                            WindowStartupLocation = WindowStartupLocation.CenterOwner
-                        };
-                        volWin.ShowDialog();
+                        // מנהל בוחר להיכנס כמתנדב → שולח ל־VolunteerMainWindow
+                        var volMainWin = new VolunteerMainWindow(userId);
+                        volMainWin.Show();
+                        this.Close();
                         return;
                     }
                 }
                 else
                 {
-                    // 4. מתנדב רגיל – נכנס ישר למסך המתנדב (VolunteerWindow או Dashboard)
-                    var volWin = new VolunteerWindow(userId)
-                    {
-                        Owner = this,
-                        WindowStartupLocation = WindowStartupLocation.CenterOwner
-                    };
-                    volWin.ShowDialog();
+                    // מתנדב רגיל → ישר ל־VolunteerMainWindow
+                    var volMainWin = new VolunteerMainWindow(userId);
+                    volMainWin.Show();
+                    this.Close();
                     return;
                 }
             }
 
-            // 5. אם לא נמצא Volunteer, אין צורך בבדיקת Manager נפרד
+            // 4. לא נמצא מתנדב
             MessageBox.Show("משתמש לא נמצא במערכת.", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+
     }
 }

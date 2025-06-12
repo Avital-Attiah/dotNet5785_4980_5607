@@ -175,7 +175,11 @@ internal class VolunteerImplementation : IVolunteer
                 OpeningTime = doCall.OpenTime,
                 StartHandlingTime = doAssignment.EntryTime,
                 DistanceFromVolunteer = CallManager.CalculateDistance(id, doCall.Latitude, doCall.Longitude),
-                Status = CallManager.GetStatusCall(doAssignment.CallId) == BO.CallStatus.InProgress ? BO.CallProgress.InTreatment : BO.CallProgress.AtRisk
+                Status = CallManager.GetStatusCall(doAssignment.CallId) switch
+                {
+                    BO.CallStatus.InProgress or BO.CallStatus.InProgressAtRisk => BO.CallProgress.InTreatment,
+                    _ => BO.CallProgress.AtRisk
+                }
             };
         }
         else
@@ -201,9 +205,7 @@ internal class VolunteerImplementation : IVolunteer
             TotalCompletedCalls = TotalCompletedCalls,
             TotalCanceledCalls = totalCancelledCalls,
             TotalExpiredCalls = totalExpiredSelectedCalls,
-            CurrentCallId = callInProgress?.CallId,
-            CurrentCall = callInProgress?.Status
-
+            CurrentCall = callInProgress
         };
     }
 
