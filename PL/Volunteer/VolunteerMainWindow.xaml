@@ -2,75 +2,88 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="מסך מתנדב ראשי" Height="650" Width="700"
-        FlowDirection="RightToLeft" WindowStartupLocation="CenterScreen">
+        FlowDirection="RightToLeft" WindowStartupLocation="CenterScreen"
+        Background="#DFF6FB">
+    <!-- תכלת מאוד בהיר ברקע הכללי -->
 
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <!-- מסגרת בולטת מסביב -->
+    <Border BorderBrush="#219EBC" BorderThickness="3" CornerRadius="10" Padding="10" Margin="10" Background="White">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <!-- פרטי מתנדב -->
-        <StackPanel Margin="0 0 0 20">
-            <TextBlock Text="פרטי מתנדב" FontSize="20" FontWeight="Bold" Margin="0 0 0 10"/>
+            <!-- כותרת ראשית -->
+            <TextBlock Text="פרטי מתנדב"
+                       FontSize="22"
+                       FontWeight="Bold"
+                       Foreground="#0077B6"
+                       HorizontalAlignment="Center"
+                       Margin="0 0 0 10"/>
 
-            <StackPanel Orientation="Horizontal" Margin="0 5">
-                <Label Content="ת.ז:" Width="120"/>
-                <TextBox x:Name="txtId" Width="150" IsReadOnly="True" Text="{Binding Id}"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal" Margin="0 5">
-                <Label Content="שם מלא:" Width="120"/>
-                <TextBox Width="200" Text="{Binding FullName}"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal" Margin="0 5">
-                <Label Content="טלפון:" Width="120"/>
-                <TextBox Width="150" Text="{Binding Phone}"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal" Margin="0 5">
-                <Label Content="דוא-ל:" Width="120"/>
-                <TextBox Width="200" Text="{Binding Email}"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal" Margin="0 5">
-                <Label Content="כתובת:" Width="120"/>
-                <TextBox Width="300" Text="{Binding Address}"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal" Margin="0 5">
-                <Label Content="מרחק מרבי:" Width="120"/>
-                <TextBox Width="100" Text="{Binding MaxCallDistance}"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal" Margin="0 5">
-                <Label Content="תפקיד:" Width="120"/>
-                <TextBox x:Name="txtRole" Width="150" IsReadOnly="True" Text="{Binding Role}"/>
-            </StackPanel>
-
-            <CheckBox x:Name="chkIsActive" Content="פעיל" Margin="0 10"/>
-            <Button x:Name="btnUpdate" Content="עדכן פרטים" Width="120" Click="btnUpdate_Click" Margin="0 10"/>
-        </StackPanel>
-
-        <!-- קריאה בטיפול + מפה -->
-        <GroupBox Header="קריאה בטיפול" Grid.Row="1" Height="500">
-            <DockPanel Margin="10">
-                <StackPanel DockPanel.Dock="Top">
-                    <TextBox x:Name="txtCallDetails" Height="100" IsReadOnly="True" TextWrapping="Wrap" Margin="0 0 0 10"/>
-
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button x:Name="btnSelectCall" Content="בחירת קריאה" Width="110" Margin="5" Click="btnSelectCall_Click"/>
-                        <Button x:Name="btnFinishCall" Content="סיום טיפול" Width="110" Margin="5" Click="btnFinishCall_Click"/>
-                        <Button x:Name="btnCancelCall" Content="ביטול טיפול" Width="110" Margin="5" Click="btnCancelCall_Click"/>
-                        <Button x:Name="btnCallHistory" Content="היסטוריית קריאות" Width="130" Margin="5" Click="btnCallHistory_Click"/>
-                        <Button x:Name="btnClose" Content="סגור" Width="80" Margin="5" Click="btnClose_Click"/>
-                    </StackPanel>
+            <!-- פרטי מתנדב -->
+            <StackPanel Margin="0 10 0 20">
+                <!-- כל השדות שלך כאן בדיוק כמו קודם -->
+                <StackPanel Orientation="Horizontal" Margin="0 5">
+                    <Label Content="ת.ז:" Width="120" Foreground="#023E8A"/>
+                    <TextBox x:Name="txtId" Width="150" IsReadOnly="True" Text="{Binding Id}"
+                             Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 5">
+                    <Label Content="שם מלא:" Width="120" Foreground="#023E8A"/>
+                    <TextBox Width="200" Text="{Binding FullName}" Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 5">
+                    <Label Content="טלפון:" Width="120" Foreground="#023E8A"/>
+                    <TextBox Width="150" Text="{Binding Phone}" Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 5">
+                    <Label Content="דוא-ל:" Width="120" Foreground="#023E8A"/>
+                    <TextBox Width="200" Text="{Binding Email}" Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 5">
+                    <Label Content="כתובת:" Width="120" Foreground="#023E8A"/>
+                    <TextBox Width="300" Text="{Binding Address}" Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 5">
+                    <Label Content="מרחק מרבי:" Width="120" Foreground="#023E8A"/>
+                    <TextBox Width="100" Text="{Binding MaxCallDistance}" Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 5">
+                    <Label Content="תפקיד:" Width="120" Foreground="#023E8A"/>
+                    <TextBox x:Name="txtRole" Width="150" IsReadOnly="True" Text="{Binding Role}" Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5"/>
                 </StackPanel>
 
-                <!-- המפה תופיע מתחת לכפתורים -->
-                <WebBrowser x:Name="MapBrowser" Height="250" Margin="0,10,0,0"/>
-            </DockPanel>
-        </GroupBox>
-    </Grid>
+                <CheckBox x:Name="chkIsActive" Content="פעיל" Margin="0 10" Foreground="#0077B6"/>
+                <Button x:Name="btnUpdate" Content="עדכן פרטים" Width="120" Click="btnUpdate_Click" Margin="0 10"
+                        Background="#90E0EF" BorderBrush="#0077B6" Foreground="#023E8A"/>
+            </StackPanel>
+
+            <!-- קריאה בטיפול + מפה -->
+            <GroupBox Header="קריאה בטיפול" Grid.Row="1" Height="500" Foreground="#0077B6" BorderBrush="#0077B6">
+                <DockPanel Margin="10">
+                    <StackPanel DockPanel.Dock="Top">
+                        <TextBox x:Name="txtCallDetails" Height="100" IsReadOnly="True" TextWrapping="Wrap" Margin="0 0 0 10"
+                                 Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5"/>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button x:Name="btnSelectCall" Content="בחירת קריאה" Width="110" Margin="5" Click="btnSelectCall_Click"
+                                    Background="#ADE8F4" BorderBrush="#0096C7" Foreground="#023E8A"/>
+                            <Button x:Name="btnFinishCall" Content="סיום טיפול" Width="110" Margin="5" Click="btnFinishCall_Click"
+                                    Background="#ADE8F4" BorderBrush="#0096C7" Foreground="#023E8A"/>
+                            <Button x:Name="btnCancelCall" Content="ביטול טיפול" Width="110" Margin="5" Click="btnCancelCall_Click"
+                                    Background="#ADE8F4" BorderBrush="#0096C7" Foreground="#023E8A"/>
+                            <Button x:Name="btnCallHistory" Content="היסטוריית קריאות" Width="130" Margin="5" Click="btnCallHistory_Click"
+                                    Background="#ADE8F4" BorderBrush="#0096C7" Foreground="#023E8A"/>
+                            <Button x:Name="btnClose" Content="סגור" Width="80" Margin="5" Click="btnClose_Click"
+                                    Background="#CAF0F8" BorderBrush="#0077B6" Foreground="#023E8A"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <WebBrowser x:Name="MapBrowser" Height="250" Margin="0,10,0,0"/>
+                </DockPanel>
+            </GroupBox>
+        </Grid>
+    </Border>
 </Window>

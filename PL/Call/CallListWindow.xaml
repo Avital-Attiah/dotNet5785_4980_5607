@@ -5,84 +5,134 @@
         Title="ניהול קריאות"
         Height="650" Width="1000"
         WindowStartupLocation="CenterScreen"
+        Background="#DFF6FB"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
-    <DockPanel Margin="10">
-        <!-- תפריט צד של סינון / מיון / קיבוץ -->
-        <Border DockPanel.Dock="Right" Width="200" Background="#F0F0F0" Padding="10" CornerRadius="10" Margin="0,0,10,0">
-            <StackPanel>
-                <TextBlock Text="סינון לפי סטטוס" FontSize="14" FontWeight="Bold" Margin="0,0,0,5"/>
-                <ComboBox x:Name="cbStatusFilter" SelectionChanged="cbStatusFilter_SelectionChanged" FontSize="13" Height="28" Margin="0,0,0,15">
-                    <ComboBoxItem Content="הכל" IsSelected="True"/>
-                    <ComboBoxItem Content="Open"/>
-                    <ComboBoxItem Content="InProgress"/>
-                    <ComboBoxItem Content="Closed"/>
-                    <ComboBoxItem Content="Expired"/>
-                    <ComboBoxItem Content="OpenAtRisk"/>
-                    <ComboBoxItem Content="InProgressAtRisk"/>
-                </ComboBox>
+    <Border BorderBrush="#219EBC" BorderThickness="3" CornerRadius="10" Padding="10" Margin="10" Background="White">
+        <DockPanel>
 
-                <TextBlock Text=" מיין לפי" FontSize="14" FontWeight="Bold" Margin="0,0,0,5"/>
-                <ComboBox x:Name="cbSortField" SelectionChanged="cbSortField_SelectionChanged" FontSize="13" Height="28" Margin="0,0,0,15">
-                    <ComboBoxItem Content="ברירת מחדל"/>
-                    <ComboBoxItem Content="סטטוס"/>
-                    <ComboBoxItem Content="תאריך פתיחה"/>
-                    <ComboBoxItem Content="סוג קריאה"/>
-                    <ComboBoxItem Content="מספר הקצאות"/>
-                </ComboBox>
+            <!-- תפריט צד -->
+            <Border DockPanel.Dock="Right"
+                    Width="220"
+                    Background="#F8FBFD"
+                    BorderBrush="#A7D8F0"
+                    BorderThickness="1.5"
+                    Padding="10"
+                    CornerRadius="8"
+                    Margin="0,0,10,0">
+                <StackPanel>
+                    <TextBlock Text="סינון לפי סטטוס" FontSize="14" FontWeight="Bold" Foreground="#0077B6" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="cbStatusFilter"
+                              SelectionChanged="cbStatusFilter_SelectionChanged"
+                              FontSize="13" Height="28" Margin="0,0,0,15"
+                              Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5">
+                        <ComboBoxItem Content="הכל" IsSelected="True"/>
+                        <ComboBoxItem Content="Open"/>
+                        <ComboBoxItem Content="InProgress"/>
+                        <ComboBoxItem Content="Closed"/>
+                        <ComboBoxItem Content="Expired"/>
+                        <ComboBoxItem Content="OpenAtRisk"/>
+                        <ComboBoxItem Content="InProgressAtRisk"/>
+                    </ComboBox>
 
-                <TextBlock Text="קבץ לפי" FontSize="14" FontWeight="Bold" Margin="0,0,0,5"/>
-                <ComboBox x:Name="cbGroupField" SelectionChanged="cbGroupField_SelectionChanged" FontSize="13" Height="28">
-                    <ComboBoxItem Content="ללא קיבוץ" IsSelected="True"/>
-                    <ComboBoxItem Content="סטטוס"/>
-                    <ComboBoxItem Content="סוג קריאה"/>
-                </ComboBox>
-            </StackPanel>
-        </Border>
+                    <TextBlock Text="מיין לפי" FontSize="14" FontWeight="Bold" Foreground="#0077B6" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="cbSortField"
+                              SelectionChanged="cbSortField_SelectionChanged"
+                              FontSize="13" Height="28" Margin="0,0,0,15"
+                              Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5">
+                        <ComboBoxItem Content="ברירת מחדל"/>
+                        <ComboBoxItem Content="סטטוס"/>
+                        <ComboBoxItem Content="תאריך פתיחה"/>
+                        <ComboBoxItem Content="סוג קריאה"/>
+                        <ComboBoxItem Content="מספר הקצאות"/>
+                    </ComboBox>
 
-        <!-- טבלת הקריאות -->
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+                    <TextBlock Text="קבץ לפי" FontSize="14" FontWeight="Bold" Foreground="#0077B6" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="cbGroupField"
+                              SelectionChanged="cbGroupField_SelectionChanged"
+                              FontSize="13" Height="28"
+                              Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5">
+                        <ComboBoxItem Content="ללא קיבוץ" IsSelected="True"/>
+                        <ComboBoxItem Content="סטטוס"/>
+                        <ComboBoxItem Content="סוג קריאה"/>
+                    </ComboBox>
+                </StackPanel>
+            </Border>
 
-            <DataGrid x:Name="dgCalls" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
-                      MouseDoubleClick="dgCalls_MouseDoubleClick" Margin="0,0,0,10" RowHeight="35" FontSize="14"
-                      GridLinesVisibility="Horizontal" HeadersVisibility="Column">
+            <!-- טבלת הקריאות -->
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="ת.ז. קריאה" Binding="{Binding Id}" Width="80"/>
-                    <DataGridTextColumn Header="סטטוס" Binding="{Binding Status}" Width="100"/>
-                    <DataGridTextColumn Header="זמן שנותר (דק')" Binding="{Binding TimeRemaining}" Width="120"/>
-                    <DataGridTextColumn Header="זמן טיפול (דק')" Binding="{Binding TimeToComplete}" Width="120"/>
-                    <DataGridTextColumn Header="מתנדב אחרון" Binding="{Binding LastAssignedVolunteerName}" Width="150"/>
-                    <DataGridTextColumn Header="מספר הקצאות" Binding="{Binding AssignmentsCount}" Width="120"/>
+                <DataGrid x:Name="dgCalls"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          IsReadOnly="True"
+                          MouseDoubleClick="dgCalls_MouseDoubleClick"
+                          Margin="0,0,0,10"
+                          RowHeight="35"
+                          FontSize="14"
+                          GridLinesVisibility="Horizontal"
+                          HeadersVisibility="Column"
+                          BorderBrush="#A7D8F0" BorderThickness="1.5">
 
-                    <DataGridTemplateColumn Header="מחיקה" Width="80">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="מחק" Width="60" Height="24" FontSize="12" Click="DeleteCall_Click" IsEnabled="{Binding CanBeDeleted}"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ת.ז. קריאה" Binding="{Binding Id}" Width="80"/>
+                        <DataGridTextColumn Header="סטטוס" Binding="{Binding Status}" Width="100"/>
+                        <DataGridTextColumn Header="זמן שנותר (דק')" Binding="{Binding TimeRemaining}" Width="120"/>
+                        <DataGridTextColumn Header="זמן טיפול (דק')" Binding="{Binding TimeToComplete}" Width="120"/>
+                        <DataGridTextColumn Header="מתנדב אחרון" Binding="{Binding LastAssignedVolunteerName}" Width="150"/>
+                        <DataGridTextColumn Header="מספר הקצאות" Binding="{Binding AssignmentsCount}" Width="120"/>
 
-                    <DataGridTemplateColumn Header="בטל הקצאה" Width="100">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="בטל" Width="60" Height="24" FontSize="12" Click="CancelAssignment_Click" IsEnabled="{Binding CanCancelAssignment}"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+                        <DataGridTemplateColumn Header="מחיקה" Width="80">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="מחק" Width="60" Height="24" FontSize="12"
+                                            Click="DeleteCall_Click"
+                                            IsEnabled="{Binding CanBeDeleted}"
+                                            Background="#FFE3F1F1" BorderBrush="#A7D8F0"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
 
-            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-                <Button x:Name="btnAddCall" Content="➕ הוסף קריאה" Width="150" Height="40" FontSize="16" Background="#FF5CB85C"
-                        Foreground="White" FontWeight="Bold" Click="btnAddCall_Click" Margin="0,0,10,0"/>
-                <Button x:Name="btnBack" Content="⬅️ חזור" Width="120" Height="40" FontSize="16" Background="#FF337AB7"
-                        Foreground="White" FontWeight="Bold" Click="btnBack_Click"/>
-            </StackPanel>
-        </Grid>
-    </DockPanel>
+                        <DataGridTemplateColumn Header="בטל הקצאה" Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="בטל" Width="60" Height="24" FontSize="12"
+                                            Click="CancelAssignment_Click"
+                                            IsEnabled="{Binding CanCancelAssignment}"
+                                            Background="#FFE3F1F1" BorderBrush="#A7D8F0"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- כפתורים תחתונים -->
+                <!-- כפתורים תחתונים -->
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                    <Button x:Name="btnAddCall"
+            Content="הוסף קריאה"
+            Width="150" Height="40" FontSize="16" FontWeight="Bold"
+            Background="#E0F7FA"
+            BorderBrush="#0077B6"
+            Foreground="#0077B6"
+            Click="btnAddCall_Click"
+            Margin="0,0,10,0"/>
+
+                    <Button x:Name="btnBack"
+            Content=" חזור"
+            Width="120" Height="40" FontSize="16" FontWeight="Bold"
+            Background="#E0F7FA"
+            BorderBrush="#0077B6"
+            Foreground="#0077B6"
+            Click="btnBack_Click"/>
+                </StackPanel>
+
+            </Grid>
+        </DockPanel>
+    </Border>
 </Window>

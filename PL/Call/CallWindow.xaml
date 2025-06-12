@@ -5,77 +5,93 @@
         Title="ניהול קריאה"
         Height="650" Width="750"
         WindowStartupLocation="CenterScreen"
+        Background="#DFF6FB"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
     <Window.Resources>
         <local:IdToVisibilityConverter x:Key="IdToVisibilityConverter"/>
     </Window.Resources>
 
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <Border BorderBrush="#219EBC" BorderThickness="3" CornerRadius="10" Padding="10" Margin="10" Background="White">
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <!-- פרטי קריאה -->
-        <GroupBox Header="פרטי הקריאה" Grid.Row="0" Margin="0,0,0,10">
-            <Grid Margin="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+            <!-- פרטי קריאה -->
+            <GroupBox Header="פרטי הקריאה"
+                      Grid.Row="0"
+                      Foreground="#0077B6"
+                      BorderBrush="#219EBC"
+                      Margin="0,0,0,10">
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+                    <!-- ת.ז. קריאה -->
+                    <TextBlock Text="ת.ז. קריאה:" Grid.Row="0" Grid.Column="0" Margin="5"
+                               Visibility="{Binding Call.Id, Converter={StaticResource IdToVisibilityConverter}}"/>
+                    <TextBox Text="{Binding Call.Id}" Grid.Row="0" Grid.Column="1" IsEnabled="False" Margin="5"
+                             Visibility="{Binding Call.Id, Converter={StaticResource IdToVisibilityConverter}}"
+                             Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5"/>
 
-                <!-- ת.ז. קריאה – יוצג רק במסך עריכה -->
-                <TextBlock Text="ת.ז. קריאה:" Grid.Row="0" Grid.Column="0" Margin="5"
-                           Visibility="{Binding Call.Id, Converter={StaticResource IdToVisibilityConverter}}"/>
-                <TextBox Text="{Binding Call.Id}" Grid.Row="0" Grid.Column="1" IsEnabled="False" Margin="5"
-                         Visibility="{Binding Call.Id, Converter={StaticResource IdToVisibilityConverter}}"/>
+                    <!-- תיאור -->
+                    <TextBlock Text="תיאור:" Grid.Row="1" Grid.Column="0" Margin="5"/>
+                    <TextBox x:Name="txtDescription" Text="{Binding Call.Description}" Grid.Row="1" Grid.Column="1" Margin="5"
+                             Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5"/>
 
-                <!-- תיאור -->
-                <TextBlock Text="תיאור:" Grid.Row="1" Grid.Column="0" Margin="5"/>
-                <TextBox x:Name="txtDescription" Text="{Binding Call.Description}" Grid.Row="1" Grid.Column="1" Margin="5"/>
+                    <!-- סוג קריאה -->
+                    <TextBlock Text="סוג קריאה:" Grid.Row="2" Grid.Column="0" Margin="5"/>
+                    <ComboBox x:Name="cmbCallType"
+                              SelectedItem="{Binding Call.Type}"
+                              Grid.Row="2" Grid.Column="1" Margin="5"
+                              Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5">
+                        <ComboBox.ItemsSource>
+                            <x:Array Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                <sys:String>Medical</sys:String>
+                                <sys:String>Emotional</sys:String>
+                                <sys:String>Logistic</sys:String>
+                            </x:Array>
+                        </ComboBox.ItemsSource>
+                    </ComboBox>
 
-                <!-- סוג -->
-                <TextBlock Text="סוג קריאה:" Grid.Row="2" Grid.Column="0" Margin="5"/>
-                <ComboBox x:Name="cmbCallType" SelectedItem="{Binding Call.Type}" Grid.Row="2" Grid.Column="1" Margin="5">
-                    <ComboBox.ItemsSource>
-                        <x:Array Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
-                            <sys:String>Medical</sys:String>
-                            <sys:String>Emotional</sys:String>
-                            <sys:String>Logistic</sys:String>
-                        </x:Array>
-                    </ComboBox.ItemsSource>
-                </ComboBox>
+                    <!-- כתובת -->
+                    <TextBlock Text="כתובת:" Grid.Row="3" Grid.Column="0" Margin="5"/>
+                    <TextBox x:Name="txtAddress" Text="{Binding Call.Address}" Grid.Row="3" Grid.Column="1" Margin="5"
+                             Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5"/>
 
-                <!-- כתובת -->
-                <TextBlock Text="כתובת:" Grid.Row="3" Grid.Column="0" Margin="5"/>
-                <TextBox x:Name="txtAddress" Text="{Binding Call.Address}" Grid.Row="3" Grid.Column="1" Margin="5"/>
+                    <!-- זמן פתיחה -->
+                    <TextBlock Text="זמן פתיחה:" Grid.Row="4" Grid.Column="0" Margin="5"/>
+                    <TextBox Text="{Binding Call.OpenTime, StringFormat=G}" IsEnabled="False"
+                             Grid.Row="4" Grid.Column="1" Margin="5"
+                             Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5"/>
 
-                <!-- זמן פתיחה -->
-                <TextBlock Text="זמן פתיחה:" Grid.Row="4" Grid.Column="0" Margin="5"/>
-                <TextBox Text="{Binding Call.OpenTime, StringFormat=G}" IsEnabled="False" Grid.Row="4" Grid.Column="1" Margin="5"/>
+                    <!-- זמן מקסימלי -->
+                    <TextBlock Text="מקס' לסיום (דקות):" Grid.Row="5" Grid.Column="0" Margin="5"/>
+                    <TextBox x:Name="dpMaxCompletionTime" Text="{Binding Call.MaxTimeToFinish}" Grid.Row="5" Grid.Column="1" Margin="5"
+                             Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5"/>
+                </Grid>
+            </GroupBox>
 
-                <!-- זמן מקסימלי -->
-                <TextBlock Text="מקס' לסיום (דקות):" Grid.Row="5" Grid.Column="0" Margin="5"/>
-                <TextBox x:Name="dpMaxCompletionTime" Text="{Binding Call.MaxTimeToFinish}" Grid.Row="5" Grid.Column="1" Margin="5"/>
-            </Grid>
-        </GroupBox>
-
-        <!-- כפתורים -->
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
-            <Button x:Name="btnAddUpdate" Content="{Binding ButtonLabel}" Width="150" Margin="5" Click="btnAddUpdate_Click"/>
-            <Button Content="סגור" Width="100" Margin="5" Click="btnCancel_Click"/>
-        </StackPanel>
-    </Grid>
+            <!-- כפתורים -->
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
+                <Button x:Name="btnAddUpdate" Content="{Binding ButtonLabel}" Width="150" Margin="5" Click="btnAddUpdate_Click"
+                        Background="#E0F7FA" BorderBrush="#0077B6" Foreground="#0077B6"/>
+                <Button Content="סגור" Width="100" Margin="5" Click="btnCancel_Click"
+                        Background="#E0F7FA" BorderBrush="#0077B6" Foreground="#0077B6"/>
+            </StackPanel>
+        </Grid>
+    </Border>
 </Window>

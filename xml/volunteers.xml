@@ -196,4 +196,32 @@
     <MaxDistance>37</MaxDistance>
     <DistanceType>Air</DistanceType>
   </Volunteer>
+  <Volunteer>
+    <Id>328275607</Id>
+    <FullName>shira suli</FullName>
+    <Phone>0583210654</Phone>
+    <Email>chirsuli1@gmail.com</Email>
+    <Password>Shirasuli!321</Password>
+    <CurrentAddress>shaulzon</CurrentAddress>
+    <Latitude xsi:nil="true" />
+    <Longitude xsi:nil="true" />
+    <Role>Volunteer</Role>
+    <IsActive>true</IsActive>
+    <MaxDistance>5</MaxDistance>
+    <DistanceType>Air</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>15482979</Id>
+    <FullName>Ariel Suli</FullName>
+    <Phone>0506591904</Phone>
+    <Email>a@gmail.com</Email>
+    <Password>Ariel!321</Password>
+    <CurrentAddress>shaulzon</CurrentAddress>
+    <Latitude xsi:nil="true" />
+    <Longitude xsi:nil="true" />
+    <Role>Manager</Role>
+    <IsActive>true</IsActive>
+    <MaxDistance>3</MaxDistance>
+    <DistanceType>Air</DistanceType>
+  </Volunteer>
 </ArrayOfVolunteer>

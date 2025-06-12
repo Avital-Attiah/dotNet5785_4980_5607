@@ -463,17 +463,6 @@
     <MaxCompletionTime>2025-06-03T05:37:00</MaxCompletionTime>
   </Call>
   <Call>
-    <Id>1085</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Tel Aviv</FullAddress>
-    <OpenTime>2025-06-03T02:55:00</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Crisis intervention</Description>
-    <Latitude>32.0853</Latitude>
-    <Longitude>34.7818</Longitude>
-    <MaxCompletionTime>2025-06-03T04:21:00</MaxCompletionTime>
-  </Call>
-  <Call>
     <Id>1087</Id>
     <CallType>Emergency</CallType>
     <FullAddress>Jerusalem</FullAddress>
@@ -549,5 +538,16 @@
     <Latitude>31.7683</Latitude>
     <Longitude>35.2137</Longitude>
     <MaxCompletionTime>2025-06-03T06:23:00</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1085</Id>
+    <CallType>Emergency</CallType>
+    <FullAddress>Tel Aviv</FullAddress>
+    <OpenTime>2025-06-03T02:55:00</OpenTime>
+    <isEmergency>true</isEmergency>
+    <Description>Crisis intervention</Description>
+    <Latitude>32.0853</Latitude>
+    <Longitude>34.7818</Longitude>
+    <MaxCompletionTime>2025-06-03T04:21:00</MaxCompletionTime>
   </Call>
 </Calls>
