@@ -2,6 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:PL.Call"
+        xmlns:enums="clr-namespace:PL"
         Title="ניהול קריאה"
         Height="650" Width="750"
         WindowStartupLocation="CenterScreen"
@@ -10,6 +11,7 @@
 
     <Window.Resources>
         <local:IdToVisibilityConverter x:Key="IdToVisibilityConverter"/>
+        <local:MinutesConverter x:Key="MinutesConverter"/>
     </Window.Resources>
 
     <Border BorderBrush="#219EBC" BorderThickness="3" CornerRadius="10" Padding="10" Margin="10" Background="White">
@@ -55,21 +57,16 @@
                     <!-- סוג קריאה -->
                     <TextBlock Text="סוג קריאה:" Grid.Row="2" Grid.Column="0" Margin="5"/>
                     <ComboBox x:Name="cmbCallType"
-                              SelectedItem="{Binding Call.Type}"
-                              Grid.Row="2" Grid.Column="1" Margin="5"
-                              Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5">
-                        <ComboBox.ItemsSource>
-                            <x:Array Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
-                                <sys:String>Medical</sys:String>
-                                <sys:String>Emotional</sys:String>
-                                <sys:String>Logistic</sys:String>
-                            </x:Array>
-                        </ComboBox.ItemsSource>
-                    </ComboBox>
+          ItemsSource="{x:Static enums:CallTypesCollection.s_values}"
+          SelectedItem="{Binding Call.CallType, Mode=TwoWay}"
+          Grid.Row="2" Grid.Column="1" Margin="5"
+          Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5"/>
+
+                    
 
                     <!-- כתובת -->
                     <TextBlock Text="כתובת:" Grid.Row="3" Grid.Column="0" Margin="5"/>
-                    <TextBox x:Name="txtAddress" Text="{Binding Call.Address}" Grid.Row="3" Grid.Column="1" Margin="5"
+                    <TextBox x:Name="txtAddress" Text="{Binding Call.FullAddress}" Grid.Row="3" Grid.Column="1" Margin="5"
                              Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5"/>
 
                     <!-- זמן פתיחה -->
@@ -79,9 +76,12 @@
                              Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5"/>
 
                     <!-- זמן מקסימלי -->
-                    <TextBlock Text="מקס' לסיום (דקות):" Grid.Row="5" Grid.Column="0" Margin="5"/>
-                    <TextBox x:Name="dpMaxCompletionTime" Text="{Binding Call.MaxTimeToFinish}" Grid.Row="5" Grid.Column="1" Margin="5"
-                             Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5"/>
+                    <TextBlock Text="מקס' דקות לסיום:" Grid.Row="5" Grid.Column="0" Margin="5"/>
+                    <TextBox x:Name="txtMaxMinutes"
+                              Grid.Row="5" Grid.Column="1" Margin="5"
+                              Background="White" BorderBrush="#A7D8F0" BorderThickness="1.5"/>
+
+
                 </Grid>
             </GroupBox>
 

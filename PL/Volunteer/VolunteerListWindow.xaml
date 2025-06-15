@@ -98,21 +98,21 @@
                             <GridViewColumn Header="פעיל"
                                             DisplayMemberBinding="{Binding IsActive}"
                                             Width="60"/>
-                            <GridViewColumn Header="טיפולי קריאות"
-                                            DisplayMemberBinding="{Binding TotalHandledCalls}"
+                            <GridViewColumn Header="קריאות שהושלמו"
+                                            DisplayMemberBinding="{Binding TotalCompletedCalls}"
                                             Width="100"/>
                             <GridViewColumn Header="קריאות שבוטלו"
-                                            DisplayMemberBinding="{Binding TotalCancelledCalls}"
+                                            DisplayMemberBinding="{Binding TotalCanceledCalls}"
                                             Width="100"/>
                             <GridViewColumn Header="קריאות שפגו"
-                                            DisplayMemberBinding="{Binding TotalExpiredSelectedCalls}"
+                                            DisplayMemberBinding="{Binding TotalExpiredCalls}"
                                             Width="100"/>
                             <GridViewColumn Header="Call ID"
-                                            DisplayMemberBinding="{Binding CallId}"
+                                            DisplayMemberBinding="{Binding CurrentCallId}"
                                             Width="80"/>
-                            <GridViewColumn Header="סוג קריאה"
-                                            DisplayMemberBinding="{Binding CurrentCallType}"
-                                            Width="100"/>
+                            <!-- <GridViewColumn Header="סוג קריאה"
+                                            DisplayMemberBinding="{Binding CurrentCallId}"
+                                            Width="100"/> -->
                             <GridViewColumn Header="מחיקה" Width="60">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>

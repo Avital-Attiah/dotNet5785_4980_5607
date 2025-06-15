@@ -48,6 +48,17 @@ namespace PL.Call
         {
             try
             {
+                // חישוב MaxCompletionTime לפי מספר הדקות שהוזנו
+                if (int.TryParse(txtMaxMinutes.Text, out int minutes))
+                {
+                    Call.MaxCompletionTime = Call.OpenTime.AddMinutes(minutes);
+                }
+                else
+                {
+                    Call.MaxCompletionTime = null; // אם השדה ריק או לא מספר
+                }
+
+                // יצירה או עדכון
                 if (_callId == 0)
                     s_bl.Call.Create(Call);
                 else

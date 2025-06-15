@@ -7,7 +7,7 @@ namespace Helpers;
 /// <summary>
 /// Internal BL manager for all Application's Clock logic policies
 /// </summary>
-internal static class AdminManager //stage 4
+public static class AdminManager //stage 4
 {
     #region Stage 4
     private static readonly DalApi.IDal s_dal = DalApi.Factory.Get; //stage 4
@@ -70,7 +70,7 @@ internal static class AdminManager //stage 4
     /// Method to perform application's clock from any BL class as may be required
     /// </summary>
     /// <param name="newClock">updated clock value</param>
-    internal static void UpdateClock(DateTime newClock) //stage 4-7
+    public static void UpdateClock(DateTime newClock) //stage 4-7
     {
         // new Thread(() => { // stage 7 - not sure - still under investigation - see stage 7 instructions after it will be released        
         updateClock(newClock);//stage 4-6
@@ -104,7 +104,7 @@ internal static class AdminManager //stage 4
     private static volatile bool s_stop = false;
     private static readonly object mutex = new();
 
-    internal static void Start(int interval)
+    public static void Start(int interval)
     {
         lock (mutex)
             if (s_thread == null)
@@ -131,7 +131,7 @@ internal static class AdminManager //stage 4
     {
         while (!s_stop)
         {
-            UpdateClock(Now.AddMinutes(s_interval));
+            UpdateClock(Now.AddSeconds(s_interval));
 
             #region Stage 7
             //TO_DO:

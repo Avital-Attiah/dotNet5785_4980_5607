@@ -153,5 +153,11 @@ namespace PL.Volunteer
                 MessageBox.Show($"שגיאה: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (Volunteer != null)
+                Volunteer.Password = PasswordBox.Password;
+        }
+
     }
 }

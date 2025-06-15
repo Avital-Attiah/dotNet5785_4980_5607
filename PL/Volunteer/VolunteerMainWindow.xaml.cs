@@ -39,24 +39,29 @@ namespace PL.Volunteer
             txtRole.IsEnabled = false;
             txtId.IsEnabled = false;
 
-            ShowMap();
+           // ShowMap();
         }
 
-        private void ShowMap()
-        {
-            if (Volunteer.Latitude != 0 && Volunteer.Longitude != 0)
-            {
-                string mapUrl = $"https://maps.googleapis.com/maps/api/staticmap?size=600x300&markers=color:blue|{Volunteer.Latitude},{Volunteer.Longitude}";
+        //private async void ShowMap()
+        //{
+        //    try
+        //    {
+        //        if (Volunteer.Latitude != 0 && Volunteer.Longitude != 0)
+        //        {
+        //            string mapUrl = $"https://www.google.com/maps/search/?api=1&query={Volunteer.Latitude},{Volunteer.Longitude}";
 
-                if (Volunteer.CurrentCall is not null && Volunteer.CurrentCall.Latitude != 0 && Volunteer.CurrentCall.Longitude != 0)
-                {
-                    mapUrl += $"&markers=color:red|{Volunteer.CurrentCall.Latitude},{Volunteer.CurrentCall.Longitude}";
-                    mapUrl += $"&path=color:0x0000ff|weight:5|{Volunteer.Latitude},{Volunteer.Longitude}|{Volunteer.CurrentCall.Latitude},{Volunteer.CurrentCall.Longitude}";
-                }
+        //            await MapBrowser.EnsureCoreWebView2Async();
+        //            MapBrowser.CoreWebView2.Navigate(mapUrl);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("לא ניתן להציג את המפה:\n" + ex.Message,
+        //                        "שגיאה בטעינת מפה", MessageBoxButton.OK, MessageBoxImage.Warning);
+        //    }
+        //}
 
-                MapBrowser.Navigate(mapUrl);
-            }
-        }
+
 
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {

@@ -100,6 +100,7 @@ internal class AdminImplementation : IAdmin // Implements the IAdmin interface
     {
         throw new NotImplementedException();
     }
+  
     #endregion Stage 5
 
 }

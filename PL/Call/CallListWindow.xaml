@@ -80,7 +80,7 @@
                           BorderBrush="#A7D8F0" BorderThickness="1.5">
 
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ת.ז. קריאה" Binding="{Binding Id}" Width="80"/>
+                        <DataGridTextColumn Header="ת.ז. קריאה" Binding="{Binding CallId}" Width="80"/>
                         <DataGridTextColumn Header="סטטוס" Binding="{Binding Status}" Width="100"/>
                         <DataGridTextColumn Header="זמן שנותר (דק')" Binding="{Binding TimeRemaining}" Width="120"/>
                         <DataGridTextColumn Header="זמן טיפול (דק')" Binding="{Binding TimeToComplete}" Width="120"/>

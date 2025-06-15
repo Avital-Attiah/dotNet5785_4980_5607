@@ -45,4 +45,33 @@ namespace PL.Call
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
+    public class MinutesConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is DateTime maxTime)
+            {
+                DateTime openTime = DateTime.Now;
+                if (parameter is DateTime providedOpenTime)
+                    openTime = providedOpenTime;
+
+                return ((int)(maxTime - openTime).TotalMinutes).ToString();
+            }
+            return string.Empty;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (int.TryParse(value?.ToString(), out int minutes))
+            {
+                DateTime openTime = DateTime.Now;
+                if (parameter is DateTime providedOpenTime)
+                    openTime = providedOpenTime;
+
+                return openTime.AddMinutes(minutes);
+            }
+            return null;
+        }
+    }
+
 }

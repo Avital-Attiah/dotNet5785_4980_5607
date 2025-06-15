@@ -28,12 +28,13 @@ internal class CallImplementation : ICall
         var (Latitude, Longitude) = CallManager.GetCoordinates(boCall.FullAddress);
 
         // Create a DO.Call object from the BO.Call object
-        DO.Call doCall = new(boCall.Id, (DO.Enums.CallType)boCall.CallType, boCall.FullAddress, boCall.OpenTime, false, boCall.Description, boCall.Latitude, boCall.Longitude, boCall.MaxCompletionTime);
+        DO.Call doCall = new(0, (DO.Enums.CallType)boCall.CallType, boCall.FullAddress, boCall.OpenTime, false, boCall.Description, boCall.Latitude, boCall.Longitude, boCall.MaxCompletionTime);
 
         try
         {
             // Attempt to create the call in the data layer
             _dal.Call.Create(doCall);
+          
             CallManager.Observers.NotifyListUpdated(); //stage 5                                                    
 
 
@@ -44,6 +45,42 @@ internal class CallImplementation : ICall
             throw new BO.BlDoesNotExistException($"Call with ID={boCall.Id} already exists", ex);
         }
     }
+    //public void Create(BO.Call boCall)
+    //{
+    //    CallManager.ValidateCall(boCall);
+    //    var (Latitude, Longitude) = CallManager.GetCoordinates(boCall.FullAddress);
+
+    //    DO.Call doCall = new(
+    //        0, // נשלח 0 כדי שה-DAL ייצור ID
+    //        (DO.Enums.CallType)boCall.CallType,
+    //        boCall.FullAddress,
+    //        boCall.OpenTime,
+    //        false,
+    //        boCall.Description,
+    //        Latitude,
+    //        Longitude,
+    //        boCall.MaxCompletionTime
+    //    );
+
+    //    try
+    //    {
+    //        _dal.Call.Create(doCall);
+
+    //        // שליפת ה־ID החדש
+    //        var created = _dal.Call.ReadAll()
+    //            .FirstOrDefault(c => c.FullAddress == doCall.FullAddress && c.OpenTime == doCall.OpenTime);
+
+    //        //if (created is not null)
+    //        //    boCall.Id = created.Id;
+
+    //        CallManager.Observers.NotifyListUpdated();
+    //    }
+    //    catch (DO.DalAlreadyExistsException ex)
+    //    {
+    //        throw new BO.BlDoesNotExistException($"Call already exists", ex);
+    //    }
+    //}
+
 
     // Cancel an ongoing treatment (assignment)
     public void CancellationOfTreatment(int CancellerId, int assignmentId)
@@ -213,6 +250,7 @@ internal class CallImplementation : ICall
             string? volunteerName = doVolunteer != null ? doVolunteer.FullName : null;
             TimeSpan? completionTime = doAssignment != null && doAssignment.Status != null
             ? doAssignment.CompletionTime - doAssignment.EntryTime : null;
+            
             return new BO.CallInList
             {
                 Id = doAssignment == null ? null : doAssignment.Id,
@@ -241,6 +279,7 @@ internal class CallImplementation : ICall
         else
         {
             callsInList = callsInList.OrderByDescending(v => v.Id).ToList();
+
         }
 
         return callsInList;
@@ -265,6 +304,9 @@ internal class CallImplementation : ICall
             var closedCallsInList = doCallList.Select(item =>
             {
                 var doAssignment = _dal.Assignment.Read(a => a.CallId == item.Id && a.Status == DO.Enums.TreatmentStatus.CompletedOnTime);
+
+                if (doAssignment == null)
+                    throw new InvalidOperationException("No completed assignment found for the call.");
                 return new BO.ClosedCallInList
                 {
                     Id = item.Id,

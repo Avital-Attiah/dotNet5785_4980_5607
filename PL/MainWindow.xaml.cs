@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using PL.Volunteer;
 using PL.Call;
+using Helpers;
 
 namespace PL
 {
@@ -19,6 +20,7 @@ namespace PL
         {
             InitializeComponent();
             DataContext = this;
+
 
             // רישום לאירוע טעינת החלון וסגירתו
             this.Loaded += MainWindow_Loaded;
@@ -34,12 +36,15 @@ namespace PL
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             // אתחול ערכים ראשוניים מתוך ה-BL
+            Helpers.AdminManager.UpdateClock(DateTime.Now);
             CurrentTime = s_bl.Admin.GetClock();
             RiskRangeMinutes = (int)s_bl.Admin.GetRiskRange().TotalMinutes;
 
             // רישום משקיפים
             s_bl.Admin.AddClockObserver(ClockObserver);
             s_bl.Admin.AddConfigObserver(ConfigObserver);
+           Helpers.AdminManager.Start(1);
+          
         }
 
         // ===== אירוע סגירת החלון =====
@@ -53,13 +58,19 @@ namespace PL
         // ===== משקיף על שעון המערכת =====
         private void ClockObserver()
         {
-            CurrentTime = s_bl.Admin.GetClock();
+            Dispatcher.Invoke(() =>
+            {
+                CurrentTime = s_bl.Admin.GetClock();
+            });
         }
 
         // ===== משקיף על משתני תצורה =====
         private void ConfigObserver()
         {
-            RiskRangeMinutes = (int)s_bl.Admin.GetRiskRange().TotalMinutes;
+            Dispatcher.Invoke(() =>
+            {
+                RiskRangeMinutes = (int)s_bl.Admin.GetRiskRange().TotalMinutes;
+            });
         }
 
         // ===== DependencyProperty עבור CurrentTime =====
@@ -174,9 +185,14 @@ namespace PL
 
                 s_bl.Admin.ResetDB();
 
+
+
                 // סנכרון UI לאחר איפוס
-                CurrentTime = s_bl.Admin.GetClock();
-                RiskRangeMinutes = (int)s_bl.Admin.GetRiskRange().TotalMinutes;
+                Dispatcher.Invoke(() =>
+                {
+                    CurrentTime = s_bl.Admin.GetClock();
+                    RiskRangeMinutes = (int)s_bl.Admin.GetRiskRange().TotalMinutes;
+                });
             }
             finally
             {

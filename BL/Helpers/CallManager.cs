@@ -162,52 +162,69 @@ namespace Helpers
         /// <exception cref="BO.BlValidationException">Thrown when the address is invalid.</exception>
         public static (double Latitude, double Longitude) GetCoordinates(string address)
         {
+           
+            address = address?.Trim();
+
             if (string.IsNullOrWhiteSpace(address))
             {
-                throw new BO.BlValidationException("The address is invalid.");
+                throw new BO.BlValidationException("יש להזין כתובת.");
             }
 
-            string url = $"https://geocode.maps.co/search?q={Uri.EscapeDataString(address)}&api_key=679a8da6c01a6853187846vomb04142";
+            string url = $"https://nominatim.openstreetmap.org/search?q={Uri.EscapeDataString(address)}&format=json";
 
             try
             {
-                using (WebClient client = new WebClient())
+                using (HttpClient client = new HttpClient())
                 {
-                    string response = client.DownloadString(url);
+                    client.DefaultRequestHeaders.UserAgent.ParseAdd("VolunteerSystem/1.0");
 
-                    var result = JsonSerializer.Deserialize<GeocodeResponse[]>(response);
+                    var responseTask = client.GetAsync(url);
+                    responseTask.Wait();
+
+                    var response = responseTask.Result;
+
+                    if (!response.IsSuccessStatusCode)
+                        throw new BO.BlValidationException("קריאת המיקום נכשלה מהשרת.");
+
+                    var jsonTask = response.Content.ReadAsStringAsync();
+                    jsonTask.Wait();
+
+                    var json = jsonTask.Result;
+
+                    var result = JsonSerializer.Deserialize<NominatimResponse[]>(json);
 
                     if (result == null || result.Length == 0)
-                    {
-                        throw new BO.BlValidationException("The address is invalid.");
-                    }
+                        throw new BO.BlValidationException($"כתובת לא נמצאה: {address}");
 
-                    double latitude = double.Parse(result[0].Latitude);
-                    double longitude = double.Parse(result[0].Longitude);
+                    double latitude = double.Parse(result[0].Lat, CultureInfo.InvariantCulture);
+                    double longitude = double.Parse(result[0].Lon, CultureInfo.InvariantCulture);
 
-                    return (latitude, longitude); // Return the coordinates
+                    return (latitude, longitude);
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("Error retrieving coordinates" + ex.Message); // Error handling
+                throw new BO.BlValidationException($"שגיאה בעת קבלת קואורדינטות: {ex.Message}");
             }
         }
+
+
 
         /// <summary>
         /// Represents the structure of a geocoding response.
         /// </summary>
-        private class GeocodeResponse
+        private class NominatimResponse
         {
             [JsonPropertyName("lat")]
-            public string Latitude { get; set; } // Latitude as string
+            public string Lat { get; set; }
 
             [JsonPropertyName("lon")]
-            public string Longitude { get; set; } // Longitude as string
+            public string Lon { get; set; }
 
             [JsonPropertyName("display_name")]
-            public string DisplayName { get; set; } // Full address representation
+            public string DisplayName { get; set; }
         }
+
 
         #endregion
 
@@ -236,23 +253,30 @@ namespace Helpers
             }
 
             // Validation - FullAddressOfCall
-            if (!string.IsNullOrEmpty(boCall.FullAddress))
+            // Validation - FullAddressOfCall
+            if (string.IsNullOrWhiteSpace(boCall.FullAddress))
+            {
+                throw new BO.BlValidationException("Full address of the call is required.");
+            }
+            else
             {
                 try
                 {
                     var (latitude, longitude) = GetCoordinates(boCall.FullAddress);
                     boCall.Latitude = latitude;
-                    boCall.Longitude = longitude; // Set latitude and longitude from address
+                    boCall.Longitude = longitude;
                 }
-                catch (BO.BlValidationException)
+                //catch (BO.BlValidationException)
+                //{
+                //    throw new BO.BlValidationException($"Invalid address: {boCall.FullAddress}");
+                //}
+                catch (Exception ex)
                 {
-                    throw new BO.BlValidationException($"Invalid address: {boCall.FullAddress}");
+                    throw new BO.BlValidationException($"שגיאה בעת בדיקת הכתובת: {ex.Message}");
                 }
+
             }
-            else
-            {
-                throw new BO.BlValidationException("Full address of the call is required.");
-            }
+
 
             // Validation - Description
             if (string.IsNullOrEmpty(boCall.Description))

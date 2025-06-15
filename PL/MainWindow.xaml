@@ -79,7 +79,7 @@
                     </WrapPanel>
 
                     <!-- טווח זמן סיכון (RiskRangeMinutes) -->
-                    <TextBlock Text="טווח זמן סיכון (דקות)"
+                    <TextBlock Text="טווח זמן סיכון"
                                FontSize="16" FontWeight="Bold"
                                Foreground="#007ACC"
                                Margin="0,0,0,10"/>
