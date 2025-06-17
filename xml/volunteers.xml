@@ -212,14 +212,14 @@
   </Volunteer>
   <Volunteer>
     <Id>15482979</Id>
-    <FullName>Ariel Suli</FullName>
+    <FullName>Ariel!321</FullName>
     <Phone>0506591904</Phone>
     <Email>a@gmail.com</Email>
     <Password>Ariel!321</Password>
-    <CurrentAddress>shaulzon</CurrentAddress>
-    <Latitude xsi:nil="true" />
-    <Longitude xsi:nil="true" />
-    <Role>Manager</Role>
+    <CurrentAddress>Herzl St 15, Tel Aviv, Israel</CurrentAddress>
+    <Latitude>32.0819823</Latitude>
+    <Longitude>34.8166592</Longitude>
+    <Role>Volunteer</Role>
     <IsActive>true</IsActive>
     <MaxDistance>3</MaxDistance>
     <DistanceType>Air</DistanceType>
