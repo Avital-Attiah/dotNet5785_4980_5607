@@ -152,12 +152,12 @@ coverage*.info
 *.coveragexml
 
 # NCrunch
-_NCrunch_*
-.*crunch*.local.xml
+NCrunch*
+.crunch.local.xml
 nCrunchTemp_*
 
 # MightyMoose
-*.mm.*
+.mm.
 AutoTest.Net/
 
 # Web workbench (sass)
@@ -269,7 +269,7 @@ ServiceFabricBackup/
 # Business Intelligence projects
 *.rdl.data
 *.bim.layout
-*.bim_*.settings
+.bim_.settings
 *.rptproj.rsuser
 *- [Bb]ackup.rdl
 *- [Bb]ackup ([0-9]).rdl
@@ -396,3 +396,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+# Ignore auto-generated XML files
+xml/Calls.xml
+xml/Volunteers.xml

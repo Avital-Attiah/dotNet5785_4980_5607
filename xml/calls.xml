@@ -67,17 +67,6 @@
     <MaxCompletionTime />
   </Call>
   <Call>
-    <Id>1013</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Tel Aviv</FullAddress>
-    <OpenTime>2025-06-03T01:45:00</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Suicide prevention</Description>
-    <Latitude>32.0853</Latitude>
-    <Longitude>34.7818</Longitude>
-    <MaxCompletionTime>2025-06-03T02:01:00</MaxCompletionTime>
-  </Call>
-  <Call>
     <Id>1015</Id>
     <CallType>Emergency</CallType>
     <FullAddress>Jerusalem</FullAddress>
@@ -119,17 +108,6 @@
     <Description>Urgent assistance</Description>
     <Latitude>31.7683</Latitude>
     <Longitude>35.2137</Longitude>
-    <MaxCompletionTime />
-  </Call>
-  <Call>
-    <Id>1023</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Haifa</FullAddress>
-    <OpenTime>2025-06-03T00:49:00</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Crisis intervention</Description>
-    <Latitude>32.794</Latitude>
-    <Longitude>34.9896</Longitude>
     <MaxCompletionTime />
   </Call>
   <Call>
@@ -353,17 +331,6 @@
     <MaxCompletionTime>2025-06-03T18:53:00</MaxCompletionTime>
   </Call>
   <Call>
-    <Id>1065</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Haifa</FullAddress>
-    <OpenTime>2025-06-03T20:03:00</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Urgent assistance</Description>
-    <Latitude>32.794</Latitude>
-    <Longitude>34.9896</Longitude>
-    <MaxCompletionTime>2025-06-03T20:34:00</MaxCompletionTime>
-  </Call>
-  <Call>
     <Id>1067</Id>
     <CallType>Emergency</CallType>
     <FullAddress>Tel Aviv</FullAddress>
@@ -549,5 +516,148 @@
     <Latitude>32.0853</Latitude>
     <Longitude>34.7818</Longitude>
     <MaxCompletionTime>2025-06-03T04:21:00</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1013</Id>
+    <CallType>Emergency</CallType>
+    <FullAddress>Tel Aviv</FullAddress>
+    <OpenTime>2025-06-03T01:45:00</OpenTime>
+    <isEmergency>true</isEmergency>
+    <Description>Suicide prevention</Description>
+    <Latitude>32.0853</Latitude>
+    <Longitude>34.7818</Longitude>
+    <MaxCompletionTime>2025-06-03T02:01:00</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1023</Id>
+    <CallType>Emergency</CallType>
+    <FullAddress>Haifa</FullAddress>
+    <OpenTime>2025-06-03T00:49:00</OpenTime>
+    <isEmergency>true</isEmergency>
+    <Description>Crisis intervention</Description>
+    <Latitude>32.794</Latitude>
+    <Longitude>34.9896</Longitude>
+    <MaxCompletionTime />
+  </Call>
+  <Call>
+    <Id>1100</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>שאולזון 40 ירושלים</FullAddress>
+    <OpenTime>2025-06-15T00:16:26.3407373+03:00</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>נפילה</Description>
+    <Latitude>31.7879223</Latitude>
+    <Longitude>35.172106</Longitude>
+    <MaxCompletionTime />
+  </Call>
+  <Call>
+    <Id>1101</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>שאולזון 24 ירושלים</FullAddress>
+    <OpenTime>2025-06-15T00:37:38.9112637+03:00</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>ממ</Description>
+    <Latitude>31.7898892</Latitude>
+    <Longitude>35.1730219</Longitude>
+    <MaxCompletionTime />
+  </Call>
+  <Call>
+    <Id>1102</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>שאולזון 32 ירושלים</FullAddress>
+    <OpenTime>2025-06-15T01:00:45.3992495+03:00</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>הי</Description>
+    <Latitude>31.7891738</Latitude>
+    <Longitude>35.1722176</Longitude>
+    <MaxCompletionTime />
+  </Call>
+  <Call>
+    <Id>1103</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>שאולזון 49 ירושלים</FullAddress>
+    <OpenTime>2025-06-15T01:13:41.7934183+03:00</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>נננ</Description>
+    <Latitude>31.7863236</Latitude>
+    <Longitude>35.1739768</Longitude>
+    <MaxCompletionTime />
+  </Call>
+  <Call>
+    <Id>1065</Id>
+    <CallType>FamilySupport</CallType>
+    <FullAddress>Haifa</FullAddress>
+    <OpenTime>2025-06-03T20:03:00</OpenTime>
+    <isEmergency>true</isEmergency>
+    <Description>Urgent assistance</Description>
+    <Latitude>32.794</Latitude>
+    <Longitude>34.9896</Longitude>
+    <MaxCompletionTime>2025-06-03T20:34:00</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1106</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>שאולזון 51 ירושלים</FullAddress>
+    <OpenTime>2025-06-15T02:24:08.637947+03:00</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>חמ</Description>
+    <Latitude>31.7851586</Latitude>
+    <Longitude>35.1741337</Longitude>
+    <MaxCompletionTime>2025-06-15T02:44:08.637947+03:00</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1105</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>שאולזון 64 ירושלים</FullAddress>
+    <OpenTime>2025-06-15T01:52:22.6522326+03:00</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>ממממ</Description>
+    <Latitude>31.7849896</Latitude>
+    <Longitude>35.1735899</Longitude>
+    <MaxCompletionTime>2025-06-15T02:42:22.6522326+03:00</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1104</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>שאולזון 50 ירושלים</FullAddress>
+    <OpenTime>2025-06-15T01:34:45.1508905+03:00</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>ממ</Description>
+    <Latitude>31.7869026</Latitude>
+    <Longitude>35.173251</Longitude>
+    <MaxCompletionTime>2025-06-15T09:54:45.1508905+03:00</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1107</Id>
+    <CallType>FamilySupport</CallType>
+    <FullAddress>שאולזון 40 ירושלים</FullAddress>
+    <OpenTime>2025-06-15T05:02:39.3134427+03:00</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>מחחחחחחחחחחחחחחחחח</Description>
+    <Latitude>31.7879223</Latitude>
+    <Longitude>35.172106</Longitude>
+    <MaxCompletionTime>2025-06-15T05:22:39.3134427+03:00</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1108</Id>
+    <CallType>ProfessionalConsultation</CallType>
+    <FullAddress>שאולזון 16 ירושלים</FullAddress>
+    <OpenTime>2025-06-15T18:11:06.4083694+03:00</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>הצילו</Description>
+    <Latitude>31.790426</Latitude>
+    <Longitude>35.1741524</Longitude>
+    <MaxCompletionTime>2025-06-15T18:21:06.4083694+03:00</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1109</Id>
+    <CallType>Emergency</CallType>
+    <FullAddress>שאולזון 16/3</FullAddress>
+    <OpenTime>2025-06-16T01:08:12.1661016+03:00</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>נסיון התאבדות</Description>
+    <Latitude>31.7863236</Latitude>
+    <Longitude>35.1739768</Longitude>
+    <MaxCompletionTime />
   </Call>
 </Calls>
