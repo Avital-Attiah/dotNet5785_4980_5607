@@ -155,40 +155,48 @@ internal class VolunteerImplementation : IVolunteer
     // Retrieves detailed information about a specific volunteer
     public BO.Volunteer Read(int id)
     {
-        var doVolunteer = _dal.Volunteer.Read(id) ??
-        throw new BO.BlDoesNotExistException($"Volunteer with ID={id} does Not exist");
-        var doAssignmentList = _dal.Assignment.ReadAll(a => a.VolunteerId == id);
-        var (TotalCompletedCalls, totalCancelledCalls, totalExpiredSelectedCalls) = VolunteerManager.GetTotalsCalls(doAssignmentList);
-        var doAssignment = doAssignmentList.LastOrDefault();
-        BO.CallInProgress? callInProgress;
+        // שולף את המתנדב ממסד הנתונים
+        var doVolunteer = _dal.Volunteer.Read(id)
+            ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={id} does not exist");
 
-        if (doAssignment != null && doAssignment.CompletionTime == null)
+        // שולף את כל השיבוצים של המתנדב
+        var doAssignmentList = _dal.Assignment.ReadAll(a => a.VolunteerId == id).ToList();
+
+        // מחשב סיכומים על הקריאות
+        var (TotalCompletedCalls, totalCancelledCalls, totalExpiredSelectedCalls) =
+            VolunteerManager.GetTotalsCalls(doAssignmentList);
+
+        // שיבוץ אחרון של המתנדב
+        var doAssignment = doAssignmentList.LastOrDefault();
+
+        // אם יש שיבוץ ואין CompletionTime, נבנה CallInProgress
+        BO.CallInProgress? callInProgress = null;
+        if (doAssignment is { CompletionTime: null })
         {
             var doCall = _dal.Call.Read(doAssignment.CallId);
-            callInProgress = new BO.CallInProgress()
+            if (doCall != null)
             {
-                Id = doAssignment.Id,
-                CallId = doAssignment.CallId,
-                CallType = (BO.CallType)doCall.CallType,
-                Description = doCall.Description,
-                FullAddress = doCall.FullAddress,
-                OpeningTime = doCall.OpenTime,
-                StartHandlingTime = doAssignment.EntryTime,
-                DistanceFromVolunteer = CallManager.CalculateDistance(id, doCall.Latitude, doCall.Longitude),
-                Status = CallManager.GetStatusCall(doAssignment.CallId) switch
+                callInProgress = new BO.CallInProgress
                 {
-                    BO.CallStatus.InProgress or BO.CallStatus.InProgressAtRisk => BO.CallProgress.InTreatment,
-                    _ => BO.CallProgress.AtRisk
-                }
-            };
-        }
-        else
-        {
-            callInProgress = null;
+                    Id = doAssignment.Id,
+                    CallId = doAssignment.CallId,
+                    CallType = (BO.CallType)doCall.CallType,
+                    Description = doCall.Description,
+                    FullAddress = doCall.FullAddress,
+                    OpeningTime = doCall.OpenTime,
+                    StartHandlingTime = doAssignment.EntryTime,
+                    DistanceFromVolunteer = CallManager.CalculateDistance(id, doCall.Latitude, doCall.Longitude),
+                    Status = CallManager.GetStatusCall(doAssignment.CallId) switch
+                    {
+                        BO.CallStatus.InProgress or BO.CallStatus.InProgressAtRisk => BO.CallProgress.InTreatment,
+                        _ => BO.CallProgress.AtRisk
+                    }
+                };
+            }
         }
 
-        // Return the detailed volunteer information
-        return new()
+        // מחזיר את האובייקט המלא
+        return new BO.Volunteer
         {
             Id = id,
             FullName = doVolunteer.FullName,
@@ -208,6 +216,7 @@ internal class VolunteerImplementation : IVolunteer
             CurrentCall = callInProgress
         };
     }
+
 
     // Logs in a volunteer by validating their credentials
     public BO.Role Login(string fullName, string password)

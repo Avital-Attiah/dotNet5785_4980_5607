@@ -2,6 +2,8 @@
 using BO;
 using System;
 using System.Windows;
+using Helpers;
+
 
 namespace PL.Volunteer
 {
@@ -91,6 +93,13 @@ namespace PL.Volunteer
         {
             try
             {
+                Volunteer.Address = txtAddress.Text;
+
+                // תרגום כתובת לקואורדינטות
+                var (latitude, longitude) = CallManager.GetCoordinates(Volunteer.Address);
+                Volunteer.Latitude = latitude;
+                Volunteer.Longitude = longitude;
+
                 if (_volunteerId == 0)
                     s_bl.Volunteer.Create(Volunteer);
                 else
@@ -104,6 +113,14 @@ namespace PL.Volunteer
 
                 this.Close();
             }
+            catch (BO.BlValidationException vex)
+            {
+                MessageBox.Show(
+                    $"שגיאת ולידציה:\n{vex.Message}",
+                    "שגיאה בנתונים",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+            }
             catch (Exception ex)
             {
                 MessageBox.Show(
@@ -113,6 +130,7 @@ namespace PL.Volunteer
                     MessageBoxImage.Error);
             }
         }
+
 
         // 10. Handler לכפתור ביטול/סגירה
         private void btnCancel_Click(object sender, RoutedEventArgs e)

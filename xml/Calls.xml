@@ -649,4 +649,15 @@
     <Longitude>35.1741524</Longitude>
     <MaxCompletionTime>2025-06-15T18:21:06.4083694+03:00</MaxCompletionTime>
   </Call>
+  <Call>
+    <Id>1109</Id>
+    <CallType>Emergency</CallType>
+    <FullAddress>שאולזון 16/3</FullAddress>
+    <OpenTime>2025-06-16T01:08:12.1661016+03:00</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>נסיון התאבדות</Description>
+    <Latitude>31.7863236</Latitude>
+    <Longitude>35.1739768</Longitude>
+    <MaxCompletionTime />
+  </Call>
 </Calls>

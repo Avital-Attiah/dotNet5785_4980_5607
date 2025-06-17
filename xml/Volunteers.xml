@@ -183,6 +183,20 @@
     <DistanceType>Air</DistanceType>
   </Volunteer>
   <Volunteer>
+    <Id>377999563</Id>
+    <FullName>John Doe</FullName>
+    <Phone>0501234567</Phone>
+    <Email>john@example.com</Email>
+    <Password>1243b15c6670942bae2d8baea21ea64c8f39c326740c8386c1fbe9352be36119</Password>
+    <CurrentAddress>Tel Aviv</CurrentAddress>
+    <Latitude>32.0853</Latitude>
+    <Longitude>34.7818</Longitude>
+    <Role>Volunteer</Role>
+    <IsActive>true</IsActive>
+    <MaxDistance>37</MaxDistance>
+    <DistanceType>Air</DistanceType>
+  </Volunteer>
+  <Volunteer>
     <Id>328275607</Id>
     <FullName>shira suli</FullName>
     <Phone>0583210654</Phone>
@@ -198,30 +212,16 @@
   </Volunteer>
   <Volunteer>
     <Id>15482979</Id>
-    <FullName>Ariel Suli</FullName>
+    <FullName>Ariel!321</FullName>
     <Phone>0506591904</Phone>
     <Email>a@gmail.com</Email>
     <Password>Ariel!321</Password>
-    <CurrentAddress>shaulzon</CurrentAddress>
-    <Latitude xsi:nil="true" />
-    <Longitude xsi:nil="true" />
-    <Role>Manager</Role>
-    <IsActive>true</IsActive>
-    <MaxDistance>3</MaxDistance>
-    <DistanceType>Air</DistanceType>
-  </Volunteer>
-  <Volunteer>
-    <Id>377999563</Id>
-    <FullName>John Doe</FullName>
-    <Phone>0501234567</Phone>
-    <Email>john@example.com</Email>
-    <Password>dce01787eef3fefefc88dd34098703d81c1d743d0526bb134f8104a991187af8</Password>
-    <CurrentAddress>שאולזון 49 ירושלים</CurrentAddress>
-    <Latitude>31.7863236</Latitude>
-    <Longitude>35.1739768</Longitude>
+    <CurrentAddress>Herzl St 15, Tel Aviv, Israel</CurrentAddress>
+    <Latitude>32.0819823</Latitude>
+    <Longitude>34.8166592</Longitude>
     <Role>Volunteer</Role>
     <IsActive>true</IsActive>
-    <MaxDistance>40</MaxDistance>
+    <MaxDistance>3</MaxDistance>
     <DistanceType>Air</DistanceType>
   </Volunteer>
 </ArrayOfVolunteer>

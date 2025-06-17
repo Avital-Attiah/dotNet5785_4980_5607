@@ -97,9 +97,10 @@
                     <StackPanel Margin="10">
                         <TextBlock Text="סוג קריאה:" FontWeight="Bold"/>
                         <TextBlock Text="{Binding Volunteer.CurrentCall.CallType}" Margin="0 0 0 10"/>
-
-                        <TextBlock Text="כתובת מלאה:" FontWeight="Bold"/>
-                        <TextBlock Text="{Binding Volunteer.CurrentCall.FullAddress}" Margin="0 0 0 10"/>
+                        <TextBlock Text="כתובת:" FontWeight="Bold"/>
+                        <TextBox x:Name="txtAddress"
+                                 Text="{Binding Volunteer.Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0 0 0 10"/>
 
                         <TextBlock Text="תיאור:" FontWeight="Bold"/>
                         <TextBlock Text="{Binding Volunteer.CurrentCall.Description}" Margin="0 0 0 10"/>

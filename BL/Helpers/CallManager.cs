@@ -8,12 +8,12 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using DO;
 using System.Globalization;
-
+using System.Net.Http; // שים לב: צריך גם using ל־HttpClient
 
 namespace Helpers
 {
     // Static class responsible for managing calls, assignments, and validations
-    internal static class CallManager
+    public static class CallManager
     {
         internal static ObserverManager Observers = new(); //stage 5 
         private static IDal s_dal = Factory.Get; // Data access layer
@@ -21,10 +21,10 @@ namespace Helpers
         /// <summary>
         /// Updates the status of open calls that have expired by comparing their completion time to the current time.
         /// </summary>
-        internal static void UpdateExpiredOpenCalls()
+        public static void UpdateExpiredOpenCalls()
         {
             var list = s_dal.Call.ReadAll().ToList(); // Get all calls
-         
+
             foreach (var doCall in list)
             {
 
@@ -36,7 +36,7 @@ namespace Helpers
                     {
                         // If no assignment exists, create a new expired assignment
                         DO.Assignment doAssignment =
-                         new(0,doCall.Id, 0, AdminManager.Now, AdminManager.Now, DO.Enums.TreatmentStatus.Expired);
+                         new(0, doCall.Id, 0, AdminManager.Now, AdminManager.Now, DO.Enums.TreatmentStatus.Expired);
                         s_dal.Assignment.Create(doAssignment);
                     }
                     else
@@ -54,9 +54,12 @@ namespace Helpers
         /// </summary>
         /// <param name="id">The ID of the call.</param>
         /// <returns>The status of the call.</returns>
-        internal static BO.CallStatus GetStatusCall(int id)
+        public static BO.CallStatus GetStatusCall(int id)
         {
-            DO.Call? doCall = s_dal.Call.Read(id)!;
+            DO.Call? doCall = s_dal.Call.Read(id);
+            if (doCall == null)
+                throw new BO.BlDoesNotExistException($"Call with ID={id} does not exist");
+
             DO.Assignment? doAssignment = s_dal.Assignment.Read(a => a.CallId == id);
             DateTime now = AdminManager.Now;
 
@@ -83,16 +86,16 @@ namespace Helpers
             if (isAtRisk)
                 return BO.CallStatus.InProgressAtRisk;
 
-
             return BO.CallStatus.InProgress;
         }
+
 
         /// <summary>
         /// Retrieves the assignment history for a specific call.
         /// </summary>
         /// <param name="id">The ID of the call.</param>
         /// <returns>A list of assignment history for the call.</returns>
-        internal static List<BO.CallAssignInList> GetAssignmentsHistory(int id)
+        public static List<BO.CallAssignInList> GetAssignmentsHistory(int id)
         {
             return s_dal.Assignment.ReadAll(a => a.CallId == id)
                 .Select(item => new BO.CallAssignInList
@@ -113,14 +116,19 @@ namespace Helpers
         /// <param name="callLat">The latitude of the call location.</param>
         /// <param name="callLong">The longitude of the call location.</param>
         /// <returns>The distance between the volunteer and the call location.</returns>
-        internal static double CalculateDistance(int volunteerId, double callLat, double callLong)
+        public static double CalculateDistance(int volunteerId, double callLat, double callLong)
         {
-            var call = s_dal.Call.Read(volunteerId);
-            if (call == null)
-                throw new BO.BlDoesNotExistException($"Tutor with ID {volunteerId} not found");
+            var volunteer = s_dal.Volunteer.Read(volunteerId);
+            if (volunteer == null)
+                throw new BO.BlDoesNotExistException($"Volunteer with ID {volunteerId} not found");
 
-            return GetDistance(call.Latitude, call.Longitude, callLat, callLong); // Calculate the distance using Haversine formula
+            if (!volunteer.Latitude.HasValue || !volunteer.Longitude.HasValue)
+                throw new Exception("Volunteer location is not set");
+
+            return GetDistance(volunteer.Latitude.Value, volunteer.Longitude.Value, callLat, callLong);
         }
+
+
 
         /// <summary>
         /// Calculates the distance between two geographical coordinates.
@@ -162,7 +170,7 @@ namespace Helpers
         /// <exception cref="BO.BlValidationException">Thrown when the address is invalid.</exception>
         public static (double Latitude, double Longitude) GetCoordinates(string address)
         {
-           
+
             address = address?.Trim();
 
             if (string.IsNullOrWhiteSpace(address))
@@ -253,7 +261,6 @@ namespace Helpers
             }
 
             // Validation - FullAddressOfCall
-            // Validation - FullAddressOfCall
             if (string.IsNullOrWhiteSpace(boCall.FullAddress))
             {
                 throw new BO.BlValidationException("Full address of the call is required.");
@@ -266,15 +273,10 @@ namespace Helpers
                     boCall.Latitude = latitude;
                     boCall.Longitude = longitude;
                 }
-                //catch (BO.BlValidationException)
-                //{
-                //    throw new BO.BlValidationException($"Invalid address: {boCall.FullAddress}");
-                //}
                 catch (Exception ex)
                 {
                     throw new BO.BlValidationException($"שגיאה בעת בדיקת הכתובת: {ex.Message}");
                 }
-
             }
 
 
@@ -357,7 +359,5 @@ namespace Helpers
                                           DateTimeStyles.None,
                                           out _);
         }
-
-
     }
 }

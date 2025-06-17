@@ -349,10 +349,23 @@ internal class CallImplementation : ICall
             if (doVolunteer == null)
                 throw new BO.BlDoesNotExistException($"Volunteer with id: {volunteerId} does not exist");
 
-            // Retrieve calls that are open or at risk
-            var doCallList = _dal.Call.ReadAll(c =>
-                CallManager.GetStatusCall(c.Id) == BO.CallStatus.Open ||
-                CallManager.GetStatusCall(c.Id) == BO.CallStatus.OpenAtRisk);
+            //// Retrieve calls that are open or at risk
+            //var doCallList = _dal.Call.ReadAll(c =>
+            //    CallManager.GetStatusCall(c.Id) == BO.CallStatus.Open ||
+            //    CallManager.GetStatusCall(c.Id) == BO.CallStatus.OpenAtRisk);
+            var allCalls = _dal.Call.ReadAll().ToList();
+
+            foreach (var call in allCalls)
+            {
+                var status = CallManager.GetStatusCall(call.Id);
+                Console.WriteLine($"Call ID: {call.Id}, Status: {status}");
+            }
+
+            var doCallList = allCalls
+               .Where(c => CallManager.GetStatusCall(c.Id) == BO.CallStatus.Open ||
+                CallManager.GetStatusCall(c.Id) == BO.CallStatus.OpenAtRisk)
+               .ToList();
+
 
             // Map each call to an OpenCallInList object
             var openCallInList = doCallList.Select(item =>
