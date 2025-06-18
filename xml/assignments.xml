@@ -1,9 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<assignments.xml>
+<ArrayOfAssignment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Assignment>
     <Id>2100</Id>
     <CallId>1001</CallId>
     <VolunteerId>15482979</VolunteerId>
     <EntryTime>2025-06-17T20:45:54</EntryTime>
+    <CompletionTime xsi:nil="true" />
+    <Status xsi:nil="true" />
   </Assignment>
-</assignments.xml>
+</ArrayOfAssignment>
