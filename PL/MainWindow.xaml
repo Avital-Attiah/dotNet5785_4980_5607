@@ -6,6 +6,7 @@
         MinHeight="450" MinWidth="700"
         Background="#E8F6FF"
         WindowStartupLocation="CenterScreen"
+        Icon="icon.ico"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Window.Resources>
         <local:SimulatorTextConverter x:Key="SimulatorTextConverter"/>

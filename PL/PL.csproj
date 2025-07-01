@@ -11,6 +11,8 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 	<UseCommonOutputDirectory>true</UseCommonOutputDirectory>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+
   </PropertyGroup>
 
   <ItemGroup>
