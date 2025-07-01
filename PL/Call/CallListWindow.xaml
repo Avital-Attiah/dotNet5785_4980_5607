@@ -89,18 +89,7 @@
                         <DataGridTextColumn Header="מספר הקצאות" Binding="{Binding AssignmentsCount}" Width="120"/>
 
                         <!-- תצוגת כתובת עם ToolTip על שגיאת קואורדינטות -->
-                        <DataGridTextColumn Header="כתובת" Binding="{Binding Address}" Width="200">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="ToolTip" Value="{Binding CoordinateStatusMessage}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding CoordinateStatusMessage}" Value="קואורדינטות לא זמינות (השאילתא לא הושלמה או נכשלה)">
-                                            <Setter Property="Foreground" Value="Red" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
+                       
 
                         <DataGridTemplateColumn Header="מחיקה" Width="80">
                             <DataGridTemplateColumn.CellTemplate>

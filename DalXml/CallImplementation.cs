@@ -17,17 +17,18 @@ internal class CallImplementation : ICall
     private static Call CreateCallFromElement(XElement element)
     {
         return new Call(
-            Id: (int?)element.Element("Id") ?? throw new FormatException("Invalid ID"),
+            Id: int.TryParse(element.Element("Id")?.Value, out var id) ? id : throw new FormatException("Invalid ID"),
             CallType: Enum.TryParse(element.Element("CallType")?.Value, out CallType type) ? type : throw new FormatException("Invalid CallType"),
             FullAddress: element.Element("FullAddress")?.Value ?? throw new FormatException("Invalid FullAddress"),
-            OpenTime: DateTime.Parse(element.Element("OpenTime")?.Value ?? throw new FormatException("Invalid OpenTime")),
-            isEmergency: (bool?)element.Element("isEmergency") ?? false,
+            OpenTime: DateTime.TryParse(element.Element("OpenTime")?.Value, out var openTime) ? openTime : throw new FormatException("Invalid OpenTime"),
+            isEmergency: bool.TryParse(element.Element("isEmergency")?.Value, out var isEmergency) && isEmergency,
             Description: element.Element("Description")?.Value,
-            Latitude: (double?)element.Element("Latitude") ?? 0.0,
-            Longitude: (double?)element.Element("Longitude") ?? 0.0,
-            MaxCompletionTime: DateTime.TryParse(element.Element("MaxCompletionTime")?.Value, out var maxTime) ? maxTime : null
+            Latitude: double.TryParse(element.Element("Latitude")?.Value, out var lat) ? lat : 0.0,
+            Longitude: double.TryParse(element.Element("Longitude")?.Value, out var lon) ? lon : 0.0,
+            MaxCompletionTime: DateTime.TryParse(element.Element("MaxCompletionTime")?.Value, out var maxTime) ? maxTime : (DateTime?)null
         );
     }
+
 
     // Converts a Call object to an XElement
     private static XElement CreateElementFromCall(Call call)

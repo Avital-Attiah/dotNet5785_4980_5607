@@ -35,7 +35,7 @@ namespace PL.Volunteer
         public bool IsIdEnabled => _volunteerId == 0;
 
         // פרופרטי חדש: האם ניתן לערוך Role
-        public bool IsRoleEditable => Volunteer?.Role != BO.Role.Manager;
+        public bool IsRoleEditable => _volunteerId == 0;
 
         // פרופרטי חדש: האם ניתן לבטל פעיל (רק אם אין CurrentCall)
         public bool CanDeactivate => Volunteer?.CurrentCall == null;

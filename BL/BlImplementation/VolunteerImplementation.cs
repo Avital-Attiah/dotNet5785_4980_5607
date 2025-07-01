@@ -31,9 +31,10 @@ internal class VolunteerImplementation : IVolunteer
     {
         AdminManager.ThrowOnSimulatorIsRunning(); // stage 7
         VolunteerManager.ValidateVolunteer(boVolunteer);
-        string password = VolunteerManager.GeneratePassword();
 
-        // יוצרים את המתנדב ללא קואורדינטות בשלב זה
+        // חישוב סינכרוני של קואורדינטות
+        var (lat, lon) = CallManager.GetCoordinates(boVolunteer.Address);
+
         DO.Volunteer doVolunteer = new DO.Volunteer(
             boVolunteer.Id,
             boVolunteer.FullName,
@@ -41,8 +42,8 @@ internal class VolunteerImplementation : IVolunteer
             boVolunteer.Email,
             VolunteerManager.HashPassword(boVolunteer.Password),
             boVolunteer.Address,
-            null, // Latitude - will be updated asynchronously
-            null, // Longitude - will be updated asynchronously
+            lat,
+            lon,
             (DO.Enums.Role)boVolunteer.Role,
             boVolunteer.IsActive,
             boVolunteer.MaxCallDistance,
@@ -55,15 +56,14 @@ internal class VolunteerImplementation : IVolunteer
                 _dal.Volunteer.Create(doVolunteer);
 
             VolunteerManager.Observers.NotifyListUpdated(); // stage 5
-
-            // מחשב את הקואורדינטות ברקע (בלי להמתין לסיום)
-            _ = VolunteerManager.UpdateCoordinatesForVolunteerAsync(doVolunteer); // stage 7
         }
         catch (DO.DalAlreadyExistsException ex)
         {
             throw new BO.BlAlreadyExistsException($"Volunteer with ID={boVolunteer.Id} already exists.", ex);
         }
     }
+
+
 
 
     // Deletes an existing volunteer

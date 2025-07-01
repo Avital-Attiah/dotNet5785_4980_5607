@@ -19,6 +19,27 @@ namespace PL.Volunteer
 
         private void LoadVolunteerInfo()
         {
+            if (Volunteer.CurrentCallId.HasValue)
+            {
+                try
+                {
+                    var call = _bl.Call.Read(Volunteer.CurrentCallId.Value);
+
+                    Volunteer.CurrentCall = new CallInProgress
+                    {
+                        Id = call.Id,
+                        CallType = call.CallType,
+                        Description = call.Description,
+                        FullAddress = call.FullAddress,
+                        // הוסיפי כאן שדות נוספים לפי הצורך
+                    };
+                }
+                catch
+                {
+                    Volunteer.CurrentCall = null!;
+                }
+            }
+
             if (Volunteer.CurrentCall != null)
             {
                 txtCallDetails.Text = Volunteer.CurrentCall.ToString();
@@ -38,28 +59,7 @@ namespace PL.Volunteer
             chkIsActive.IsChecked = Volunteer.IsActive;
             txtRole.IsEnabled = false;
             txtId.IsEnabled = false;
-
-           // ShowMap();
         }
-
-        //private async void ShowMap()
-        //{
-        //    try
-        //    {
-        //        if (Volunteer.Latitude != 0 && Volunteer.Longitude != 0)
-        //        {
-        //            string mapUrl = $"https://www.google.com/maps/search/?api=1&query={Volunteer.Latitude},{Volunteer.Longitude}";
-
-        //            await MapBrowser.EnsureCoreWebView2Async();
-        //            MapBrowser.CoreWebView2.Navigate(mapUrl);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("לא ניתן להציג את המפה:\n" + ex.Message,
-        //                        "שגיאה בטעינת מפה", MessageBoxButton.OK, MessageBoxImage.Warning);
-        //    }
-        //}
 
 
 
@@ -80,7 +80,6 @@ namespace PL.Volunteer
             {
                 MessageBox.Show(ex.Message, "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
         }
 
         private void btnSelectCall_Click(object sender, RoutedEventArgs e)
@@ -94,7 +93,11 @@ namespace PL.Volunteer
         {
             try
             {
-                _bl.Call.FinishCall(Volunteer.Id, Volunteer.CurrentCallId!.Value);
+                int? callId = Volunteer.CurrentCallId ?? Volunteer.CurrentCall?.Id;
+                if (callId == null)
+                    throw new Exception("לא קיימת קריאה בטיפול.");
+
+                _bl.Call.FinishCall(Volunteer.Id, callId.Value);
                 MessageBox.Show("הטיפול הסתיים", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
                 Volunteer = _bl.Volunteer.Read(Volunteer.Id);
                 LoadVolunteerInfo();
@@ -108,14 +111,17 @@ namespace PL.Volunteer
             {
                 MessageBox.Show(ex.Message, "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
         }
 
         private void btnCancelCall_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                _bl.Call.CancellationOfTreatment(Volunteer.Id, Volunteer.CurrentCallId!.Value);
+                int? callId = Volunteer.CurrentCallId ?? Volunteer.CurrentCall?.Id;
+                if (callId == null)
+                    throw new Exception("לא קיימת קריאה לטיפול.");
+
+                _bl.Call.CancellationOfTreatment(Volunteer.Id, callId.Value);
                 MessageBox.Show("הטיפול בוטל", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
                 Volunteer = _bl.Volunteer.Read(Volunteer.Id);
                 LoadVolunteerInfo();
@@ -129,7 +135,6 @@ namespace PL.Volunteer
             {
                 MessageBox.Show(ex.Message, "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
         }
 
         private void btnCallHistory_Click(object sender, RoutedEventArgs e)

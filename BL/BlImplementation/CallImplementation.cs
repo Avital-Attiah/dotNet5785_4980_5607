@@ -24,7 +24,7 @@ internal class CallImplementation : ICall
     public void Create(BO.Call boCall)
     {
         AdminManager.ThrowOnSimulatorIsRunning();
-        CallManager.ValidateCall(boCall);
+        CallManager.ValidateCall(boCall); // כבר מבצע חישוב קואורדינטות
 
         DO.Call doCall = new(
             0,
@@ -33,8 +33,8 @@ internal class CallImplementation : ICall
             boCall.OpenTime,
             false,
             boCall.Description,
-            null, // Latitude
-            null, // Longitude
+            boCall.Latitude,  // מחושב ב־ValidateCall
+            boCall.Longitude, // מחושב ב־ValidateCall
             boCall.MaxCompletionTime
         );
 
@@ -44,10 +44,7 @@ internal class CallImplementation : ICall
                 _dal.Call.Create(doCall);
 
             CallManager.Observers.NotifyListUpdated();
-
-            // המשך חישוב הקואורדינטות בצורה אסינכרונית
-            _ = CallManager.UpdateCoordinatesForCallAddressAsync(doCall, _dal);
-
+            // אין צורך באסינכרוני אם כבר חושב קודם
         }
         catch (DO.DalAlreadyExistsException ex)
         {
@@ -56,41 +53,7 @@ internal class CallImplementation : ICall
     }
 
 
-    //public void Create(BO.Call boCall)
-    //{
-    //    CallManager.ValidateCall(boCall);
-    //    var (Latitude, Longitude) = CallManager.GetCoordinates(boCall.FullAddress);
 
-    //    DO.Call doCall = new(
-    //        0, // נשלח 0 כדי שה-DAL ייצור ID
-    //        (DO.Enums.CallType)boCall.CallType,
-    //        boCall.FullAddress,
-    //        boCall.OpenTime,
-    //        false,
-    //        boCall.Description,
-    //        Latitude,
-    //        Longitude,
-    //        boCall.MaxCompletionTime
-    //    );
-
-    //    try
-    //    {
-    //        _dal.Call.Create(doCall);
-
-    //        // שליפת ה־ID החדש
-    //        var created = _dal.Call.ReadAll()
-    //            .FirstOrDefault(c => c.FullAddress == doCall.FullAddress && c.OpenTime == doCall.OpenTime);
-
-    //        //if (created is not null)
-    //        //    boCall.Id = created.Id;
-
-    //        CallManager.Observers.NotifyListUpdated();
-    //    }
-    //    catch (DO.DalAlreadyExistsException ex)
-    //    {
-    //        throw new BO.BlDoesNotExistException($"Call already exists", ex);
-    //    }
-    //}
 
 
     // Cancel an ongoing treatment (assignment)
@@ -328,56 +291,52 @@ internal class CallImplementation : ICall
     // Get a list of closed calls by a volunteer with optional filtering and sorting
     public IEnumerable<BO.ClosedCallInList> GetClosedCallsByVolunteer(int volunteerId, BO.CallType? callTypeFilter = null, BO.ClosedCallInListFields? sortField = null)
     {
-        try
-        {
-            // Ensure the volunteer exists
-            if (_dal.Volunteer.Read(volunteerId) == null)
-                throw new BO.BlDoesNotExistException($"Volunteer with id: {volunteerId} does not exist");
+        // ודא שהמתנדב קיים
+        if (_dal.Volunteer.Read(volunteerId) == null)
+            throw new BO.BlDoesNotExistException($"Volunteer with id: {volunteerId} does not exist");
 
-            // Retrieve calls that have finished assignments for the volunteer
-            var doCallList = (from assignment in _dal.Assignment.ReadAll(a => a.VolunteerId == volunteerId)
-                              let call = _dal.Call.Read(c => c.Id == assignment.CallId && assignment.CompletionTime != null)
-                              where call != null
-                              select call)
-                      .ToList();
-            // Map each call to a ClosedCallInList object with relevant details
-            var closedCallsInList = doCallList.Select(item =>
+        // שליפת כל ההשמות של המתנדב עם CompletionTime
+        var assignments = _dal.Assignment.ReadAll(a =>
+            a.VolunteerId == volunteerId && a.CompletionTime != null
+        );
+
+        var closedCallsInList = assignments
+            .Select(a =>
             {
-                var doAssignment = _dal.Assignment.Read(a => a.CallId == item.Id && a.Status == DO.Enums.TreatmentStatus.CompletedOnTime);
+                var call = _dal.Call.Read(a.CallId);
+                if (call == null) return null;
 
-                if (doAssignment == null)
-                    throw new InvalidOperationException("No completed assignment found for the call.");
                 return new BO.ClosedCallInList
                 {
-                    Id = item.Id,
-                    CallType = (BO.CallType)item.CallType,
-                    FullAddress = item.FullAddress,
-                    OpenTime = item.OpenTime,
-                    StartHandlingTime = doAssignment!.EntryTime,
-                    EndHandlingTime = doAssignment.CompletionTime,
-                    ClosureType = (BO.ClosureType)doAssignment.Status!
+                    Id = call.Id,
+                    CallType = (BO.CallType)call.CallType,
+                    FullAddress = call.FullAddress,
+                    OpenTime = call.OpenTime,
+                    StartHandlingTime = a.EntryTime,
+                    EndHandlingTime = a.CompletionTime,
+                    ClosureType = (BO.ClosureType?)a.Status
                 };
             })
-                .ToList();
-            // Apply call type filtering if specified
-            if (callTypeFilter != null)
-            {
-                closedCallsInList = closedCallsInList.Where(item => item.CallType == callTypeFilter)
-                    .ToList();
-            }
-            // Sort the list if a sort field is provided
-            if (sortField != null)
-            {
-                closedCallsInList = Tools.SortByEnum(closedCallsInList, sortField);
-            }
-            return closedCallsInList;
-        }
-        catch (BO.BlDoesNotExistException)
+            .Where(c => c != null)
+            .ToList();
+
+        // סינון לפי סוג קריאה (אם נבחר)
+        if (callTypeFilter != null)
         {
-            throw;
+            closedCallsInList = closedCallsInList
+                .Where(item => item.CallType == callTypeFilter)
+                .ToList();
         }
-       
+
+        // מיון אם נבחר
+        if (sortField != null)
+        {
+            closedCallsInList = Tools.SortByEnum(closedCallsInList, sortField);
+        }
+
+        return closedCallsInList!;
     }
+
 
     // Get a list of open calls for a volunteer with optional filtering and sorting
     public IEnumerable<BO.OpenCallInList> GetOpenCalls(int volunteerId, BO.CallType? callTypeFilter = null, BO.OpenCallInListFields? sortField = null)
@@ -402,9 +361,12 @@ internal class CallImplementation : ICall
             }
 
             var doCallList = allCalls
-               .Where(c => CallManager.GetStatusCall(c.Id) == BO.CallStatus.Open ||
-                CallManager.GetStatusCall(c.Id) == BO.CallStatus.OpenAtRisk)
-               .ToList();
+    .Where(c =>
+         (CallManager.GetStatusCall(c.Id) == BO.CallStatus.Open ||
+          CallManager.GetStatusCall(c.Id) == BO.CallStatus.OpenAtRisk) &&
+         c.Latitude != null && c.Longitude != null)
+    .ToList();
+
 
 
             // Map each call to an OpenCallInList object

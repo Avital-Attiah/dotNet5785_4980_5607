@@ -419,22 +419,34 @@ namespace Helpers
         {
             try
             {
-                var loc = await GetCoordinatesAsync(doCall.FullAddress); // ← ב־CallManager כבר יש async
-                if (loc != null)
-                {
-                    var updated = doCall with { Latitude = loc.Latitude, Longitude = loc.Longitude };
-                    lock (AdminManager.BlMutex)
-                        dal.Call.Update(updated);
+                // קבלת קואורדינטות מהכתובת (סינכרוני)
+                var (lat, lon) = GetCoordinates(doCall.FullAddress); // ←←← זה התיקון
 
-                    Observers.NotifyItemUpdated(updated.Id);
-                    Observers.NotifyListUpdated();
-                }
+                // יצירת עותק מעודכן של הקריאה עם הקואורדינטות
+                var updatedCall = doCall with
+                {
+                    Latitude = lat,
+                    Longitude = lon
+                };
+
+                // עדכון הקריאה במסד הנתונים
+                lock (AdminManager.BlMutex)
+                    dal.Call.Update(updatedCall);
+
+                // יידוע כל התצוגות שיש עדכון לפריט הספציפי וגם לרשימה
+                Observers.NotifyItemUpdated(doCall.Id);
+                Observers.NotifyListUpdated();
             }
-            catch
+            catch (Exception ex)
             {
-                // אפשר להוסיף לוג בעתיד
+                Console.WriteLine($"[ERROR] Failed to get coordinates for Call ID {doCall.Id}: {ex.Message}");
+
+                // ליידע שהתצוגה צריכה להתעדכן (כדי שיראו ToolTip למשל)
+                Observers.NotifyItemUpdated(doCall.Id);
+                Observers.NotifyListUpdated();
             }
         }
+
         internal static async Task<Tools.Location?> GetLocationOfAddressAsync(string address)
         {
             try

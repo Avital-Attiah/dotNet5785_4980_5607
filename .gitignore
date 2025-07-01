@@ -396,6 +396,3 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-# Ignore auto-generated XML files
-xml/Calls.xml
-xml/Volunteers.xml
