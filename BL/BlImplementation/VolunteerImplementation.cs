@@ -29,11 +29,8 @@ internal class VolunteerImplementation : IVolunteer
     // Creates a new volunteer after validating the input
     public void Create(BO.Volunteer boVolunteer)
     {
-        AdminManager.ThrowOnSimulatorIsRunning(); // stage 7
-        VolunteerManager.ValidateVolunteer(boVolunteer);
-
-        // חישוב סינכרוני של קואורדינטות
-        var (lat, lon) = CallManager.GetCoordinates(boVolunteer.Address);
+        AdminManager.ThrowOnSimulatorIsRunning();
+        VolunteerManager.ValidateVolunteer(boVolunteer); // כבר מחושב שם ה-Lat & Lon
 
         DO.Volunteer doVolunteer = new DO.Volunteer(
             boVolunteer.Id,
@@ -42,8 +39,8 @@ internal class VolunteerImplementation : IVolunteer
             boVolunteer.Email,
             VolunteerManager.HashPassword(boVolunteer.Password),
             boVolunteer.Address,
-            lat,
-            lon,
+            boVolunteer.Latitude, 
+            boVolunteer.Longitude, 
             (DO.Enums.Role)boVolunteer.Role,
             boVolunteer.IsActive,
             boVolunteer.MaxCallDistance,
@@ -55,13 +52,15 @@ internal class VolunteerImplementation : IVolunteer
             lock (AdminManager.BlMutex)
                 _dal.Volunteer.Create(doVolunteer);
 
-            VolunteerManager.Observers.NotifyListUpdated(); // stage 5
+            VolunteerManager.Observers.NotifyListUpdated();
         }
         catch (DO.DalAlreadyExistsException ex)
         {
             throw new BO.BlAlreadyExistsException($"Volunteer with ID={boVolunteer.Id} already exists.", ex);
         }
     }
+
+
 
 
 

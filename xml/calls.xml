@@ -561,4 +561,37 @@
     <Longitude>35.218164</Longitude>
     <MaxCompletionTime>2025-07-02T00:58:31.3241023+03:00</MaxCompletionTime>
   </Call>
+  <Call>
+    <Id>1101</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>jerusalem</FullAddress>
+    <OpenTime>2025-07-02T01:39:59.2336725+03:00</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>stress</Description>
+    <Latitude />
+    <Longitude />
+    <MaxCompletionTime>2025-07-02T02:09:59.2336725+03:00</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1102</Id>
+    <CallType>FamilySupport</CallType>
+    <FullAddress>Jabotinsky St 1, Tel Aviv</FullAddress>
+    <OpenTime>2025-07-02T01:43:31.5471782+03:00</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>emotinal</Description>
+    <Latitude />
+    <Longitude />
+    <MaxCompletionTime>2025-07-02T02:28:31.5471782+03:00</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1103</Id>
+    <CallType>FamilySupport</CallType>
+    <FullAddress>Jabotinsky St 1, Tel Aviv</FullAddress>
+    <OpenTime>2025-07-02T01:50:55.3893879+03:00</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>1233</Description>
+    <Latitude>32.1708832</Latitude>
+    <Longitude>34.8288667</Longitude>
+    <MaxCompletionTime>2025-07-02T02:03:55.3893879+03:00</MaxCompletionTime>
+  </Call>
 </Calls>

@@ -267,4 +267,32 @@
     <MaxDistance>41</MaxDistance>
     <DistanceType>Air</DistanceType>
   </Volunteer>
+  <Volunteer>
+    <Id>211770581</Id>
+    <FullName>Lea Dan</FullName>
+    <Phone>0527676755</Phone>
+    <Email>lea@gmail.com</Email>
+    <Password>51fcf2d1879dc17aa22a6d5c378ce75f4580e25d3288c082397b5ac1d29ae71e</Password>
+    <CurrentAddress>Jabotinsky St 1, Tel Aviv</CurrentAddress>
+    <Latitude xsi:nil="true" />
+    <Longitude xsi:nil="true" />
+    <Role>Manager</Role>
+    <IsActive>true</IsActive>
+    <MaxDistance>12</MaxDistance>
+    <DistanceType>Air</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>328218730</Id>
+    <FullName>Elish Tzemach</FullName>
+    <Phone>05483210654</Phone>
+    <Email>EEE@gmail.com</Email>
+    <Password>3228f890d294bd875293d2c742d5c99d013fad96688b0847d87f070da5af4266</Password>
+    <CurrentAddress>Jabotinsky St 1, Tel Aviv</CurrentAddress>
+    <Latitude>32.1708832</Latitude>
+    <Longitude>34.8288667</Longitude>
+    <Role>Manager</Role>
+    <IsActive>true</IsActive>
+    <MaxDistance>12</MaxDistance>
+    <DistanceType>Air</DistanceType>
+  </Volunteer>
 </ArrayOfVolunteer>

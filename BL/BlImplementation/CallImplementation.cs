@@ -23,8 +23,8 @@ internal class CallImplementation : ICall
     // Create a new call
     public void Create(BO.Call boCall)
     {
-        AdminManager.ThrowOnSimulatorIsRunning();
-        CallManager.ValidateCall(boCall); // כבר מבצע חישוב קואורדינטות
+        AdminManager.ThrowOnSimulatorIsRunning(); // שלב 7
+        CallManager.ValidateCall(boCall, isUpdate: false);
 
         DO.Call doCall = new(
             0,
@@ -33,8 +33,8 @@ internal class CallImplementation : ICall
             boCall.OpenTime,
             false,
             boCall.Description,
-            boCall.Latitude,  // מחושב ב־ValidateCall
-            boCall.Longitude, // מחושב ב־ValidateCall
+            null, // Latitude
+            null, // Longitude
             boCall.MaxCompletionTime
         );
 
@@ -43,14 +43,31 @@ internal class CallImplementation : ICall
             lock (AdminManager.BlMutex)
                 _dal.Call.Create(doCall);
 
-            CallManager.Observers.NotifyListUpdated();
-            // אין צורך באסינכרוני אם כבר חושב קודם
+            CallManager.Observers.NotifyListUpdated(); // עדכון תצוגה
+
+           
+            DO.Call? created = null;
+            lock (AdminManager.BlMutex)
+            {
+                created = _dal.Call.ReadAll()
+                    .FirstOrDefault(c =>
+                        c.FullAddress == doCall.FullAddress &&
+                        c.OpenTime == doCall.OpenTime &&
+                        c.Description == doCall.Description);
+            }
+
+            if (created != null)
+            {
+                _ = CallManager.UpdateCoordinatesForCallAddressAsync(created, _dal);
+            }
         }
         catch (DO.DalAlreadyExistsException ex)
         {
             throw new BO.BlAlreadyExistsException($"Call with ID={boCall.Id} already exists.", ex);
         }
     }
+
+
 
 
 
