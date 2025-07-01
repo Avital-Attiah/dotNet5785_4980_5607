@@ -31,6 +31,7 @@ namespace BO
         public CallStatus Status { get; set; }
         public int AssignmentsCount { get; set; }
         public override string ToString() => Tools.ToStringProperty(this);
+        public string CoordinateStatusMessage { get; set; }
 
     }
 }

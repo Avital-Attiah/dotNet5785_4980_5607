@@ -29,28 +29,42 @@ internal class VolunteerImplementation : IVolunteer
     // Creates a new volunteer after validating the input
     public void Create(BO.Volunteer boVolunteer)
     {
-        // Validate the volunteer object
+        AdminManager.ThrowOnSimulatorIsRunning(); // stage 7
         VolunteerManager.ValidateVolunteer(boVolunteer);
         string password = VolunteerManager.GeneratePassword();
-        // Get geographic coordinates based on the volunteer's address
-        var (latitude, longitude) = CallManager.GetCoordinates(boVolunteer.Address);
+
+        // יוצרים את המתנדב ללא קואורדינטות בשלב זה
+        DO.Volunteer doVolunteer = new DO.Volunteer(
+            boVolunteer.Id,
+            boVolunteer.FullName,
+            boVolunteer.Phone,
+            boVolunteer.Email,
+            VolunteerManager.HashPassword(boVolunteer.Password),
+            boVolunteer.Address,
+            null, // Latitude - will be updated asynchronously
+            null, // Longitude - will be updated asynchronously
+            (DO.Enums.Role)boVolunteer.Role,
+            boVolunteer.IsActive,
+            boVolunteer.MaxCallDistance,
+            (DO.Enums.DistanceType)boVolunteer.DistanceType
+        );
+
         try
         {
-            // Create a new volunteer in the DAL
-            _dal.Volunteer.Create(new DO.Volunteer(
-                boVolunteer.Id, boVolunteer.FullName, boVolunteer.Phone,
-                boVolunteer.Email, boVolunteer.Password, boVolunteer.Address,
-                boVolunteer.Latitude, boVolunteer.Longitude, (DO.Enums.Role)boVolunteer.Role,
-                boVolunteer.IsActive, boVolunteer.MaxCallDistance, (DO.Enums.DistanceType)boVolunteer.DistanceType));
-            VolunteerManager.Observers.NotifyListUpdated(); //stage 5   
+            lock (AdminManager.BlMutex)
+                _dal.Volunteer.Create(doVolunteer);
 
+            VolunteerManager.Observers.NotifyListUpdated(); // stage 5
+
+            // מחשב את הקואורדינטות ברקע (בלי להמתין לסיום)
+            _ = VolunteerManager.UpdateCoordinatesForVolunteerAsync(doVolunteer); // stage 7
         }
         catch (DO.DalAlreadyExistsException ex)
         {
-            // Handle the case where the volunteer already exists
             throw new BO.BlAlreadyExistsException($"Volunteer with ID={boVolunteer.Id} already exists.", ex);
         }
     }
+
 
     // Deletes an existing volunteer
     public void Delete(int id)
@@ -185,7 +199,7 @@ internal class VolunteerImplementation : IVolunteer
                     FullAddress = doCall.FullAddress,
                     OpeningTime = doCall.OpenTime,
                     StartHandlingTime = doAssignment.EntryTime,
-                    DistanceFromVolunteer = CallManager.CalculateDistance(id, doCall.Latitude, doCall.Longitude),
+                    DistanceFromVolunteer = CallManager.CalculateDistance(id, doCall.Latitude ?? 0, doCall.Longitude ?? 0),
                     Status = CallManager.GetStatusCall(doAssignment.CallId) switch
                     {
                         BO.CallStatus.InProgress or BO.CallStatus.InProgressAtRisk => BO.CallProgress.InTreatment,
@@ -232,7 +246,7 @@ internal class VolunteerImplementation : IVolunteer
     // Updates an existing volunteer's details
     public void Update(int id, BO.Volunteer updateVolunteerObj)
     {
-       
+
         var doVolunteer = _dal.Volunteer.Read(id)
                           ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={id} does not exist");
 

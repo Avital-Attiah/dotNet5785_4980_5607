@@ -32,10 +32,16 @@ namespace PL.Volunteer
                 MessageBox.Show("הכתובת עודכנה בהצלחה", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.Close();
             }
+            catch (BO.BLTemporaryNotAvailableException ex)
+            {
+                MessageBox.Show("לא ניתן לעדכן כתובת בזמן שהסימולטור פועל.\n" + ex.Message,
+                    "הסימולטור פעיל", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
             catch (System.Exception ex)
             {
                 MessageBox.Show($"שגיאה בעדכון כתובת:\n{ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
         }
     }
 }

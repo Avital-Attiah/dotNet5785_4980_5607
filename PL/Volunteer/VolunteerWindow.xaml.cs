@@ -121,14 +121,16 @@ namespace PL.Volunteer
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
             }
+            catch (BO.BLTemporaryNotAvailableException ex)
+            {
+                MessageBox.Show("לא ניתן לעדכן או להוסיף מתנדב בזמן שהסימולטור פועל.\n" + ex.Message,
+                    "הסימולטור פעיל", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Error: {ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
         }
         //help to find
 
@@ -150,10 +152,16 @@ namespace PL.Volunteer
 
                 VolunteerObserver();
             }
+            catch (BO.BLTemporaryNotAvailableException ex)
+            {
+                MessageBox.Show("לא ניתן לסיים טיפול בזמן שהסימולטור פועל.\n" + ex.Message,
+                    "סימולטור פעיל", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
             catch (Exception ex)
             {
                 MessageBox.Show($"שגיאה: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
         }
 
         // 12. Handler לכפתור ביטול טיפול
@@ -167,10 +175,16 @@ namespace PL.Volunteer
 
                 VolunteerObserver();
             }
+            catch (BO.BLTemporaryNotAvailableException ex)
+            {
+                MessageBox.Show("לא ניתן לבטל טיפול בזמן שהסימולטור פועל.\n" + ex.Message,
+                    "סימולטור פעיל", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
             catch (Exception ex)
             {
                 MessageBox.Show($"שגיאה: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
         }
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {

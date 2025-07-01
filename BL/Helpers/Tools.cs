@@ -1,81 +1,99 @@
 ﻿using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Linq.Expressions;
-using System.Reflection;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Helpers
 {
-    // Static helper class containing useful extension methods and utilities
+   
+
     internal static class Tools
     {
+        public class Location
+        {
+            public double Latitude { get; set; }
+            public double Longitude { get; set; }
+        }
         /// <summary>
-        /// Extension method that converts all properties of an object to a formatted string.
+        /// Gets the geographic coordinates (latitude, longitude) of a given address using OpenStreetMap API.
         /// </summary>
-        /// <typeparam name="T">The type of the object.</typeparam>
-        /// <param name="t">The object whose properties are to be converted to a string.</param>
-        /// <returns>A string representation of the object's properties.</returns>
+        public static async Task<Location?> GetLocationOfAddressAsync(string address)
+        {
+            try
+            {
+                using var client = new HttpClient();
+                string url = $"https://nominatim.openstreetmap.org/search?q={Uri.EscapeDataString(address)}&format=json&limit=1";
+
+                var response = await client.GetAsync(url);
+                if (!response.IsSuccessStatusCode)
+                    return null;
+
+                var content = await response.Content.ReadAsStringAsync();
+                var results = JsonSerializer.Deserialize<List<NominatimResult>>(content);
+
+                if (results is not null && results.Count > 0)
+                {
+                    return new Location
+                    {
+                        Latitude = double.Parse(results[0].lat),
+                        Longitude = double.Parse(results[0].lon)
+                    };
+                }
+            }
+            catch
+            {
+                // Handle network error or invalid address gracefully
+            }
+
+            return null;
+        }
+
+        private class NominatimResult
+        {
+            public string lat { get; set; }
+            public string lon { get; set; }
+        }
+
         public static string ToStringProperty<T>(this T t)
         {
             string str = "";
-            // Loop through each property of the object and append it to the result string
             foreach (PropertyInfo item in t.GetType().GetProperties())
-                str += "\n" + item.Name + ": " + item.GetValue(t, null); // Append property name and value
+                str += "\n" + item.Name + ": " + item.GetValue(t, null);
             return str;
         }
 
-        /// <summary>
-        /// Sorts a list of objects by a property corresponding to an enum value.
-        /// </summary>
-        /// <typeparam name="T">The type of the objects in the list.</typeparam>
-        /// <typeparam name="TEnum">The enum type used to specify the property to sort by.</typeparam>
-        /// <param name="list">The list of objects to be sorted.</param>
-        /// <param name="sortByField">The enum value that specifies the property to sort by.</param>
-        /// <param name="descending">A boolean value that specifies whether to sort in descending order (default is true).</param>
-        /// <returns>A new sorted list of objects.</returns>
         public static List<T> SortByEnum<T, TEnum>(List<T> list, TEnum? sortByField, bool descending = true)
             where TEnum : struct, Enum
         {
-            if (list == null || list.Count == 0) return list; // Return the list if it's null or empty
+            if (list == null || list.Count == 0) return list;
 
             string propertyName = sortByField.ToString()!;
-            PropertyInfo? prop = typeof(T).GetProperty(propertyName); // Get the property based on the enum value
-            if (prop == null) return list; // Return the list if the property doesn't exist
+            PropertyInfo? prop = typeof(T).GetProperty(propertyName);
+            if (prop == null) return list;
 
-            // Create an expression to access the property dynamically
             var parameter = Expression.Parameter(typeof(T), "x");
             var propertyAccess = Expression.Property(parameter, prop);
             var conversion = Expression.Convert(propertyAccess, typeof(object));
             var lambda = Expression.Lambda<Func<T, object>>(conversion, parameter).Compile();
 
-            // Sort the list based on the property, in ascending or descending order
             return descending
                 ? list.OrderByDescending(lambda).ToList()
                 : list.OrderBy(lambda).ToList();
         }
 
-        /// <summary>
-        /// Filters a list of objects based on an enum property value.
-        /// </summary>
-        /// <typeparam name="T">The type of the objects in the list.</typeparam>
-        /// <typeparam name="TEnum">The enum type used to specify the property to filter by.</typeparam>
-        /// <param name="list">The list of objects to be filtered.</param>
-        /// <param name="filterByField">The enum value that specifies the property to filter by.</param>
-        /// <param name="value">The value to filter the property by.</param>
-        /// <returns>A new filtered list of objects.</returns>
         public static IEnumerable<T> FilterList<T, TEnum>(IEnumerable<T> list, TEnum? filterByField, object? value)
             where TEnum : struct, Enum
         {
             string propertyName = filterByField.ToString()!;
-            PropertyInfo? prop = typeof(T).GetProperty(propertyName); // Get the property based on the enum value
+            PropertyInfo? prop = typeof(T).GetProperty(propertyName);
             if (prop != null)
             {
-                // Filter the list based on the value of the specified property
                 return list.Where(item =>
                 {
                     var propValue = prop.GetValue(item);
 
-                    // Handle type mismatch and attempt to convert if necessary
                     if (propValue != null && propValue.GetType() != value.GetType())
                     {
                         try
@@ -84,14 +102,14 @@ namespace Helpers
                         }
                         catch
                         {
-                            return false; // Return false if conversion fails
+                            return false;
                         }
                     }
 
-                    return propValue != null && propValue.Equals(value); // Return true if property value matches the filter value
+                    return propValue != null && propValue.Equals(value);
                 }).ToList();
             }
-            return list; // Return the list if the property doesn't exist
+            return list;
         }
     }
 }

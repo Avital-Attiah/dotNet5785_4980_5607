@@ -5,12 +5,14 @@ using DO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 
 internal class VolunteerImplementation : IVolunteer
 {
     private const string FilePath = "volunteers.xml"; // Path to the XML file where volunteers are stored
 
+    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
     public void Create(Volunteer item)
     {
         try
@@ -31,24 +33,28 @@ internal class VolunteerImplementation : IVolunteer
         }
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
     public Volunteer? Read(int id)
     {
         var volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath); // Load existing volunteers
         return volunteers.FirstOrDefault(v => v.Id == id); // Find the volunteer by ID
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
     public Volunteer? Read(Func<Volunteer, bool> filter)
     {
         var volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath); // Load existing volunteers
         return volunteers.FirstOrDefault(filter); // Find the volunteer based on the filter
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
     public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null)
     {
         var volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath); // Load existing volunteers
         return filter == null ? volunteers : volunteers.Where(filter); // Return all or filtered volunteers
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
     public void Update(Volunteer item)
     {
         var volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath); // Load existing volunteers
@@ -59,6 +65,7 @@ internal class VolunteerImplementation : IVolunteer
         XMLTools.SaveListToXMLSerializer(volunteers, FilePath); // Save the list to XML
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
     public void Delete(int id)
     {
         var volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(FilePath); // Load existing volunteers
@@ -68,6 +75,7 @@ internal class VolunteerImplementation : IVolunteer
         XMLTools.SaveListToXMLSerializer(volunteers, FilePath); // Save the updated list to XML
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
     public void DeleteAll()
     {
         XMLTools.SaveListToXMLSerializer(new List<Volunteer>(), FilePath); // Clear the volunteer list in XML

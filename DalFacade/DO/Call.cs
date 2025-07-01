@@ -12,8 +12,8 @@ namespace DO
     /// <param name="OpenTime">The time the call was opened.</param>
     /// <param name="isEmergency">A property to check whether the call is an emergency.</param>
     /// <param name="Description">A textual description of the call (default: null).</param>
-    /// <param name="Latitude">The latitude of the call location (default: 0.0).</param>
-    /// <param name="Longitude">The longitude of the call location (default: 0.0).</param>
+    /// <param name="Latitude">The latitude of the call location (default: null).</param>
+    /// <param name="Longitude">The longitude of the call location (default: null).</param>
     /// <param name="MaxCompletionTime">The maximum completion time for the call (if applicable, default: null).</param>
     public record Call
     (
@@ -23,8 +23,8 @@ namespace DO
         DateTime OpenTime,
         bool isEmergency = false,
         string? Description = null,
-        double Latitude = 0.0,
-        double Longitude = 0.0,
+        double? Latitude = null,
+        double? Longitude = null,
         DateTime? MaxCompletionTime = null
     )
     {

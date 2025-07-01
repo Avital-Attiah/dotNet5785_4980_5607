@@ -71,10 +71,16 @@ namespace PL.Volunteer
                 _bl.Volunteer.Update(Volunteer.Id, Volunteer);
                 MessageBox.Show("הפרטים עודכנו בהצלחה", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-            catch (System.Exception ex)
+            catch (BO.BLTemporaryNotAvailableException ex)
+            {
+                MessageBox.Show("לא ניתן לעדכן פרטי מתנדב בזמן שהסימולטור פועל.\n" + ex.Message,
+                    "סימולטור פעיל", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
         }
 
         private void btnSelectCall_Click(object sender, RoutedEventArgs e)
@@ -93,10 +99,16 @@ namespace PL.Volunteer
                 Volunteer = _bl.Volunteer.Read(Volunteer.Id);
                 LoadVolunteerInfo();
             }
-            catch (System.Exception ex)
+            catch (BO.BLTemporaryNotAvailableException ex)
+            {
+                MessageBox.Show("לא ניתן לסיים טיפול בזמן הסימולטור.\n" + ex.Message,
+                    "סימולטור פעיל", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
         }
 
         private void btnCancelCall_Click(object sender, RoutedEventArgs e)
@@ -108,10 +120,16 @@ namespace PL.Volunteer
                 Volunteer = _bl.Volunteer.Read(Volunteer.Id);
                 LoadVolunteerInfo();
             }
-            catch (System.Exception ex)
+            catch (BO.BLTemporaryNotAvailableException ex)
+            {
+                MessageBox.Show("לא ניתן לבטל טיפול בזמן הסימולטור.\n" + ex.Message,
+                    "סימולטור פעיל", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
         }
 
         private void btnCallHistory_Click(object sender, RoutedEventArgs e)

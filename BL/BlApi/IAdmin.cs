@@ -10,6 +10,9 @@ namespace BlApi
     public interface IAdmin :IObservable //stage 5 הרחבת ממשק
 
     {
+        void StartSimulator(int interval); //stage 7
+        void StopSimulator(); //stage 7
+
         #region Stage 5
         void AddConfigObserver(Action configObserver);
         void RemoveConfigObserver(Action configObserver);

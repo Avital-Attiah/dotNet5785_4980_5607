@@ -23,28 +23,39 @@ internal class CallImplementation : ICall
     // Create a new call
     public void Create(BO.Call boCall)
     {
-        // Validate the call before creation
+        AdminManager.ThrowOnSimulatorIsRunning();
         CallManager.ValidateCall(boCall);
-        var (Latitude, Longitude) = CallManager.GetCoordinates(boCall.FullAddress);
 
-        // Create a DO.Call object from the BO.Call object
-        DO.Call doCall = new(0, (DO.Enums.CallType)boCall.CallType, boCall.FullAddress, boCall.OpenTime, false, boCall.Description, boCall.Latitude, boCall.Longitude, boCall.MaxCompletionTime);
+        DO.Call doCall = new(
+            0,
+            (DO.Enums.CallType)boCall.CallType,
+            boCall.FullAddress,
+            boCall.OpenTime,
+            false,
+            boCall.Description,
+            null, // Latitude
+            null, // Longitude
+            boCall.MaxCompletionTime
+        );
 
         try
         {
-            // Attempt to create the call in the data layer
-            _dal.Call.Create(doCall);
-          
-            CallManager.Observers.NotifyListUpdated(); //stage 5                                                    
+            lock (AdminManager.BlMutex)
+                _dal.Call.Create(doCall);
 
+            CallManager.Observers.NotifyListUpdated();
+
+            // המשך חישוב הקואורדינטות בצורה אסינכרונית
+            _ = CallManager.UpdateCoordinatesForCallAddressAsync(doCall, _dal);
 
         }
         catch (DO.DalAlreadyExistsException ex)
         {
-            // Handle the case where the call already exists
-            throw new BO.BlDoesNotExistException($"Call with ID={boCall.Id} already exists", ex);
+            throw new BO.BlAlreadyExistsException($"Call with ID={boCall.Id} already exists.", ex);
         }
     }
+
+
     //public void Create(BO.Call boCall)
     //{
     //    CallManager.ValidateCall(boCall);
@@ -85,45 +96,63 @@ internal class CallImplementation : ICall
     // Cancel an ongoing treatment (assignment)
     public void CancellationOfTreatment(int CancellerId, int assignmentId)
     {
-        DO.Assignment? doAssignment = _dal.Assignment.Read(assignmentId);
-        DO.Volunteer doVolunteer = _dal.Volunteer.Read(CancellerId)!;
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         try
         {
-            // Check if assignment exists
-            if (doAssignment == null)
-                throw new BO.BlDoesNotExistException($"Assignment with ID={assignmentId} does not exist.");
+            lock (AdminManager.BlMutex) // stage 7
+            {
+                // קריאת האובייקטים מה-DAL
+                DO.Assignment? doAssignment = _dal.Assignment.Read(assignmentId);
+                DO.Volunteer doVolunteer = _dal.Volunteer.Read(CancellerId)!;
 
-            // Validate cancellation conditions
-            if (doAssignment.VolunteerId != CancellerId && doVolunteer.Role != DO.Enums.Role.Manager || doAssignment.CompletionTime != null || doAssignment.Status != null)
-            {
-                throw new BO.InvalidAssignmentCompletionException($"Assignment with ID={assignmentId} cannot be completed.");
-            }
-            else
-            {
-                // Update assignment status to canceled
-                DO.Enums.TreatmentStatus finishType = doVolunteer.Role == DO.Enums.Role.Volunteer ? DO.Enums.TreatmentStatus.CanceledByVolunteer : DO.Enums.TreatmentStatus.CanceledByManager;
-                DO.Assignment copyAssignment = doAssignment with { CompletionTime = AdminManager.Now, Status = finishType };
+                // בדיקה אם ההשמה קיימת
+                if (doAssignment == null)
+                    throw new BO.BlDoesNotExistException($"Assignment with ID={assignmentId} does not exist.");
+
+                // בדיקת תנאים לביטול
+                if ((doAssignment.VolunteerId != CancellerId && doVolunteer.Role != DO.Enums.Role.Manager) ||
+                    doAssignment.CompletionTime != null || doAssignment.Status != null)
+                {
+                    throw new BO.InvalidAssignmentCompletionException($"Assignment with ID={assignmentId} cannot be completed.");
+                }
+
+                // קביעת סוג הביטול לפי התפקיד
+                DO.Enums.TreatmentStatus finishType =
+                    doVolunteer.Role == DO.Enums.Role.Volunteer
+                    ? DO.Enums.TreatmentStatus.CanceledByVolunteer
+                    : DO.Enums.TreatmentStatus.CanceledByManager;
+
+                // עדכון ההשמה עם זמן וסוג סיום
+                DO.Assignment copyAssignment = doAssignment with
+                {
+                    CompletionTime = AdminManager.Now,
+                    Status = finishType
+                };
+
                 _dal.Assignment.Update(copyAssignment);
             }
         }
-        catch (BO.BlDoesNotExistException ex)
+        catch (BO.BlDoesNotExistException)
         {
-            // Handle assignment not found
             throw;
         }
-        catch (BO.InvalidAssignmentCompletionException ex)
+        catch (BO.InvalidAssignmentCompletionException)
         {
-            // Handle invalid assignment state
             throw;
         }
     }
 
+
     // Delete a call from the system
     public void DeleteCall(int callId)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
         try
         {
-            var doCall = _dal.Call.Read(callId)
+            lock (AdminManager.BlMutex) 
+            {
+                var doCall = _dal.Call.Read(callId)
                             ?? throw new BO.BlDoesNotExistException($"Call with ID={callId} does not exist.");
 
             // Check if the call is still open
@@ -143,8 +172,10 @@ internal class CallImplementation : ICall
 
             // Attempt to delete the call
             _dal.Call.Delete(callId);
+             }
             CallManager.Observers.NotifyListUpdated();  //stage 5  	
         }
+
         catch (DO.DalDoesNotExistException ex)
         {
             // Handle the case where the call does not exist
@@ -160,36 +191,45 @@ internal class CallImplementation : ICall
     // Mark the call as finished (when an assignment is completed)
     public void FinishCall(int volunteerId, int assignmentId)
     {
-        DO.Assignment? doAssignment = _dal.Assignment.Read(assignmentId);
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         try
         {
-            // Check if the assignment exists
-            if (doAssignment == null)
-                throw new BO.BlDoesNotExistException($"Assignment with ID={assignmentId} does not exist.");
+            lock (AdminManager.BlMutex) // stage 7
+            {
+                // קריאת ההשמה מה-DAL
+                DO.Assignment? doAssignment = _dal.Assignment.Read(assignmentId);
 
-            // Validate if the assignment can be completed
-            if (doAssignment.VolunteerId != volunteerId || doAssignment.Status != null || doAssignment.CompletionTime != null)
-            {
-                throw new BO.InvalidAssignmentCompletionException($"Assignment with ID={assignmentId} cannot be completed.");
-            }
-            else
-            {
-                // Mark the assignment as completed on time
-                DO.Assignment copyAssignment = doAssignment with { CompletionTime = AdminManager.Now, Status = DO.Enums.TreatmentStatus.CompletedOnTime };
+                // בדיקה אם קיימת ההשמה
+                if (doAssignment == null)
+                    throw new BO.BlDoesNotExistException($"Assignment with ID={assignmentId} does not exist.");
+
+                // בדיקה אם אפשר לסיים את ההשמה
+                if (doAssignment.VolunteerId != volunteerId || doAssignment.Status != null || doAssignment.CompletionTime != null)
+                {
+                    throw new BO.InvalidAssignmentCompletionException($"Assignment with ID={assignmentId} cannot be completed.");
+                }
+
+                // סימון ההשמה כהושלמה בזמן
+                DO.Assignment copyAssignment = doAssignment with
+                {
+                    CompletionTime = AdminManager.Now,
+                    Status = DO.Enums.TreatmentStatus.CompletedOnTime
+                };
+
                 _dal.Assignment.Update(copyAssignment);
             }
         }
-        catch (BO.BlDoesNotExistException ex)
+        catch (BO.BlDoesNotExistException)
         {
-            // Handle assignment not found
             throw;
         }
-        catch (BO.InvalidAssignmentCompletionException ex)
+        catch (BO.InvalidAssignmentCompletionException)
         {
-            // Handle invalid completion
             throw;
         }
     }
+
 
     // Get the number of calls by status
     public int[] GetCallCounts()
@@ -377,7 +417,8 @@ internal class CallImplementation : ICall
                     FullAddress = item.FullAddress,
                     OpenTime = item.OpenTime,
                     MaxCompletionTime = item.MaxCompletionTime,
-                    DistanceFromVolunteer = CallManager.CalculateDistance(volunteerId, item.Latitude, item.Longitude)
+                    DistanceFromVolunteer = CallManager.CalculateDistance(volunteerId, item.Latitude!.Value, item.Longitude!.Value)
+
                 }).ToList();
 
             // Apply call type filtering if specified
@@ -405,27 +446,28 @@ internal class CallImplementation : ICall
     // Assign a volunteer to a call
     public void SelectCall(int volunteerId, int callId)
     {
-        DO.Call? doCall = _dal.Call.Read(callId);
-        DO.Assignment? doAssignment = _dal.Assignment.Read(a => a.CallId == callId);
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         try
         {
-
-            BO.CallStatus statusCall = CallManager.GetStatusCall(callId);
-            // Check if the call cannot be selected due to its finish state, progress, or expiration
-            if ((doAssignment?.Status is DO.Enums.TreatmentStatus.CompletedOnTime or DO.Enums.TreatmentStatus.Expired) ||
-               statusCall is BO.CallStatus.InProgress or BO.CallStatus.InProgressAtRisk ||
-               (doCall.MaxCompletionTime <= AdminManager.Now))
+            lock (AdminManager.BlMutex)
             {
-                throw new BO.InvalidCallSelectionException($"Call with ID={callId} cannot be selected.");
-            }
+                DO.Call? doCall = _dal.Call.Read(callId);
+                DO.Assignment? doAssignment = _dal.Assignment.Read(a => a.CallId == callId);
 
-            else
-            {
-                // Create a new assignment linking the volunteer to the call
+                BO.CallStatus statusCall = CallManager.GetStatusCall(callId);
+
+                if ((doAssignment?.Status is DO.Enums.TreatmentStatus.CompletedOnTime or DO.Enums.TreatmentStatus.Expired) ||
+                   statusCall is BO.CallStatus.InProgress or BO.CallStatus.InProgressAtRisk ||
+                   (doCall.MaxCompletionTime <= AdminManager.Now))
+                {
+                    throw new BO.InvalidCallSelectionException($"Call with ID={callId} cannot be selected.");
+                }
+
                 DO.Assignment newAssignment = new DO.Assignment()
                 {
                     CallId = callId,
-                   VolunteerId = volunteerId,
+                    VolunteerId = volunteerId,
                     EntryTime = AdminManager.Now
                 };
                 _dal.Assignment.Create(newAssignment);
@@ -435,47 +477,63 @@ internal class CallImplementation : ICall
         {
             throw;
         }
-        catch (Exception)
-        {
-            throw;
-        }
     }
-    
 
-    
+
+
+
     public void UpdateCallDetails(BO.Call updateCallObj)
     {
-       // Retrieve the existing call from the data layer; throw exception if not found
-        var doCall = _dal.Call.Read(updateCallObj.Id)
-                   ?? throw new BO.BlDoesNotExistException($"Call with ID={updateCallObj.Id} does not exist");
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         try
         {
-            // Validate the updated call details
-            CallManager.ValidateCall(updateCallObj, isUpdate: true);
-            // Map any necessary changes from the business object to the data object
-            var copyDoCall = CallManager.updateIfNeededDoCall(doCall, updateCallObj);
-            _dal.Call.Update(copyDoCall);
-            CallManager.Observers.NotifyItemUpdated(doCall.Id);  //stage 5
-            CallManager.Observers.NotifyListUpdated();  //stage 5
+            lock (AdminManager.BlMutex)
+            {
+                var doCall = _dal.Call.Read(updateCallObj.Id)
+                           ?? throw new BO.BlDoesNotExistException($"Call with ID={updateCallObj.Id} does not exist");
+
+                CallManager.ValidateCall(updateCallObj, isUpdate: true);
+                var copyDoCall = CallManager.updateIfNeededDoCall(doCall, updateCallObj);
+                _dal.Call.Update(copyDoCall);
+            }
+
+            CallManager.Observers.NotifyItemUpdated(updateCallObj.Id);  // מחוץ ל-lock
+            CallManager.Observers.NotifyListUpdated();                 // מחוץ ל-lock
         }
         catch (DO.DalDoesNotExistException ex)
         {
-            throw new BO.BlCannotUpdateException($"Failed to update call with ID={doCall.Id}.", ex);
+            throw new BO.BlCannotUpdateException($"Failed to update call with ID={updateCallObj.Id}.", ex);
         }
-        catch (BO.BlValidationException)
-        {
-            throw;
-        }
-        catch (BO.BlNullPropertyException)
-        {
-            throw;
-        }
+        catch (BO.BlValidationException) { throw; }
+        catch (BO.BlNullPropertyException) { throw; }
     }
+
     public void CancelAssignment(int callId)
     {
-        // לוגיקה לביטול הקצאת קריאה
-        // לדוגמה: הסרת ההקצאה מהמאגר או עדכון סטטוס
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
+        lock (AdminManager.BlMutex)
+        {
+            var assignment = _dal.Assignment.Read(a => a.CallId == callId)
+                ?? throw new BO.BlDoesNotExistException("No assignment found for this call.");
+
+            if (assignment.Status != null)
+                throw new BO.InvalidAssignmentCompletionException("Cannot cancel already completed assignment.");
+
+            var updated = assignment with
+            {
+                CompletionTime = AdminManager.Now,
+                Status = DO.Enums.TreatmentStatus.CanceledByManager
+            };
+
+            _dal.Assignment.Update(updated);
+        }
+
+        CallManager.Observers.NotifyItemUpdated(callId); // מחוץ ל-lock
     }
+
+
 
     public void SendAssignmentCancellationEmail(int callId)
     {

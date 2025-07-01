@@ -15,6 +15,9 @@ namespace PL
     {
         static readonly IBl s_bl = Factory.Get();
         private readonly DispatcherTimer _timer;
+        private volatile bool _clockObserverRunning = false;
+        private volatile bool _configObserverRunning = false;
+
 
         public MainWindow()
         {
@@ -35,15 +38,13 @@ namespace PL
         // ===== אירוע טעינת החלון =====
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            // אתחול ערכים ראשוניים מתוך ה-BL
-            Helpers.AdminManager.UpdateClock(DateTime.Now);
+
             CurrentTime = s_bl.Admin.GetClock();
             RiskRangeMinutes = (int)s_bl.Admin.GetRiskRange().TotalMinutes;
-
             // רישום משקיפים
             s_bl.Admin.AddClockObserver(ClockObserver);
             s_bl.Admin.AddConfigObserver(ConfigObserver);
-           Helpers.AdminManager.Start(1);
+           
           
         }
 
@@ -53,24 +54,35 @@ namespace PL
             // הסרת משקיפים
             s_bl.Admin.RemoveClockObserver(ClockObserver);
             s_bl.Admin.RemoveConfigObserver(ConfigObserver);
+            s_bl.Admin.StopSimulator();
+
         }
 
         // ===== משקיף על שעון המערכת =====
         private void ClockObserver()
         {
-            Dispatcher.Invoke(() =>
+            if (!_clockObserverRunning)
             {
-                CurrentTime = s_bl.Admin.GetClock();
-            });
+                _clockObserverRunning = true;
+                _ = Dispatcher.BeginInvoke(() =>
+                {
+                    CurrentTime = s_bl.Admin.GetClock();
+                    _clockObserverRunning = false;
+                });
+            }
         }
-
         // ===== משקיף על משתני תצורה =====
         private void ConfigObserver()
         {
-            Dispatcher.Invoke(() =>
+            if (!_configObserverRunning)
             {
-                RiskRangeMinutes = (int)s_bl.Admin.GetRiskRange().TotalMinutes;
-            });
+                _configObserverRunning = true;
+                _ = Dispatcher.BeginInvoke(() =>
+                {
+                    RiskRangeMinutes = (int)s_bl.Admin.GetRiskRange().TotalMinutes;
+                    _configObserverRunning = false;
+                });
+            }
         }
 
         // ===== DependencyProperty עבור CurrentTime =====
@@ -141,7 +153,14 @@ namespace PL
             {
                 Mouse.OverrideCursor = Cursors.Wait;
 
-                // סגירת כל החלונות הפתוחים חוץ מהראשי
+                // ❗ עצירת הסימולטור אם רץ
+                if (IsSimulatorRunning)
+                {
+                    s_bl.Admin.StopSimulator();
+                    IsSimulatorRunning = false;
+                }
+
+                // סגירת חלונות
                 foreach (Window w in Application.Current.Windows
                                                 .OfType<Window>()
                                                 .Where(w => w != this)
@@ -151,12 +170,24 @@ namespace PL
                 }
 
                 s_bl.Admin.InitializeDB();
+
+                // סנכרון UI
+                Dispatcher.Invoke(() =>
+                {
+                    CurrentTime = s_bl.Admin.GetClock();
+                    RiskRangeMinutes = (int)s_bl.Admin.GetRiskRange().TotalMinutes;
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("אירעה שגיאה: " + ex.Message, "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
                 Mouse.OverrideCursor = null;
             }
         }
+
 
         // ===== Handler לאיפוס בסיס הנתונים =====
         private void Reset_DB(object sender, RoutedEventArgs e)
@@ -174,6 +205,13 @@ namespace PL
             {
                 Mouse.OverrideCursor = Cursors.Wait;
 
+                // ❗ עצירת הסימולטור אם רץ
+                if (IsSimulatorRunning)
+                {
+                    s_bl.Admin.StopSimulator();
+                    IsSimulatorRunning = false;
+                }
+
                 // סגירת כל החלונות הפתוחים חוץ מהראשי
                 foreach (Window w in Application.Current.Windows
                                                 .OfType<Window>()
@@ -185,8 +223,6 @@ namespace PL
 
                 s_bl.Admin.ResetDB();
 
-
-
                 // סנכרון UI לאחר איפוס
                 Dispatcher.Invoke(() =>
                 {
@@ -194,17 +230,45 @@ namespace PL
                     RiskRangeMinutes = (int)s_bl.Admin.GetRiskRange().TotalMinutes;
                 });
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("אירעה שגיאה: " + ex.Message, "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             finally
             {
                 Mouse.OverrideCursor = null;
             }
         }
 
+
         // ===== Handler לעדכון משתנה התצורה =====
         private void btnUpdateRiskRange_Click(object sender, RoutedEventArgs e)
         {
             s_bl.Admin.SetRiskRange(TimeSpan.FromMinutes(RiskRangeMinutes));
         }
+
+        private void ToggleSimulator(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                MessageBox.Show($"IsSimulatorRunning = {IsSimulatorRunning}, Interval = {Interval}");
+                if (!IsSimulatorRunning)
+                {
+                    s_bl.Admin.StartSimulator(Interval);
+                    IsSimulatorRunning = true;
+                }
+                else
+                {
+                    s_bl.Admin.StopSimulator();
+                    IsSimulatorRunning = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("שגיאה בעת הפעלת/עצירת הסימולטור: " + ex.Message, "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
 
         private void View_CallList(object sender, RoutedEventArgs e)
         {
@@ -215,5 +279,23 @@ namespace PL
             };
             listWindow.Show();
         }
+        public int Interval
+        {
+            get => (int)GetValue(IntervalProperty);
+            set => SetValue(IntervalProperty, value);
+        }
+
+        public static readonly DependencyProperty IntervalProperty =
+            DependencyProperty.Register("Interval", typeof(int), typeof(MainWindow));
+
+        public bool IsSimulatorRunning
+        {
+            get => (bool)GetValue(IsSimulatorRunningProperty);
+            set => SetValue(IsSimulatorRunningProperty, value);
+        }
+
+        public static readonly DependencyProperty IsSimulatorRunningProperty =
+            DependencyProperty.Register("IsSimulatorRunning", typeof(bool), typeof(MainWindow));
+
     }
 }

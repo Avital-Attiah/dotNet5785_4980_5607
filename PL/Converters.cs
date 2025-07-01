@@ -14,6 +14,15 @@ namespace PL
             => throw new NotImplementedException();
     }
 
+    public class SimulatorTextConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            => (value is bool b && b) ? "עצור סימולטור" : "הפעל סימולטור";
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
+
     public class SingleToCollectionConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -25,6 +34,15 @@ namespace PL
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();
+    }
+
+    public class InverseBooleanConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            => !(value is bool b) ? Binding.DoNothing : !b;
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => !(value is bool b) ? Binding.DoNothing : !b;
     }
 }
 
@@ -45,6 +63,7 @@ namespace PL.Call
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
+
     public class MinutesConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -73,5 +92,4 @@ namespace PL.Call
             return null;
         }
     }
-
 }

@@ -19,31 +19,113 @@ namespace Helpers
         private static IDal s_dal = Factory.Get; // Data access layer
 
         /// <summary>
+        /// מחזירה את הקריאות הפתוחות שמתאימות למתנדב, ושיש להן קואורדינטות מחושבות.
+        /// </summary>
+        internal static IEnumerable<BO.CallInList> GetOpenCallsForVolunteer(int volunteerId)
+        {
+            DO.Volunteer? volunteer;
+            lock (AdminManager.BlMutex)
+                volunteer = s_dal.Volunteer.Read(volunteerId);
+
+            if (volunteer == null || !volunteer.Latitude.HasValue || !volunteer.Longitude.HasValue)
+                return Enumerable.Empty<BO.CallInList>();
+
+            List<DO.Call> openCalls;
+            lock (AdminManager.BlMutex)
+            {
+                openCalls = s_dal.Call
+                    .ReadAll(c => c.MaxCompletionTime > AdminManager.Now)
+                    .Where(c => c.Latitude != null && c.Longitude != null)
+                    .ToList();
+            }
+
+            List<BO.CallInList> result = new();
+
+            foreach (var call in openCalls)
+            {
+                double distance = CalculateHaversineDistance(volunteer.Latitude!.Value,volunteer.Longitude!.Value,call.Latitude!.Value,call.Longitude!.Value);
+
+
+                if (distance <= volunteer.MaxDistance)
+                {
+                    int assignmentsCount;
+                    string lastVolunteerName = null;
+                    TimeSpan? timeToComplete = null;
+
+                    lock (AdminManager.BlMutex)
+                    {
+                        var assignments = s_dal.Assignment.ReadAll(a => a.CallId == call.Id).ToList();
+                        assignmentsCount = assignments.Count;
+
+                        var last = assignments.OrderByDescending(a => a.EntryTime).FirstOrDefault();
+                        if (last != null && last.VolunteerId != 0)
+                        {
+                            var vol = s_dal.Volunteer.Read(last.VolunteerId);
+                            lastVolunteerName = vol?.FullName;
+
+                            if (last.CompletionTime != null)
+                                timeToComplete = last.CompletionTime - call.OpenTime;
+                        }
+                    }
+
+                    result.Add(new BO.CallInList
+                    {
+                        Id = null,
+                        CallId = call.Id,
+                        CallType = (BO.CallType)call.CallType,
+                        OpenTime = call.OpenTime,
+                        TimeRemaining = call.MaxCompletionTime - AdminManager.Now,
+                        LastAssignedVolunteerName = lastVolunteerName,
+                        TimeToComplete = timeToComplete,
+                        Status = GetStatusCall(call.Id),
+                        AssignmentsCount = assignmentsCount,
+                        CoordinateStatusMessage = (call.Latitude == null || call.Longitude == null)? "קואורדינטות לא זמינות (השאילתא לא הושלמה או נכשלה)": null
+                    });
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Updates the status of open calls that have expired by comparing their completion time to the current time.
         /// </summary>
         public static void UpdateExpiredOpenCalls()
         {
-            var list = s_dal.Call.ReadAll().ToList(); // Get all calls
+            List<DO.Call> list;
+            lock (AdminManager.BlMutex) //stage 7
+            {
+                list = s_dal.Call.ReadAll().ToList(); // Get all calls
+            }
 
             foreach (var doCall in list)
             {
-
                 if (doCall.MaxCompletionTime <= AdminManager.Now)
                 {
-                    var assignment = s_dal.Assignment.Read(a => a.CallId == doCall.Id);
+                    DO.Assignment? assignment;
+                    lock (AdminManager.BlMutex) //stage 7
+                    {
+                        assignment = s_dal.Assignment.Read(a => a.CallId == doCall.Id);
+                    }
 
                     if (assignment == null)
                     {
                         // If no assignment exists, create a new expired assignment
                         DO.Assignment doAssignment =
-                         new(0, doCall.Id, 0, AdminManager.Now, AdminManager.Now, DO.Enums.TreatmentStatus.Expired);
-                        s_dal.Assignment.Create(doAssignment);
+                            new(0, doCall.Id, 0, AdminManager.Now, AdminManager.Now, DO.Enums.TreatmentStatus.Expired);
+                        lock (AdminManager.BlMutex) //stage 7
+                        {
+                            s_dal.Assignment.Create(doAssignment);
+                        }
                     }
                     else
                     {
                         // If assignment exists, update it to expired
                         DO.Assignment updatedAssignment = assignment with { CompletionTime = AdminManager.Now, Status = DO.Enums.TreatmentStatus.Expired };
-                        s_dal.Assignment.Update(updatedAssignment);
+                        lock (AdminManager.BlMutex) //stage 7
+                        {
+                            s_dal.Assignment.Update(updatedAssignment);
+                        }
                     }
                 }
             }
@@ -52,20 +134,26 @@ namespace Helpers
         /// <summary>
         /// Gets the current status of a call based on its completion time and assignment status.
         /// </summary>
-        /// <param name="id">The ID of the call.</param>
-        /// <returns>The status of the call.</returns>
         public static BO.CallStatus GetStatusCall(int id)
         {
-            DO.Call? doCall = s_dal.Call.Read(id);
-            if (doCall == null)
-                throw new BO.BlDoesNotExistException($"Call with ID={id} does not exist");
+            DO.Call? doCall;
+            DO.Assignment? doAssignment;
+            TimeSpan? timeDifference;
+            bool isExpired;
+            bool isAtRisk;
 
-            DO.Assignment? doAssignment = s_dal.Assignment.Read(a => a.CallId == id);
-            DateTime now = AdminManager.Now;
+            lock (AdminManager.BlMutex) //stage 7
+            {
+                doCall = s_dal.Call.Read(id);
+                if (doCall == null)
+                    throw new BO.BlDoesNotExistException($"Call with ID={id} does not exist");
 
-            TimeSpan? timeDifference = doCall.MaxCompletionTime - now;
-            bool isExpired = doCall.MaxCompletionTime <= now;
-            bool isAtRisk = timeDifference.HasValue && timeDifference <= s_dal.Config.RiskRange;
+                doAssignment = s_dal.Assignment.Read(a => a.CallId == id);
+                DateTime now = AdminManager.Now;
+                timeDifference = doCall.MaxCompletionTime - now;
+                isExpired = doCall.MaxCompletionTime <= now;
+                isAtRisk = timeDifference.HasValue && timeDifference <= s_dal.Config.RiskRange;
+            }
 
             if (doAssignment?.Status == DO.Enums.TreatmentStatus.Expired)
                 return BO.CallStatus.Expired;
@@ -89,36 +177,42 @@ namespace Helpers
             return BO.CallStatus.InProgress;
         }
 
-
         /// <summary>
         /// Retrieves the assignment history for a specific call.
         /// </summary>
-        /// <param name="id">The ID of the call.</param>
-        /// <returns>A list of assignment history for the call.</returns>
         public static List<BO.CallAssignInList> GetAssignmentsHistory(int id)
         {
-            return s_dal.Assignment.ReadAll(a => a.CallId == id)
-                .Select(item => new BO.CallAssignInList
-                {
-                    VolunteerId = item.VolunteerId,
-                    VolunteerName = s_dal.Volunteer.Read(item.VolunteerId).FullName,
-                    StartTime = item.EntryTime,
-                    EndTime = item.CompletionTime,
-                    CompletionType = (BO.CompletionType?)item.Status
-                })
-                .ToList();
+            lock (AdminManager.BlMutex) //stage 7
+            {
+                return s_dal.Assignment.ReadAll(a => a.CallId == id)
+                    .Select(item =>
+                    {
+                        var volunteer = s_dal.Volunteer.Read(item.VolunteerId);
+                        return new BO.CallAssignInList
+                        {
+                            VolunteerId = item.VolunteerId,
+                            VolunteerName = volunteer?.FullName ?? "(מתנדב לא קיים)",
+                            StartTime = item.EntryTime,
+                            EndTime = item.CompletionTime,
+                            CompletionType = (BO.CompletionType?)item.Status
+                        };
+                    })
+                    .ToList();
+            }
         }
+
 
         /// <summary>
         /// Calculates the distance between a volunteer's current location and the location of a specific call.
         /// </summary>
-        /// <param name="volunteerId">The ID of the volunteer.</param>
-        /// <param name="callLat">The latitude of the call location.</param>
-        /// <param name="callLong">The longitude of the call location.</param>
-        /// <returns>The distance between the volunteer and the call location.</returns>
         public static double CalculateDistance(int volunteerId, double callLat, double callLong)
         {
-            var volunteer = s_dal.Volunteer.Read(volunteerId);
+            DO.Volunteer? volunteer;
+            lock (AdminManager.BlMutex) //stage 7
+            {
+                volunteer = s_dal.Volunteer.Read(volunteerId);
+            }
+
             if (volunteer == null)
                 throw new BO.BlDoesNotExistException($"Volunteer with ID {volunteerId} not found");
 
@@ -128,16 +222,9 @@ namespace Helpers
             return GetDistance(volunteer.Latitude.Value, volunteer.Longitude.Value, callLat, callLong);
         }
 
-
-
         /// <summary>
         /// Calculates the distance between two geographical coordinates.
         /// </summary>
-        /// <param name="lat1">Latitude of the first point.</param>
-        /// <param name="lon1">Longitude of the first point.</param>
-        /// <param name="lat2">Latitude of the second point.</param>
-        /// <param name="lon2">Longitude of the second point.</param>
-        /// <returns>The distance between the two points in kilometers.</returns>
         private static double GetDistance(double lat1, double lon1, double lat2, double lon2)
         {
             double earthRadiusKm = 6371; // Radius of the Earth in kilometers
@@ -153,8 +240,6 @@ namespace Helpers
         /// <summary>
         /// Converts degrees to radians.
         /// </summary>
-        /// <param name="degrees">The angle in degrees.</param>
-        /// <returns>The angle in radians.</returns>
         private static double DegreesToRadians(double degrees)
         {
             return degrees * (Math.PI / 180.0);// Conversion formula
@@ -165,12 +250,8 @@ namespace Helpers
         /// <summary>
         /// Retrieves the geographical coordinates (latitude and longitude) for a given address.
         /// </summary>
-        /// <param name="address">The address to get the coordinates for.</param>
-        /// <returns>A tuple containing the latitude and longitude of the address.</returns>
-        /// <exception cref="BO.BlValidationException">Thrown when the address is invalid.</exception>
         public static (double Latitude, double Longitude) GetCoordinates(string address)
         {
-
             address = address?.Trim();
 
             if (string.IsNullOrWhiteSpace(address))
@@ -216,8 +297,6 @@ namespace Helpers
             }
         }
 
-
-
         /// <summary>
         /// Represents the structure of a geocoding response.
         /// </summary>
@@ -233,34 +312,23 @@ namespace Helpers
             public string DisplayName { get; set; }
         }
 
-
         #endregion
 
-        /// <summary>
-        /// Validates if the input string is a valid number.
-        /// </summary>
-        /// <param name="input">The input string to validate.</param>
-        /// <returns>True if the input is a valid number, false otherwise.</returns>
         public static bool IsValidNumber(string input)
         {
             var numberRegex = new Regex(@"^\d+$");
             return numberRegex.IsMatch(input); // Check if input is a number
         }
 
-        /// <summary>
-        /// Validates the properties of a call object.
-        /// </summary>
-        /// <param name="boCall">The call object to validate.</param>
-        /// <param name="isUpdate">Flag indicating if this is an update operation (default is false).</param>
         public static void ValidateCall(BO.Call boCall, bool isUpdate = false)
         {
-            // Validation - TimeOpen and MaxTimeFinishCall
+            AdminManager.ThrowOnSimulatorIsRunning();
+
             if (boCall.MaxCompletionTime.HasValue && boCall.OpenTime >= boCall.MaxCompletionTime)
             {
                 throw new BO.BlValidationException("MaxTimeFinishCall must be later than TimeOpen.");
             }
 
-            // Validation - FullAddressOfCall
             if (string.IsNullOrWhiteSpace(boCall.FullAddress))
             {
                 throw new BO.BlValidationException("Full address of the call is required.");
@@ -279,31 +347,23 @@ namespace Helpers
                 }
             }
 
-
-            // Validation - Description
             if (string.IsNullOrEmpty(boCall.Description))
             {
                 throw new BO.BlValidationException("Verbal description is required.");
             }
 
-            // Validation - CallType
             if (!VolunteerManager.IsValidEnum<BO.CallType>((int)boCall.CallType))
             {
                 throw new BO.BlValidationException($"Invalid TypeCall value: {boCall.CallType}");
             }
         }
 
-        /// <summary>
-        /// Updates a DO.Call object if needed based on a BO.Call object.
-        /// </summary>
-        /// <param name="doCall">The existing DO.Call object.</param>
-        /// <param name="boCAll">The BO.Call object containing new values.</param>
-        /// <returns>The updated DO.Call object.</returns>
         public static DO.Call updateIfNeededDoCall(DO.Call doCall, BO.Call boCAll)
         {
+            AdminManager.ThrowOnSimulatorIsRunning();
+
             var copyDoCall = doCall;
 
-            // Update properties if there are changes
             if (doCall.OpenTime != boCAll.OpenTime || doCall.MaxCompletionTime != boCAll.MaxCompletionTime)
             {
                 copyDoCall = copyDoCall with { OpenTime = boCAll.OpenTime, MaxCompletionTime = boCAll.MaxCompletionTime };
@@ -326,10 +386,8 @@ namespace Helpers
             return copyDoCall; // Return updated DO.Call object
         }
 
-
         public static double CalculateHaversineDistance(double? lat1, double? lon1, double lat2, double lon2)
         {
-            // Ensure that the first set of coordinates is not null
             if (lat1 == null || lon1 == null)
             {
                 throw new BO.BlValidationException("Latitude and longitude of volunteer address cannot be null.");
@@ -337,11 +395,9 @@ namespace Helpers
 
             const double EarthRadiusKm = 6371.0; // Radius of the Earth in kilometers
 
-            // Convert latitude and longitude differences from degrees to radians
             double dLat = DegreesToRadians(lat2 - lat1.Value);
             double dLon = DegreesToRadians(lon2 - lon1.Value);
 
-            // Apply the Haversine formula
             double a = Math.Pow(Math.Sin(dLat / 2), 2) +
                        Math.Cos(DegreesToRadians(lat1.Value)) * Math.Cos(DegreesToRadians(lat2)) *
                        Math.Pow(Math.Sin(dLon / 2), 2);
@@ -359,5 +415,68 @@ namespace Helpers
                                           DateTimeStyles.None,
                                           out _);
         }
+        internal static async Task UpdateCoordinatesForCallAddressAsync(DO.Call doCall, IDal dal)
+        {
+            try
+            {
+                var loc = await GetCoordinatesAsync(doCall.FullAddress); // ← ב־CallManager כבר יש async
+                if (loc != null)
+                {
+                    var updated = doCall with { Latitude = loc.Latitude, Longitude = loc.Longitude };
+                    lock (AdminManager.BlMutex)
+                        dal.Call.Update(updated);
+
+                    Observers.NotifyItemUpdated(updated.Id);
+                    Observers.NotifyListUpdated();
+                }
+            }
+            catch
+            {
+                // אפשר להוסיף לוג בעתיד
+            }
+        }
+        internal static async Task<Tools.Location?> GetLocationOfAddressAsync(string address)
+        {
+            try
+            {
+                return await Tools.GetLocationOfAddressAsync(address); // קריאה אסינכרונית לכלי שמחשב קואורדינטות
+            }
+            catch
+            {
+                return null; // במקרה של כשל
+            }
+        }
+        internal static async Task UpdateCoordinatesForCallAsync(DO.Call doCall)
+        {
+            if (string.IsNullOrWhiteSpace(doCall.FullAddress)) return;
+
+            var location = await Tools.GetLocationOfAddressAsync(doCall.FullAddress);
+            if (location != null)
+            {
+                doCall = doCall with { Latitude = location.Latitude, Longitude = location.Longitude };
+                lock (AdminManager.BlMutex)
+                    s_dal.Call.Update(doCall);
+
+                Observers.NotifyItemUpdated(doCall.Id);
+                Observers.NotifyListUpdated();
+            }
+        }
+        internal static async Task<Tools.Location?> GetCoordinatesAsync(string address)
+        {
+            try
+            {
+                return await Tools.GetLocationOfAddressAsync(address);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+
+
     }
+
+
+
 }

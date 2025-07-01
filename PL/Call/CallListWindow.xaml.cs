@@ -70,7 +70,7 @@ namespace PL.Call
 
         private void btnAddCall_Click(object sender, RoutedEventArgs e)
         {
-            new CallWindow().ShowDialog();
+            new CallWindow().Show();
             LoadCalls();
         }
 
@@ -80,12 +80,60 @@ namespace PL.Call
         {
             if (dgCalls.SelectedItem is CallInList selectedCall)
             {
-                new CallWindow(selectedCall.CallId).ShowDialog();
+                new CallWindow(selectedCall.CallId).Show();
                 LoadCalls();
             }
         }
 
-        private void DeleteCall_Click(object sender, RoutedEventArgs e) { /* לפי תנאים */ }
-        private void CancelAssignment_Click(object sender, RoutedEventArgs e) { /* לפי תנאים */ }
+        private void DeleteCall_Click(object sender, RoutedEventArgs e)
+        {
+            if (dgCalls.SelectedItem is CallInList selected)
+            {
+                try
+                {
+                    BlApi.Factory.Get().Call.DeleteCall(selected.CallId);
+                    MessageBox.Show("הקריאה נמחקה בהצלחה");
+                    LoadCalls();
+                }
+                catch (BO.BlCannotBeDeletedException ex)
+                {
+                    MessageBox.Show("לא ניתן למחוק את הקריאה: " + ex.Message);
+                }
+                catch (BO.BLTemporaryNotAvailableException ex)
+                {
+                    MessageBox.Show("לא ניתן למחוק קריאה בזמן שהסימולטור פועל.\n" + ex.Message,
+                        "הסימולטור פעיל", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"שגיאה במחיקת קריאה: {ex.Message}");
+                }
+
+            }
+        }
+
+        private void CancelAssignment_Click(object sender, RoutedEventArgs e)
+        {
+            if (dgCalls.SelectedItem is CallInList selected)
+            {
+                try
+                {
+                    BlApi.Factory.Get().Call.CancelAssignment(selected.CallId);
+                    MessageBox.Show("ההקצאה בוטלה בהצלחה");
+                    LoadCalls();
+                }
+                catch (BO.BLTemporaryNotAvailableException ex)
+                {
+                    MessageBox.Show("ביטול הקצאה אינו אפשרי בזמן שהסימולטור פועל.\n" + ex.Message,
+                        "הסימולטור פעיל", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"שגיאה בביטול הקצאה: {ex.Message}");
+                }
+
+            }
+        }
+
     }
 }

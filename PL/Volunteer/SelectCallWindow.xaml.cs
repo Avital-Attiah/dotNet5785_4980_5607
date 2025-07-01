@@ -45,10 +45,16 @@ namespace PL.Volunteer
                     MessageBox.Show("הקריאה נבחרה בהצלחה", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
                     this.Close();
                 }
+                catch (BO.BLTemporaryNotAvailableException ex)
+                {
+                    MessageBox.Show("לא ניתן לבחור קריאה בזמן שהסימולטור פועל.\n" + ex.Message,
+                        "הסימולטור פעיל", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"שגיאה בבחירת הקריאה:\n{ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+
             }
             else
             {

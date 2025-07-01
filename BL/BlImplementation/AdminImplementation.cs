@@ -10,15 +10,28 @@ internal class AdminImplementation : IAdmin // Implements the IAdmin interface
     // Reference to the Data Access Layer (DAL) instance
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
 
+    public void StartSimulator(int interval)  //stage 7
+    {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+        AdminManager.Start(interval); //stage 7
+    }
+
+    public void StopSimulator()  //stage 7
+        => AdminManager.Stop(); //stage 7
+
+
     // Retrieves the current clock time from the DAL configuration
     DateTime IAdmin.GetClock()
     {
-        return _dal.Config.Clock;
+        lock (AdminManager.BlMutex) // stage 7
+            return _dal.Config.Clock;
     }
+
 
     // Updates the system clock based on the specified time unit
     public void UpdateClock(BO.TimeUnit timeUnit)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
         switch (timeUnit)
         {
             case BO.TimeUnit.MINUTE:
@@ -44,32 +57,35 @@ internal class AdminImplementation : IAdmin // Implements the IAdmin interface
     // Retrieves the configured risk range from the DAL
     TimeSpan IAdmin.GetRiskRange()
     {
-        return _dal.Config.RiskRange;
+        lock (AdminManager.BlMutex) //stage 7
+            return _dal.Config.RiskRange;
     }
+
 
     // Sets a new risk range in the DAL configuration
     void IAdmin.SetRiskRange(TimeSpan riskRange)
     {
-        _dal.Config.RiskRange = riskRange;
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+        lock (AdminManager.BlMutex) //stage 7
+            _dal.Config.RiskRange = riskRange;
     }
 
-    // Resets the database and updates the clock to the current time
-    void IAdmin.ResetDB()
-    {
-        _dal.ResetDB(); // Calls the DAL method to reset the database
-        AdminManager.UpdateClock(DateTime.Now); // Updates the system clock
-        AdminManager.ResetDB();
 
+    // Resets the database and updates the clock to the current time
+    public void ResetDB()
+    {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+        AdminManager.ResetDB(); //stage 7
     }
 
     // Initializes the database with test data and updates the clock
-    void IAdmin.InitializeDB()
+    public void InitializeDB()
     {
-        DalTest.Initialization.Do(); // Calls the DAL test initialization
-        AdminManager.UpdateClock(AdminManager.Now); // Updates the system clock
-        AdminManager.InitializeDB();
-
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+        AdminManager.InitializeDB(); //stage 7
     }
+
+   
 
     #region Stage 5
     public void AddClockObserver(Action clockObserver) =>

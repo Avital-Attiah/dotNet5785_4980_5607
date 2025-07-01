@@ -4,10 +4,12 @@ using DalApi;
 using DO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 internal class CallImplementation : ICall
 {
     // מתודת יצירה/הוספה Create
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Call item)
     {
         // הוספה לרשימת הקריאות
@@ -15,6 +17,7 @@ internal class CallImplementation : ICall
     }
 
     //Read מתודת בקשה/קבלה של אובייקט בודד 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Call? Read(int id)
     {
         return DataSource.Calls.FirstOrDefault(item => item.Id == id);
@@ -22,13 +25,15 @@ internal class CallImplementation : ICall
     }
 
     // מתודת בקשה/קבלה של כל האובייקטים מטיפוס מסוים ReadAll
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null)
            => filter == null
             ? DataSource.Calls.Select(item => item)
             : DataSource.Calls.Where(filter);
-   
+
 
     // מתודת עדכון של אובייקט קיים Update
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Call item)
     {
         // חיפוש הקריאה עם ה-ID המתאים
@@ -43,6 +48,7 @@ internal class CallImplementation : ICall
     }
 
     // מתודת מחיקה של אובייקט קיים Delete
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         // חיפוש הקריאה למחיקה
@@ -56,6 +62,7 @@ internal class CallImplementation : ICall
     }
 
     // מתודת מחיקה של כל האובייקטים מטיפוס מסוים DeleteAll
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         // ניקוי הרשימה כולה
@@ -67,6 +74,7 @@ internal class CallImplementation : ICall
         Console.WriteLine("Id:"+item.Id+ " Call-type:"+item.CallType+ " Address:"+item.FullAddress+ " Open-time:"+item.OpenTime+ " Is-emergency:"+item.isEmergency+ " Description:"+item.Description+ " Max-completion-time:"+item.MaxCompletionTime);
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Call? Read(Func<Call, bool> filter)
     {
         return DataSource.Calls.FirstOrDefault(filter);

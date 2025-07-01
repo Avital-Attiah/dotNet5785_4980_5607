@@ -2,10 +2,12 @@
 using DalApi;
 using DO;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 internal class VolunteerImplementation : IVolunteer
 {
     // מתודת יצירה/הוספה Create
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Volunteer item)
     {
         // בדיקה אם קיים מתנדב עם אותו ID
@@ -18,6 +20,7 @@ internal class VolunteerImplementation : IVolunteer
     }
 
     // מתודת בקשה/קבלה של אובייקט בודד Read
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Volunteer? Read(int id)
     {
         return DataSource.Volunteers.FirstOrDefault(item => item.Id == id);
@@ -30,10 +33,11 @@ internal class VolunteerImplementation : IVolunteer
             : DataSource.Volunteers.Where(filter);
 
 
-    
 
-// מתודת עדכון של אובייקט קיים Update
-public void Update(Volunteer item)
+
+    // מתודת עדכון של אובייקט קיים Update
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public void Update(Volunteer item)
     {
         // חיפוש מתנדב עם ה-ID המתאים
         var existingVolunteer = DataSource.Volunteers.FirstOrDefault(v => v.Id == item.Id);
@@ -47,6 +51,7 @@ public void Update(Volunteer item)
     }
 
     // מתודת מחיקה של אובייקט קיים Delete
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         // חיפוש המתנדב למחיקה
@@ -60,6 +65,7 @@ public void Update(Volunteer item)
     }
 
     // מתודת מחיקה של כל האובייקטים מטיפוס מסוים DeleteAll
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         // ניקוי הרשימה כולה
@@ -71,6 +77,7 @@ public void Update(Volunteer item)
         Console.WriteLine("Id:"+item.Id+ " Name:"+ item.FullName+" Phone:"+item.Phone+" Email:"+item.Email+" Password:"+item.Password+" Adress"+item.CurrentAddress+" Role:"+item.Role+ " IsActive:" + item.IsActive+ " Max distance" + item.MaxDistance+ " Distance-type" + item.DistanceType);
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Volunteer? Read(Func<Volunteer, bool> filter)
     {
         return DataSource.Volunteers.FirstOrDefault(filter);

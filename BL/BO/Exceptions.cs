@@ -70,3 +70,17 @@ public class InvalidCallSelectionException : Exception
 {
     public InvalidCallSelectionException(string message) : base(message) { }
 }
+
+// Exception thrown when the simulator is running and an operation is not allowed
+[Serializable]
+public class BLTemporaryNotAvailableException : Exception
+{
+    public BLTemporaryNotAvailableException() { }
+
+    public BLTemporaryNotAvailableException(string message)
+        : base(message) { }
+
+    public BLTemporaryNotAvailableException(string message, Exception inner)
+        : base(message, inner) { }
+}
+

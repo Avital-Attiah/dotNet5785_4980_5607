@@ -5,6 +5,7 @@ using DO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 using static DO.Enums;
 
@@ -16,6 +17,7 @@ internal class AssignmentImplementation : IAssignment
     /// Creates a new assignment and saves it to the XML file.
     /// </summary>
     /// <param name="item">The assignment object to create.</param>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Assignment item)
     {
         XElement assignmentElements = XMLTools.LoadListFromXMLElement(Config.s_assignments_xml);
@@ -38,6 +40,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="assignment">The assignment object to convert.</param>
     /// <returns>An XElement representation of the assignment.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     static XElement GetXElement(Assignment assignment)
     {
         var elements = new List<XElement>();
@@ -68,6 +71,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="id">The ID of the assignment to read.</param>
     /// <returns>The assignment object if found; otherwise, null.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Assignment? Read(int id)
     {
         var assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(FilePath);
@@ -79,6 +83,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="filter">A function that defines the condition for retrieving an assignment.</param>
     /// <returns>The first assignment that matches the condition, or null if none found.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Assignment? Read(Func<Assignment, bool> filter)
     {
         var assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(FilePath);
@@ -90,6 +95,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="filter">An optional filter function.</param>
     /// <returns>A list of assignments that match the condition.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Assignment> ReadAll(Func<Assignment, bool>? filter = null)
     {
         var assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(FilePath);
@@ -101,6 +107,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="item">The updated assignment object.</param>
     /// <exception cref="DalDoesNotExistException">Thrown if the assignment does not exist.</exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Assignment item)
     {
         var assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(FilePath);
@@ -116,6 +123,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="id">The ID of the assignment to delete.</param>
     /// <exception cref="DalDoesNotExistException">Thrown if the assignment does not exist.</exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         var assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(FilePath);
@@ -128,6 +136,7 @@ internal class AssignmentImplementation : IAssignment
     /// <summary>
     /// Deletes all assignments from the XML file.
     /// </summary>
+   [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         XMLTools.SaveListToXMLSerializer(new List<Assignment>(), FilePath);

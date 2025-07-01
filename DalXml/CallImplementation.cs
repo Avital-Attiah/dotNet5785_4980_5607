@@ -5,6 +5,7 @@ using DO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 using static DO.Enums;
 
@@ -45,6 +46,7 @@ internal class CallImplementation : ICall
     }
 
     // Adds a new Call to the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
     public void Create(Call item)
     {
         XElement callsRootElem = XMLTools.LoadListFromXMLElement(FilePath);
@@ -55,6 +57,7 @@ internal class CallImplementation : ICall
     }
 
     // Reads a Call by ID from the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
     public Call? Read(int id)
     {
         XElement callsRootElem = XMLTools.LoadListFromXMLElement(FilePath);
@@ -63,6 +66,7 @@ internal class CallImplementation : ICall
     }
 
     // Reads the first Call that matches the given filter
+    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
     public Call? Read(Func<Call, bool> filter)
     {
         XElement callsRootElem = XMLTools.LoadListFromXMLElement(FilePath);
@@ -70,6 +74,7 @@ internal class CallImplementation : ICall
     }
 
     // Reads all Calls from the XML file, optionally filtering them
+    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
     public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null)
     {
         XElement callsRootElem = XMLTools.LoadListFromXMLElement(FilePath);
@@ -78,6 +83,7 @@ internal class CallImplementation : ICall
     }
 
     // Updates an existing Call in the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
     public void Update(Call item)
     {
         XElement callsRootElem = XMLTools.LoadListFromXMLElement(FilePath);
@@ -91,6 +97,7 @@ internal class CallImplementation : ICall
     }
 
     // Deletes a Call by ID from the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
     public void Delete(int id)
     {
         XElement callsRootElem = XMLTools.LoadListFromXMLElement(FilePath);
@@ -103,6 +110,7 @@ internal class CallImplementation : ICall
     }
 
     // Deletes all Calls from the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
     public void DeleteAll()
     {
         XMLTools.SaveListToXMLElement(new XElement("Calls"), FilePath);

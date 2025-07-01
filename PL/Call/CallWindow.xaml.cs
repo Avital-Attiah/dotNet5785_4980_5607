@@ -67,10 +67,16 @@ namespace PL.Call
                 MessageBox.Show("הפעולה בוצעה בהצלחה", "✔", MessageBoxButton.OK, MessageBoxImage.Information);
                 Close();
             }
+            catch (BO.BLTemporaryNotAvailableException ex)
+            {
+                MessageBox.Show("לא ניתן להוסיף או לעדכן קריאה בזמן שהסימולטור פועל.\n" + ex.Message,
+                    "הסימולטור פעיל", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
             catch (Exception ex)
             {
                 MessageBox.Show($"שגיאה: {ex.Message}", "⚠", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e) => Close();

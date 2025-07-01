@@ -14,33 +14,52 @@ internal static class AssignmentManager
     /// <returns>List of assignment details for the given call.</returns>
     internal static List<BO.CallAssignInList> GetAssignmentsHistory(int id)
     {
-        return _dal.Assignment.ReadAll(a => a.CallId == id)
-            .Select(item => new BO.CallAssignInList
-            {
-                VolunteerId = item.VolunteerId,
-                VolunteerName = _dal.Volunteer.Read(item.VolunteerId).FullName,
-                StartTime = item.EntryTime,
-                EndTime = item.CompletionTime,
-                CompletionType = (BO.CompletionType?)(BO.ClosureType?)item.Status
-            })
-            .ToList();
+        lock (AdminManager.BlMutex) //stage 7
+        {
+            return _dal.Assignment.ReadAll(a => a.CallId == id)
+                .Select(item => new BO.CallAssignInList
+                {
+                    VolunteerId = item.VolunteerId,
+                    VolunteerName = _dal.Volunteer.Read(item.VolunteerId).FullName,
+                    StartTime = item.EntryTime,
+                    EndTime = item.CompletionTime,
+                    CompletionType = (BO.CompletionType?)(BO.ClosureType?)item.Status
+                })
+                .ToList();
+        }
     }
+
     internal static void PeriodicAssignmentsUpdates(DateTime oldClock, DateTime newClock)
     {
-        bool assignmentUpdated;
-        assignmentUpdated = false;
-        var list = _dal.Assignment.ReadAll().ToList();
+        var list = _dal.Assignment.ReadAll().ToList(); //  הפיכה לרשימה קונקרטית
+        List<int> updatedAssignments = new(); //  רשימת מזהים שצריך לשלוח עליהם Notification
+
         foreach (var doAssignment in list)
         {
             if (doAssignment.CompletionTime.HasValue && newClock >= doAssignment.CompletionTime.Value)
             {
-                assignmentUpdated = true;
-                _dal.Assignment.Update(doAssignment with { Status = DO.Enums.TreatmentStatus.Expired });
-                Observers.NotifyItemUpdated(doAssignment.Id);
+                // שלב 3: עדכון בתוך נעילה
+                lock (AdminManager.BlMutex)
+                {
+                    _dal.Assignment.Update(doAssignment with { Status = DO.Enums.TreatmentStatus.Expired });
+                }
+
+                // שלב 4: נזכור את ה־ID כדי לעדכן אותו אחרי ה־lock
+                updatedAssignments.Add(doAssignment.Id);
             }
         }
-        bool yearChanged = oldClock.Year != newClock.Year;
-        if (yearChanged || assignmentUpdated)
+
+        
+        foreach (var id in updatedAssignments)
+        {
+            Observers.NotifyItemUpdated(id);
+        }
+
+       
+        if (updatedAssignments.Any())
+        {
             Observers.NotifyListUpdated();
+        }
     }
+
 }

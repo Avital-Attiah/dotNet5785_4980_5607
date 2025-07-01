@@ -118,19 +118,6 @@
     <DistanceType>Air</DistanceType>
   </Volunteer>
   <Volunteer>
-    <Id>393916427</Id>
-    <FullName>Chris Taylor</FullName>
-    <Phone>0537891234</Phone>
-    <Email>chris@example.com</Email>
-    <CurrentAddress>Jerusalem</CurrentAddress>
-    <Latitude>31.7683</Latitude>
-    <Longitude>35.2137</Longitude>
-    <Role>Volunteer</Role>
-    <IsActive>true</IsActive>
-    <MaxDistance>40</MaxDistance>
-    <DistanceType>Air</DistanceType>
-  </Volunteer>
-  <Volunteer>
     <Id>211890752</Id>
     <FullName>Sophia Lee</FullName>
     <Phone>0549876123</Phone>
@@ -154,19 +141,6 @@
     <Role>Volunteer</Role>
     <IsActive>true</IsActive>
     <MaxDistance>12</MaxDistance>
-    <DistanceType>Air</DistanceType>
-  </Volunteer>
-  <Volunteer>
-    <Id>365467058</Id>
-    <FullName>Olivia Moore</FullName>
-    <Phone>0506785432</Phone>
-    <Email>olivia@example.com</Email>
-    <CurrentAddress>Jerusalem</CurrentAddress>
-    <Latitude>31.7683</Latitude>
-    <Longitude>35.2137</Longitude>
-    <Role>Volunteer</Role>
-    <IsActive>true</IsActive>
-    <MaxDistance>48</MaxDistance>
     <DistanceType>Air</DistanceType>
   </Volunteer>
   <Volunteer>
@@ -222,6 +196,34 @@
     <Role>Volunteer</Role>
     <IsActive>true</IsActive>
     <MaxDistance>3</MaxDistance>
+    <DistanceType>Air</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>393916427</Id>
+    <FullName>Chris Zini</FullName>
+    <Phone>0537891234</Phone>
+    <Email>chris@example.com</Email>
+    <Password>5de190a64b3f873243a7f9a88d70ba34e0568af41e5a04e27160b0600b1661eb</Password>
+    <CurrentAddress>Jerusalem</CurrentAddress>
+    <Latitude>31.7683</Latitude>
+    <Longitude>35.2137</Longitude>
+    <Role>Volunteer</Role>
+    <IsActive>false</IsActive>
+    <MaxDistance>40</MaxDistance>
+    <DistanceType>Air</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>365467058</Id>
+    <FullName>Olivia More</FullName>
+    <Phone>0506785432</Phone>
+    <Email>olivia@example.com</Email>
+    <Password>c4694df1ea9d05696760cace08f51721d64514781369f75e52cdd52539db3534</Password>
+    <CurrentAddress>Jerusalem</CurrentAddress>
+    <Latitude>31.7683</Latitude>
+    <Longitude>35.2137</Longitude>
+    <Role>Volunteer</Role>
+    <IsActive>false</IsActive>
+    <MaxDistance>48</MaxDistance>
     <DistanceType>Air</DistanceType>
   </Volunteer>
 </ArrayOfVolunteer>

@@ -59,10 +59,21 @@ namespace PL.Volunteer
         }
 
         // המשקיף נקרא כשחלה כל עדכון ברשימת המתנדבים ב־BL
+        private volatile bool _volunteerListObserverRunning = false; // שלב 7
+
         private void VolunteerListObserver()
         {
-            QueryVolunteerList();
+            if (!_volunteerListObserverRunning)
+            {
+                _volunteerListObserverRunning = true;
+                _ = Dispatcher.BeginInvoke(() =>
+                {
+                    QueryVolunteerList();
+                    _volunteerListObserverRunning = false;
+                });
+            }
         }
+
 
         // Handler לשינוי הבחירה ב־ComboBox של סינון לפי CallType
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -256,14 +267,17 @@ namespace PL.Volunteer
 
                     QueryVolunteerList(); // ריענון הרשימה לאחר המחיקה
                 }
+                catch (BO.BLTemporaryNotAvailableException ex)
+                {
+                    MessageBox.Show("לא ניתן למחוק מתנדב בזמן שהסימולטור פועל.\n" + ex.Message,
+                        "סימולטור פעיל", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(
-                        $"שגיאה במחיקת המתנדב: {ex.Message}",
-                        "שגיאה",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error);
+                    MessageBox.Show($"שגיאה במחיקת המתנדב: {ex.Message}",
+                        "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+
             }
         }
 

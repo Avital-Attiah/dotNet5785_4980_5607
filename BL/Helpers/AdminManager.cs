@@ -1,7 +1,5 @@
-﻿using BlImplementation;
-using BO;
-using DalApi;
-using System.Threading;
+﻿using System.Runtime.CompilerServices;
+
 namespace Helpers;
 
 /// <summary>
@@ -22,17 +20,6 @@ public static class AdminManager //stage 4
     /// <summary>
     /// Property for providing/setting current configuration variable value for any BL class that may need it
     /// </summary>
-    internal static DateTime Clock
-    {
-        get => s_dal.Config.Clock;
-        set
-        {
-            s_dal.Config.Clock = value;
-            ConfigUpdatedObservers?.Invoke(); // stage 5
-        }
-    }
-
-
     internal static TimeSpan RiskRange
     {
         get => s_dal.Config.RiskRange;
@@ -42,42 +29,39 @@ public static class AdminManager //stage 4
             ConfigUpdatedObservers?.Invoke(); // stage 5
         }
     }
-    internal static void InitializeDB()
-    {
-        //lock (BlMutex) //stage 7
-        //{
-        DalTest.Initialization.Do();
-        UpdateClock(Now);  // stage 5 - needed for update the PL
-        RiskRange = RiskRange; // stage 5 - needed for update the PL
-                               //}
-    }
-    internal static void ResetDB()
-    {
-        //lock (BlMutex) //stage 7
-        //{
-        s_dal.ResetDB();
-        UpdateClock(Now); //stage 5 - needed for update PL
-        RiskRange = AdminManager.RiskRange; //stage 5 - needed for update PL
-                                            //}
-    }
-   
+
     /// <summary>
     /// Property for providing current application's clock value for any BL class that may need it
     /// </summary>
     internal static DateTime Now { get => s_dal.Config.Clock; } //stage 4
+
+    internal static void ResetDB() //stage 4
+    {
+        lock (BlMutex) //stage 7
+        {
+            s_dal.ResetDB();
+            AdminManager.UpdateClock(AdminManager.Now); //stage 5 - needed since we want the label on Pl to be updated
+            AdminManager.RiskRange = AdminManager.RiskRange; // stage 5 - needed to update PL 
+        }
+    }
+
+    internal static void InitializeDB() //stage 4
+    {
+        lock (BlMutex) //stage 7
+        {
+            DalTest.Initialization.Do();
+            AdminManager.UpdateClock(AdminManager.Now);  //stage 5 - needed since we want the label on Pl to be updated
+            AdminManager.RiskRange = AdminManager.RiskRange; // stage 5 - needed for update the PL 
+        }
+    }
+
+    private static Task? _periodicTask = null;
 
     /// <summary>
     /// Method to perform application's clock from any BL class as may be required
     /// </summary>
     /// <param name="newClock">updated clock value</param>
     public static void UpdateClock(DateTime newClock) //stage 4-7
-    {
-        // new Thread(() => { // stage 7 - not sure - still under investigation - see stage 7 instructions after it will be released        
-        updateClock(newClock);//stage 4-6
-        // }).Start(); // stage 7 as above
-    }
-
-    private static void updateClock(DateTime newClock) // prepared for stage 7 as DRY to eliminate needless repetition
     {
         var oldClock = s_dal.Config.Clock; //stage 4
         s_dal.Config.Clock = newClock; //stage 4
@@ -89,7 +73,20 @@ public static class AdminManager //stage 4
         //Go through all students to update properties that are affected by the clock update
         //(students becomes not active after 5 years etc.)
 
-        AssignmentManager.PeriodicAssignmentsUpdates(oldClock, newClock); //stage 4
+        //StudentManager.PeriodicStudentsUpdates(oldClock, newClock); //stage 4
+        if (_periodicTask is null || _periodicTask.IsCompleted) //stage 7
+            _periodicTask = Task.Run(() =>
+            {
+                lock (BlMutex)
+                {
+                    try
+                    {
+                        CallManager.UpdateExpiredOpenCalls();
+                    }
+                    catch { }
+                }
+            });
+
         //etc ...
 
         //Calling all the observers of clock update
@@ -98,49 +95,88 @@ public static class AdminManager //stage 4
     #endregion Stage 4
 
     #region Stage 7 base
-    internal static readonly object blMutex = new();
-    private static Thread? s_thread;
-    private static int s_interval { get; set; } = 1; //in minutes by second    
-    private static volatile bool s_stop = false;
-    private static readonly object mutex = new();
 
+    /// <summary>    
+    /// Mutex to use from BL methods to get mutual exclusion while the simulator is running
+    /// </summary>
+    internal static readonly object BlMutex = new(); // BlMutex = s_dal; // This field is actually the same as s_dal - it is defined for readability of locks
+    /// <summary>
+    /// The thread of the simulator
+    /// </summary>
+    private static volatile Thread? s_thread;
+    /// <summary>
+    /// The Interval for clock updating
+    /// in minutes by second (default value is 1, will be set on Start())    
+    /// </summary>
+    private static int s_interval = 1;
+    /// <summary>
+    /// The flag that signs whether simulator is running
+    /// 
+    private static volatile bool s_stop = false;
+
+
+    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7                                                 
+    public static void ThrowOnSimulatorIsRunning()
+    {
+        if (s_thread is not null)
+            throw new BO.BLTemporaryNotAvailableException("Cannot perform the operation since Simulator is running");
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7                                                 
     public static void Start(int interval)
     {
-        lock (mutex)
-            if (s_thread == null)
-            {
-                s_interval = interval;
-                s_stop = false;
-                s_thread = new Thread(clockRunner);
-                s_thread.Start();
-            }
+        if (s_thread is null)
+        {
+            s_interval = interval;
+            s_stop = false;
+            s_thread = new(clockRunner) { Name = "ClockRunner" };
+            s_thread.Start();
+        }
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7                                                 
     internal static void Stop()
     {
-        lock (mutex)
-            if (s_thread != null)
-            {
-                s_stop = true;
-                s_thread?.Interrupt();
-                s_thread = null;
-            }
+        if (s_thread is not null)
+        {
+            s_stop = true;
+            s_thread.Interrupt(); //awake a sleeping thread
+            s_thread.Name = "ClockRunner stopped";
+            s_thread = null;
+        }
     }
+
+    private static Task? _simulateTask = null;
 
     private static void clockRunner()
     {
         while (!s_stop)
         {
-            UpdateClock(Now.AddSeconds(s_interval));
+            UpdateClock(Now.AddMinutes(s_interval));
 
-            #region Stage 7
-            //TO_DO:
-            //Add calls here to any logic simulation that was required in stage 7
-            //for example: course registration simulation
-            //StudentManager.SimulateCourseRegistrationAndGrade(); //stage 7
+            // ✅ סימולציה: יצירת קריאה חדשה שתפוג תוך זמן קצר
+            if (_simulateTask is null || _simulateTask.IsCompleted)
+                _simulateTask = Task.Run(() =>
+                {
+                    lock (BlMutex)
+                    {
+                        try
+                        {
+                            var call = new BO.Call
+                            {
+                                FullAddress = "jerusalem",
+                                OpenTime = Now,
+                                MaxCompletionTime = Now.AddMinutes(3),
+                                Description = "קריאה לדוגמה מהסימולטור",
+                                CallType = BO.CallType.FamilySupport
+                            };
 
-            //etc...
-            #endregion Stage 7
+                            var callBL = new BlImplementation.CallImplementation();
+                            callBL.Create(call);
+                        }
+                        catch { } // אם זה נכשל – מתעלמים
+                    }
+                });
 
             try
             {
@@ -149,12 +185,6 @@ public static class AdminManager //stage 4
             catch (ThreadInterruptedException) { }
         }
     }
+
     #endregion Stage 7 base
 }
-
-
-
-
-
-
-

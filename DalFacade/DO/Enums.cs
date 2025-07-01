@@ -5,10 +5,12 @@
         // Types of call assignment completion statuses.
         public enum TreatmentStatus
         {
+           
             CompletedOnTime,
             CanceledByVolunteer,
             CanceledByManager,
-            Expired
+            Expired,
+            InProgress
         }
 
         // Different types of calls.

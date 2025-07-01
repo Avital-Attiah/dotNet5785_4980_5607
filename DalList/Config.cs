@@ -1,30 +1,62 @@
-﻿namespace Dal
+﻿using System.Runtime.CompilerServices;
+
+namespace Dal
 {
     internal static class Config
     {
-        // הגדרה של מספרים רצים עבור ישויות שונות
-        internal const int startCallId = 1000; // ערך התחלתי למזהה קריאה
-        private static int nextCallId = startCallId; // ערך רץ
+        // Starting ID for calls
+        internal const int startCallId = 1000;
 
-        // מאפיין שימשוך את המספר הרץ ויקדמו אוטומטית ב-1
-        public static int NextCallId { get => nextCallId++; }
+        // Running call ID counter
+        private static int nextCallId = startCallId;
 
-        internal const int startAssignmentId = 2000; // ערך התחלתי למזהה הקצאה
-        private static int nextAssignmentId = startAssignmentId; // ערך רץ
+        // Gets and increments the next available call ID
+        public static int NextCallId
+        {
+            [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
+            get => nextCallId++;
+        }
 
-        // מאפיין שימשוך את המספר הרץ ויקדמו אוטומטית ב-1
-        public static int NextAssignmentId { get => nextAssignmentId++; }
+        // Starting ID for assignments
+        internal const int startAssignmentId = 2000;
 
-        // שעון מערכת
-        public static DateTime Clock { get; set; } = DateTime.Now;
+        // Running assignment ID counter
+        private static int nextAssignmentId = startAssignmentId;
 
-        // טווח זמן סיכון
-        internal static TimeSpan RiskRange { get; set; } = TimeSpan.FromMinutes(10);
+        // Gets and increments the next available assignment ID
+        public static int NextAssignmentId
+        {
+            [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
+            get => nextAssignmentId++;
+        }
 
-        // מתודה לאיפוס משתני התצורה לערכים ההתחלתיים
+        // System clock (used for time-based operations)
+        private static DateTime clock = DateTime.Now;
+        public static DateTime Clock
+        {
+            [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
+            get => clock;
+
+            [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
+            set => clock = value;
+        }
+
+        // Risk threshold range for call expiration logic
+        private static TimeSpan riskRange = TimeSpan.FromMinutes(10);
+        internal static TimeSpan RiskRange
+        {
+            [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
+            get => riskRange;
+
+            [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
+            set => riskRange = value;
+        }
+
+        // Resets configuration values to their default state
+        [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
         internal static void Reset()
         {
-             nextCallId = startCallId;
+            nextCallId = startCallId;
             nextAssignmentId = startAssignmentId;
             Clock = DateTime.Now;
             RiskRange = TimeSpan.FromMinutes(10);

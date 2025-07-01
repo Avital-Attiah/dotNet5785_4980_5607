@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,32 +18,41 @@ internal static class Config
 
     public static int NextCallId
     {
+        [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
         get => XMLTools.GetAndIncreaseConfigIntVal(s_data_config, "NextCallId"); // Gets and increases the next call ID
+        [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
         set => XMLTools.SetConfigIntVal(s_data_config, "NextCallId", value); // Sets the next call ID value
     }
 
     // Property for running assignment ID
+    
     public static int NextAssignmentId
     {
+        [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
         get => XMLTools.GetAndIncreaseConfigIntVal(s_data_config, "NextAssignmentId"); // Gets and increases the next assignment ID
+        [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
         set => XMLTools.SetConfigIntVal(s_data_config, "NextAssignmentId", value); // Sets the next assignment ID value
     }
 
     // Property for system clock time
     public static DateTime Clock
     {
+        [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
         get => XMLTools.GetConfigDateVal(s_data_config, "Clock"); // Gets the current system time
+        [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
         set => XMLTools.SetConfigDateVal(s_data_config, "Clock", value); // Sets the system clock time
     }
 
     // Property for risk time range
     public static TimeSpan RiskRange
     {
+        [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
         get
         {
             int minutes = XMLTools.GetConfigIntVal(s_data_config, "RiskRangeMinutes"); // Gets risk range in minutes
             return TimeSpan.FromMinutes(minutes); // Converts to TimeSpan
         }
+        [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
         set
         {
             int minutes = (int)value.TotalMinutes; // Converts TimeSpan to minutes
@@ -51,6 +61,7 @@ internal static class Config
     }
 
     // Function to reset configuration variables to initial values
+    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
     internal static void Reset()
     {
         NextCallId = 1000; // Reset to initial call ID
