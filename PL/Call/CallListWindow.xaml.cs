@@ -14,14 +14,19 @@ namespace PL.Call
         {
             InitializeComponent();
             LoadCalls();
+            BlApi.Factory.Get().Call.AddObserver(LoadCalls);
         }
 
         private void LoadCalls()
         {
-            var allCalls = BlApi.Factory.Get().Call.GetCallsList();
-            _callsView = CollectionViewSource.GetDefaultView(allCalls);
-            dgCalls.ItemsSource = _callsView;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var allCalls = BlApi.Factory.Get().Call.GetCallsList();
+                _callsView = CollectionViewSource.GetDefaultView(allCalls);
+                dgCalls.ItemsSource = _callsView;
+            });
         }
+
 
         private void cbStatusFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -134,6 +139,12 @@ namespace PL.Call
 
             }
         }
+        protected override void OnClosed(EventArgs e)
+        {
+            BlApi.Factory.Get().Call.RemoveObserver(LoadCalls);
+            base.OnClosed(e);
+        }
+
 
     }
 }

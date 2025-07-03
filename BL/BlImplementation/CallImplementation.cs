@@ -78,12 +78,15 @@ internal class CallImplementation : ICall
     {
         AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
 
+        DO.Assignment? doAssignment;
+        DO.Assignment copyAssignment;
+
         try
         {
             lock (AdminManager.BlMutex) // stage 7
             {
                 // קריאת האובייקטים מה-DAL
-                DO.Assignment? doAssignment = _dal.Assignment.Read(assignmentId);
+                doAssignment = _dal.Assignment.Read(assignmentId);
                 DO.Volunteer doVolunteer = _dal.Volunteer.Read(CancellerId)!;
 
                 // בדיקה אם ההשמה קיימת
@@ -104,7 +107,7 @@ internal class CallImplementation : ICall
                     : DO.Enums.TreatmentStatus.CanceledByManager;
 
                 // עדכון ההשמה עם זמן וסוג סיום
-                DO.Assignment copyAssignment = doAssignment with
+                copyAssignment = doAssignment with
                 {
                     CompletionTime = AdminManager.Now,
                     Status = finishType
@@ -112,6 +115,10 @@ internal class CallImplementation : ICall
 
                 _dal.Assignment.Update(copyAssignment);
             }
+
+            // ✅ עדכון התצוגה אחרי ביטול
+            CallManager.Observers.NotifyItemUpdated(copyAssignment.CallId);
+            CallManager.Observers.NotifyListUpdated();
         }
         catch (BO.BlDoesNotExistException)
         {
@@ -122,6 +129,7 @@ internal class CallImplementation : ICall
             throw;
         }
     }
+
 
 
     // Delete a call from the system
@@ -173,25 +181,24 @@ internal class CallImplementation : ICall
     {
         AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
 
+        DO.Assignment? doAssignment;
+        DO.Assignment copyAssignment;
+
         try
         {
             lock (AdminManager.BlMutex) // stage 7
             {
-                // קריאת ההשמה מה-DAL
-                DO.Assignment? doAssignment = _dal.Assignment.Read(assignmentId);
+                doAssignment = _dal.Assignment.Read(assignmentId);
 
-                // בדיקה אם קיימת ההשמה
                 if (doAssignment == null)
                     throw new BO.BlDoesNotExistException($"Assignment with ID={assignmentId} does not exist.");
 
-                // בדיקה אם אפשר לסיים את ההשמה
                 if (doAssignment.VolunteerId != volunteerId || doAssignment.Status != null || doAssignment.CompletionTime != null)
                 {
                     throw new BO.InvalidAssignmentCompletionException($"Assignment with ID={assignmentId} cannot be completed.");
                 }
 
-                // סימון ההשמה כהושלמה בזמן
-                DO.Assignment copyAssignment = doAssignment with
+                copyAssignment = doAssignment with
                 {
                     CompletionTime = AdminManager.Now,
                     Status = DO.Enums.TreatmentStatus.CompletedOnTime
@@ -199,6 +206,10 @@ internal class CallImplementation : ICall
 
                 _dal.Assignment.Update(copyAssignment);
             }
+
+            // ✅ עכשיו כן תכירי את copyAssignment:
+            CallManager.Observers.NotifyItemUpdated(copyAssignment.CallId);
+            CallManager.Observers.NotifyListUpdated();
         }
         catch (BO.BlDoesNotExistException)
         {
@@ -209,6 +220,7 @@ internal class CallImplementation : ICall
             throw;
         }
     }
+
 
 
     // Get the number of calls by status
@@ -399,6 +411,16 @@ internal class CallImplementation : ICall
                     DistanceFromVolunteer = CallManager.CalculateDistance(volunteerId, item.Latitude!.Value, item.Longitude!.Value)
 
                 }).ToList();
+            // ✅ סינון לפי מרחק מקסימלי של המתנדב
+            openCallInList = openCallInList
+                .Where(call => call.DistanceFromVolunteer <= doVolunteer.MaxDistance)
+                .ToList();
+            if (doVolunteer.MaxDistance > 0)
+            {
+                openCallInList = openCallInList
+                    .Where(call => call.DistanceFromVolunteer <= doVolunteer.MaxDistance)
+                    .ToList();
+            }
 
             // Apply call type filtering if specified
             if (callTypeFilter.HasValue)
@@ -422,7 +444,6 @@ internal class CallImplementation : ICall
         
     }
 
-    // Assign a volunteer to a call
     public void SelectCall(int volunteerId, int callId)
     {
         AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
@@ -437,8 +458,8 @@ internal class CallImplementation : ICall
                 BO.CallStatus statusCall = CallManager.GetStatusCall(callId);
 
                 if ((doAssignment?.Status is DO.Enums.TreatmentStatus.CompletedOnTime or DO.Enums.TreatmentStatus.Expired) ||
-                   statusCall is BO.CallStatus.InProgress or BO.CallStatus.InProgressAtRisk ||
-                   (doCall.MaxCompletionTime <= AdminManager.Now))
+                    statusCall is BO.CallStatus.InProgress or BO.CallStatus.InProgressAtRisk ||
+                    (doCall.MaxCompletionTime <= AdminManager.Now))
                 {
                     throw new BO.InvalidCallSelectionException($"Call with ID={callId} cannot be selected.");
                 }
@@ -449,14 +470,20 @@ internal class CallImplementation : ICall
                     VolunteerId = volunteerId,
                     EntryTime = AdminManager.Now
                 };
+
                 _dal.Assignment.Create(newAssignment);
             }
+
+            // ✅ זה החלק שצריך להוסיף:
+            CallManager.Observers.NotifyItemUpdated(callId);
+            CallManager.Observers.NotifyListUpdated();
         }
         catch (BO.InvalidCallSelectionException)
         {
             throw;
         }
     }
+
 
 
 

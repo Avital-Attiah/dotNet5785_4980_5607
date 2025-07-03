@@ -193,6 +193,16 @@
                             FontSize="16"
                             HorizontalContentAlignment="Center"
                             VerticalContentAlignment="Center"/>
+
+                    <StackPanel x:Name="CallStatsPanel" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="20">
+                        <TextBlock Text="סטטיסטיקת קריאות" FontWeight="Bold" FontSize="16"/>
+                        <TextBlock x:Name="OpenCountText" Text="פתוחות: 0"/>
+                        <TextBlock x:Name="InProgressCountText" Text="בתהליך: 0"/>
+                        <TextBlock x:Name="ClosedCountText" Text="נסגרו: 0"/>
+                        <TextBlock x:Name="ExpiredCountText" Text="פג תוקף: 0"/>
+                        <TextBlock x:Name="AtRiskCountText" Text="בסיכון: 0"/>
+                    </StackPanel>
+
                 </StackPanel>
 
             </Grid>

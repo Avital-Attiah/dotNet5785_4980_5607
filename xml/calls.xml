@@ -67,17 +67,6 @@
     <MaxCompletionTime>2025-07-01T02:42:45</MaxCompletionTime>
   </Call>
   <Call>
-    <Id>1015</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Jerusalem</FullAddress>
-    <OpenTime>2025-07-01T03:10:45</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Suicide prevention</Description>
-    <Latitude>31.7683</Latitude>
-    <Longitude>35.2137</Longitude>
-    <MaxCompletionTime />
-  </Call>
-  <Call>
     <Id>1017</Id>
     <CallType>Emergency</CallType>
     <FullAddress>Haifa</FullAddress>
@@ -408,17 +397,6 @@
     <MaxCompletionTime>2025-07-01T06:42:45</MaxCompletionTime>
   </Call>
   <Call>
-    <Id>1079</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Tel Aviv</FullAddress>
-    <OpenTime>2025-07-01T15:04:45</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Mental health advice</Description>
-    <Latitude>32.0853</Latitude>
-    <Longitude>34.7818</Longitude>
-    <MaxCompletionTime />
-  </Call>
-  <Call>
     <Id>1081</Id>
     <CallType>Emergency</CallType>
     <FullAddress>Jerusalem</FullAddress>
@@ -593,5 +571,27 @@
     <Latitude>32.1708832</Latitude>
     <Longitude>34.8288667</Longitude>
     <MaxCompletionTime>2025-07-02T02:03:55.3893879+03:00</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1079</Id>
+    <CallType>Emergency</CallType>
+    <FullAddress>Tel Aviv</FullAddress>
+    <OpenTime>2025-07-01T15:04:45</OpenTime>
+    <isEmergency>true</isEmergency>
+    <Description>Mental health advice</Description>
+    <Latitude>32.0853</Latitude>
+    <Longitude>34.7818</Longitude>
+    <MaxCompletionTime>2025-07-01T15:17:45</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1015</Id>
+    <CallType>Emergency</CallType>
+    <FullAddress>Jerusalem</FullAddress>
+    <OpenTime>2025-07-01T03:10:45</OpenTime>
+    <isEmergency>true</isEmergency>
+    <Description>Suicide prevention</Description>
+    <Latitude>31.7683</Latitude>
+    <Longitude>35.2137</Longitude>
+    <MaxCompletionTime>2025-07-01T03:58:45</MaxCompletionTime>
   </Call>
 </Calls>

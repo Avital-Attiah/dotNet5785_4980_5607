@@ -15,6 +15,7 @@ namespace PL.Volunteer
             Volunteer = _bl.Volunteer.Read(volunteerId);
             DataContext = Volunteer;
             LoadVolunteerInfo();
+            _bl.Call.AddObserver(volunteerId, LoadVolunteerInfo);
         }
 
         private void LoadVolunteerInfo()
@@ -63,12 +64,23 @@ namespace PL.Volunteer
 
 
 
-        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
             try
             {
+                // עדכון פרטי מתנדב
                 Volunteer.IsActive = chkIsActive.IsChecked ?? true;
                 _bl.Volunteer.Update(Volunteer.Id, Volunteer);
+
+                // עדכון קואורדינטות לפי הכתובת החדשה
+                var location = await Helpers.Tools.GetLocationOfAddressAsync(Volunteer.Address);
+                if (location != null)
+                {
+                    Volunteer.Latitude = location.Latitude;
+                    Volunteer.Longitude = location.Longitude;
+                    _bl.Volunteer.Update(Volunteer.Id, Volunteer); // עדכון נוסף עם קואורדינטות
+                }
+
                 MessageBox.Show("הפרטים עודכנו בהצלחה", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (BO.BLTemporaryNotAvailableException ex)

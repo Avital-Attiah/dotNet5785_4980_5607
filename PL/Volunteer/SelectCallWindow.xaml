@@ -33,6 +33,8 @@
                         <GridViewColumn Header="כתובת" DisplayMemberBinding="{Binding FullAddress}" Width="200"/>
                         <GridViewColumn Header="תיאור" DisplayMemberBinding="{Binding Description}" Width="200"/>
                         <GridViewColumn Header="מרחק" DisplayMemberBinding="{Binding DistanceFromVolunteer}" Width="80"/>
+                        
+                        
                     </GridView>
                 </ListView.View>
             </ListView>

@@ -55,7 +55,7 @@ namespace PL.Volunteer
                     {
                         var adminWin = new MainWindow();
                         adminWin.Show();
-                        this.Close();
+                       
                         return;
                     }
                     else
@@ -63,7 +63,7 @@ namespace PL.Volunteer
                         // מנהל בוחר להיכנס כמתנדב → שולח ל־VolunteerMainWindow
                         var volMainWin = new VolunteerMainWindow(userId);
                         volMainWin.Show();
-                        this.Close();
+                       
                         return;
                     }
                 }
@@ -72,7 +72,7 @@ namespace PL.Volunteer
                     // מתנדב רגיל → ישר ל־VolunteerMainWindow
                     var volMainWin = new VolunteerMainWindow(userId);
                     volMainWin.Show();
-                    this.Close();
+                    
                     return;
                 }
             }

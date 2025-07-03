@@ -29,7 +29,7 @@ namespace Helpers
 
             if (volunteer == null || !volunteer.Latitude.HasValue || !volunteer.Longitude.HasValue)
                 return Enumerable.Empty<BO.CallInList>();
-
+            UpdateExpiredOpenCalls();
             List<DO.Call> openCalls;
             lock (AdminManager.BlMutex)
             {

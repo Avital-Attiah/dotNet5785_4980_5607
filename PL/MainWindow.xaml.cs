@@ -24,6 +24,9 @@ namespace PL
             InitializeComponent();
             DataContext = this;
 
+            s_bl.Call.AddObserver(UpdateCallStats);
+            UpdateCallStats(); // עדכון ראשוני
+
 
             // רישום לאירוע טעינת החלון וסגירתו
             this.Loaded += MainWindow_Loaded;
@@ -296,6 +299,26 @@ namespace PL
 
         public static readonly DependencyProperty IsSimulatorRunningProperty =
             DependencyProperty.Register("IsSimulatorRunning", typeof(bool), typeof(MainWindow));
+
+        private void UpdateCallStats()
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(UpdateCallStats);
+                return;
+            }
+
+            var counts = s_bl.Call.GetCallCounts();
+
+            OpenCountText.Text = $"פתוחות: {counts[(int)CallStatus.Open]}";
+            int inProgress = counts[(int)CallStatus.InProgress];
+            int atRisk = counts[(int)CallStatus.InProgressAtRisk];
+            InProgressCountText.Text = $"בטיפול: {inProgress + atRisk}";
+            ClosedCountText.Text = $"נסגרו: {counts[(int)CallStatus.Closed]}";
+            ExpiredCountText.Text = $"פג תוקף: {counts[(int)CallStatus.Expired]}";
+            AtRiskCountText.Text = $"בסיכון: {counts[(int)CallStatus.OpenAtRisk]}";
+        }
+
 
     }
 }

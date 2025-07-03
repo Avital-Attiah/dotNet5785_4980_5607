@@ -9,7 +9,7 @@ namespace Helpers
 {
    
 
-    internal static class Tools
+    public static class Tools
     {
         public class Location
         {

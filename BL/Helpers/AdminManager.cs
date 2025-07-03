@@ -152,10 +152,15 @@ public static class AdminManager //stage 4
     {
         while (!s_stop)
         {
+            // קידום זמן המערכת
             UpdateClock(Now.AddMinutes(s_interval));
 
-            // ✅ סימולציה: יצירת קריאה חדשה שתפוג תוך זמן קצר
+            // הקצאות רנדומליות למתנדבים, סיום/ביטול טיפולים
+            VolunteerManager.SimulateVolunteerActivity();
+
+            // יצירת קריאה חדשה קצרה (אם אין אחת בתהליך)
             if (_simulateTask is null || _simulateTask.IsCompleted)
+            {
                 _simulateTask = Task.Run(() =>
                 {
                     lock (BlMutex)
@@ -164,7 +169,7 @@ public static class AdminManager //stage 4
                         {
                             var call = new BO.Call
                             {
-                                FullAddress = "jerusalem",
+                                FullAddress = "Jerusalem",
                                 OpenTime = Now,
                                 MaxCompletionTime = Now.AddMinutes(3),
                                 Description = "קריאה לדוגמה מהסימולטור",
@@ -173,18 +178,29 @@ public static class AdminManager //stage 4
 
                             var callBL = new BlImplementation.CallImplementation();
                             callBL.Create(call);
+
+                            Console.WriteLine($"📞 נוצרה קריאה סימולטיבית חדשה בשעה {Now:t}");
                         }
-                        catch { } // אם זה נכשל – מתעלמים
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("⚠️ שגיאה ביצירת קריאה מהסימולטור: " + ex.Message);
+                        }
                     }
                 });
+            }
 
             try
             {
-                Thread.Sleep(1000); // 1 second
+                Thread.Sleep(1000); // מחכה שנייה בין סיבובים
             }
-            catch (ThreadInterruptedException) { }
+            catch (ThreadInterruptedException)
+            {
+                // הסימולטור נעצר ידנית - זה תקין
+                Console.WriteLine("🛑 הסימולטור נעצר על ידי המשתמש.");
+            }
         }
     }
+
 
     #endregion Stage 7 base
 }

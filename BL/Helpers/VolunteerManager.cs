@@ -83,6 +83,11 @@ internal static class VolunteerManager
 
         foreach (var id in volunteersToNotify)
             Observers.NotifyItemUpdated(id); // stage 5+7
+
+        // ✅ עדכוני UI
+        CallManager.Observers.NotifyListUpdated();
+        VolunteerManager.Observers.NotifyListUpdated();
+
     }
 
     /// <summary>
@@ -399,8 +404,11 @@ internal static class VolunteerManager
                 Observers.NotifyListUpdated();
             }
         }
+
+
     }
 
+    
 
 
 }
