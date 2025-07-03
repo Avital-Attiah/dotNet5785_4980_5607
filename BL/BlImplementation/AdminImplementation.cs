@@ -65,10 +65,12 @@ internal class AdminImplementation : IAdmin // Implements the IAdmin interface
     // Sets a new risk range in the DAL configuration
     void IAdmin.SetRiskRange(TimeSpan riskRange)
     {
-        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
-        lock (AdminManager.BlMutex) //stage 7
-            _dal.Config.RiskRange = riskRange;
+        AdminManager.ThrowOnSimulatorIsRunning();
+        AdminManager.RiskRange = riskRange; // ←← זה כן מפעיל ConfigUpdatedObservers
+        CallManager.Observers.NotifyListUpdated();
+
     }
+
 
 
     // Resets the database and updates the clock to the current time

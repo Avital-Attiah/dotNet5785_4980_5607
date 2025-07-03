@@ -179,56 +179,22 @@ namespace PL.Volunteer
             }
         }
 
-        // Handler לכפתור Delete בתוך שורת ה־ListView – מבצע מחיקה
-        //private void DeleteButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (SelectedVolunteer == null)
-        //        return;
-
-        //    var result = MessageBox.Show(
-        //        $"האם את בטוחה שאת רוצה למחוק את המתנדב “{SelectedVolunteer.FullName}”?",
-        //        "אישור מחיקה",
-        //        MessageBoxButton.YesNo,
-        //        MessageBoxImage.Warning);
-
-        //    if (result == MessageBoxResult.Yes)
-        //    {
-        //        try
-        //        {
-        //            s_bl.Volunteer.Delete(SelectedVolunteer.Id);
-        //            MessageBox.Show(
-        //                "המתנדב נמחק בהצלחה.",
-        //                "הצלחה",
-        //                MessageBoxButton.OK,
-        //                MessageBoxImage.Information);
-
-        //            // לאחר מחיקה – רענון הרשימה
-        //            QueryVolunteerList();
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            MessageBox.Show(
-        //                $"שגיאה במחיקת המתנדב: {ex.Message}",
-        //                "שגיאה",
-        //                MessageBoxButton.OK,
-        //                MessageBoxImage.Error);
-        //        }
-        //    }
-        //}
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedVolunteer == null)
+            {
+                MessageBox.Show("⛔ לא ניתן למחוק מתנדב בזמן שהסימולטור פועל!", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
+            }
 
             // 1. קבלת כל הקריאות
-            var allCalls = s_bl.Call.GetCallsList(); // מניח שמוחזר IEnumerable<CallInList>
+            var allCalls = s_bl.Call.GetCallsList();
 
             // 2. בדיקה אם קיים Call פעיל עבור המתנדב הזה
             bool hasActiveCall = false;
             foreach (var c in allCalls)
             {
-                // מניח ש-CallInList כולל VolunteerId ושדה Status מסוג CallStatus
                 if (c.Id == SelectedVolunteer.Id &&
                     (c.Status == CallStatus.Open || c.Status == CallStatus.InProgress))
                 {
@@ -247,7 +213,7 @@ namespace PL.Volunteer
                 return;
             }
 
-            // 3. אם אין קריאה פעילה – אפשר להמשיך למחיקה
+            // 3. אם אין קריאה פעילה – המשך למחיקה
             var result = MessageBox.Show(
                 $"האם את בטוחה שאת רוצה למחוק את המתנדב “{SelectedVolunteer.FullName}”?",
                 "אישור מחיקה",
@@ -256,31 +222,34 @@ namespace PL.Volunteer
 
             if (result == MessageBoxResult.Yes)
             {
+                if (Helpers.AdminManager.SimulatorStarted)
+                {
+                    MessageBox.Show("⛔ לא ניתן למחוק מתנדב בזמן שהסימולטור פועל!", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 try
                 {
                     s_bl.Volunteer.Delete(SelectedVolunteer.Id);
-                    MessageBox.Show(
-                        "המתנדב נמחק בהצלחה.",
-                        "הצלחה",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information);
-
-                    QueryVolunteerList(); // ריענון הרשימה לאחר המחיקה
+                    MessageBox.Show("המתנדב נמחק בהצלחה.", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
+                    QueryVolunteerList();
                 }
                 catch (BO.BLTemporaryNotAvailableException ex)
                 {
-                    MessageBox.Show("לא ניתן למחוק מתנדב בזמן שהסימולטור פועל.\n" + ex.Message,
+                    MessageBox.Show("⛔ לא ניתן למחוק מתנדב בזמן שהסימולטור פועל!\n" + ex.Message,
                         "סימולטור פעיל", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                catch (BO.BlCannotBeDeletedException ex)
+                {
+                    MessageBox.Show("⚠️ לא ניתן למחוק את המתנדב: " + ex.Message,
+                        "שגיאה", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"שגיאה במחיקת המתנדב: {ex.Message}",
+                    MessageBox.Show($"❗ שגיאה כללית במחיקה:\n{ex.Message}",
                         "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-
             }
         }
-
-
     }
-}
+    }

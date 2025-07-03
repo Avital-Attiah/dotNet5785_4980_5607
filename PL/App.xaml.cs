@@ -3,13 +3,28 @@ using System.Windows;
 
 namespace PL
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
-        // את יכולה להוסיף כאן טיפול בשגיאות כלליות של האפליקציה אם תרצי
-        // לדוגמה: AppDomain.CurrentDomain.UnhandledException += ...
-      
+        public App()
+        {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            DispatcherUnhandledException += App_DispatcherUnhandledException;
+        }
+
+        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show($"שגיאה שלא נתפסה:\n{e.Exception.GetType().Name}: {e.Exception.Message}",
+                "שגיאה כללית", MessageBoxButton.OK, MessageBoxImage.Error);
+            e.Handled = true;
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (e.ExceptionObject is Exception ex)
+            {
+                MessageBox.Show($"שגיאה בלתי צפויה:\n{ex.GetType().Name}: {ex.Message}",
+                    "שגיאת מערכת", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
     }
 }

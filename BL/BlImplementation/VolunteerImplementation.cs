@@ -68,25 +68,22 @@ internal class VolunteerImplementation : IVolunteer
     // Deletes an existing volunteer
     public void Delete(int id)
     {
+        AdminManager.ThrowOnSimulatorIsRunning(); // ✅ זה יזרוק חריגה כשהסימולטור רץ
+
         try
         {
-            // Read the volunteer details by ID
             BO.Volunteer boVolunteer = Read(id);
 
-            // Check if the volunteer is currently handling calls or has handled any calls
             if (boVolunteer.CurrentCall != null || boVolunteer.TotalCompletedCalls > 0)
             {
                 throw new BO.BlCannotBeDeletedException($"Volunteer with ID={id} cannot be deleted because they are currently handling or have handled calls.");
             }
 
-            // Delete the volunteer from the DAL
             _dal.Volunteer.Delete(id);
-            VolunteerManager.Observers.NotifyListUpdated();  //stage 5  
-
+            VolunteerManager.Observers.NotifyListUpdated();
         }
         catch (DO.DalDoesNotExistException ex)
         {
-            // Handle case where the volunteer does not exist
             throw new BO.BlDoesNotExistException($"Volunteer with ID={id} does not exist.", ex);
         }
         catch (BO.BlCannotBeDeletedException)
@@ -94,6 +91,7 @@ internal class VolunteerImplementation : IVolunteer
             throw new BO.BlCannotBeDeletedException($"Failed to delete volunteer with ID={id}.");
         }
     }
+
 
     // Fetches the role of a user based on their username and password
     public BO.Role GetUserRole(string userName, string password)

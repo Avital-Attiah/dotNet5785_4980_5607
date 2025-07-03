@@ -528,4 +528,70 @@
     <Longitude>34.9983856</Longitude>
     <MaxCompletionTime>2025-07-06T01:22:45</MaxCompletionTime>
   </Call>
+  <Call>
+    <Id>1137</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>נהריה</FullAddress>
+    <OpenTime>2025-07-07T02:17:45</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>בדיקה4</Description>
+    <Latitude>33.0198621</Latitude>
+    <Longitude>35.1020015</Longitude>
+    <MaxCompletionTime>2025-07-07T02:43:45</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1136</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>רמת גן</FullAddress>
+    <OpenTime>2025-07-07T02:17:45</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>בדיקה2</Description>
+    <Latitude>32.0686867</Latitude>
+    <Longitude>34.8246812</Longitude>
+    <MaxCompletionTime>2025-07-07T02:39:45</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1135</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>תל אביב</FullAddress>
+    <OpenTime>2025-07-07T02:17:45</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>פתוחה</Description>
+    <Latitude>32.0852997</Latitude>
+    <Longitude>34.7818064</Longitude>
+    <MaxCompletionTime>2025-07-07T02:43:45</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1138</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>תל אביב</FullAddress>
+    <OpenTime>2025-07-07T06:09:45</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>זוהי בדיקה</Description>
+    <Latitude>32.0852997</Latitude>
+    <Longitude>34.7818064</Longitude>
+    <MaxCompletionTime>2025-07-07T06:44:45</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1139</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>הרצליה</FullAddress>
+    <OpenTime>2025-07-07T06:09:45</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>מלקר</Description>
+    <Latitude>32.1656255</Latitude>
+    <Longitude>34.8469023</Longitude>
+    <MaxCompletionTime>2025-07-07T06:47:45</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1140</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>ירושלים</FullAddress>
+    <OpenTime>2025-07-07T06:09:45</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>כר</Description>
+    <Latitude>31.7788472</Latitude>
+    <Longitude>35.2257856</Longitude>
+    <MaxCompletionTime>2025-07-07T06:51:45</MaxCompletionTime>
+  </Call>
 </Calls>

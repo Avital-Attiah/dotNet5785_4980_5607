@@ -123,8 +123,12 @@ public static class AdminManager //stage 4
     public static void ThrowOnSimulatorIsRunning()
     {
         if (s_thread is not null)
-            throw new BO.BLTemporaryNotAvailableException("Cannot perform the operation since Simulator is running");
+        {
+            Console.WriteLine("🛑 הסימולטור פועל – נזרקת חריגה");
+            throw new BO.BLTemporaryNotAvailableException("הסימולטור פועל כרגע – לא ניתן לבצע פעולה זו.");
+        }
     }
+
 
     [MethodImpl(MethodImplOptions.Synchronized)] //stage 7                                                 
     public static void Start(int interval)
@@ -134,9 +138,11 @@ public static class AdminManager //stage 4
             s_interval = interval;
             s_stop = false;
             s_thread = new(clockRunner) { Name = "ClockRunner" };
+            SimulatorStarted = true; // ← ← ← זה!
             s_thread.Start();
         }
     }
+
 
     [MethodImpl(MethodImplOptions.Synchronized)] //stage 7                                                 
     internal static void Stop()
@@ -147,6 +153,8 @@ public static class AdminManager //stage 4
             s_thread.Interrupt(); //awake a sleeping thread
             s_thread.Name = "ClockRunner stopped";
             s_thread = null;
+            SimulatorStarted = false;
+
         }
     }
 
@@ -154,35 +162,44 @@ public static class AdminManager //stage 4
 
     private static void clockRunner()
     {
-        while (!s_stop)
+        try
         {
-            UpdateClock(Now.AddMinutes(s_interval));
-
-            bool hadChanges = false;
-
-            // נריץ את העדכון ברקע, נמתין לסיום
-            Task.Run(() =>
+            while (!s_stop)
             {
-                try
+                UpdateClock(Now.AddMinutes(s_interval));
+
+                bool hadChanges = false;
+
+                Task.Run(() =>
                 {
-                    hadChanges = CallManager.UpdateExpiredOpenCalls();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("⚠️ שגיאה בעדכון קריאות שפגו תוקפן: " + ex.Message);
-                }
-            }).Wait(); // נחכה לסיום לפני שמעדכנים את התצוגה
+                    try
+                    {
+                        hadChanges = CallManager.UpdateExpiredOpenCalls();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("⚠️ שגיאה בעדכון קריאות שפגו תוקפן: " + ex.Message);
+                    }
+                }).Wait(); // נחכה לסיום לפני שמעדכנים את התצוגה
 
-            // ✅ רק אם היה שינוי – נשלח עדכון לרשימה
-            if (hadChanges)
-                CallManager.Observers.NotifyListUpdated();
+                if (hadChanges)
+                    CallManager.Observers.NotifyListUpdated();
 
-            // הרצת סימולציה
-            VolunteerManager.SimulateVolunteerActivity();
+                VolunteerManager.SimulateVolunteerActivity();
 
-            Thread.Sleep(1000);
+                Thread.Sleep(1000); // ← כאן נזרקה החריגה
+            }
+        }
+        catch (ThreadInterruptedException)
+        {
+            Console.WriteLine("🟠 הסימולטור הופסק (Interrupt)");
+            // אפשר גם לא לעשות כלום – רק לבלוע את החריגה כדי שה-thread ימות בשקט
         }
     }
+    public static bool IsSimulatorRunning => s_thread is not null && s_thread.IsAlive;
+    public static bool SimulatorStarted { get; private set; } = false;
+
+
 
 
 
