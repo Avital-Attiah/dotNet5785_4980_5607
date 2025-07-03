@@ -1,4 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
+using static System.Net.Mime.MediaTypeNames;
+using System.Windows;
+
 
 namespace Helpers;
 
@@ -33,7 +36,7 @@ public static class AdminManager //stage 4
     /// <summary>
     /// Property for providing current application's clock value for any BL class that may need it
     /// </summary>
-    internal static DateTime Now { get => s_dal.Config.Clock; } //stage 4
+    public static DateTime Now { get => s_dal.Config.Clock; } //stage 4
 
     internal static void ResetDB() //stage 4
     {
@@ -63,35 +66,36 @@ public static class AdminManager //stage 4
     /// <param name="newClock">updated clock value</param>
     public static void UpdateClock(DateTime newClock) //stage 4-7
     {
-        var oldClock = s_dal.Config.Clock; //stage 4
-        s_dal.Config.Clock = newClock; //stage 4
+        var oldClock = s_dal.Config.Clock;
+        s_dal.Config.Clock = newClock;
 
-        //TO_DO:
-        //Add calls here to any logic method that should be called periodically,
-        //after each clock update
-        //for example, Periodic students' updates:
-        //Go through all students to update properties that are affected by the clock update
-        //(students becomes not active after 5 years etc.)
-
-        //StudentManager.PeriodicStudentsUpdates(oldClock, newClock); //stage 4
         if (_periodicTask is null || _periodicTask.IsCompleted) //stage 7
+        {
             _periodicTask = Task.Run(() =>
             {
+                bool changed = false;
+
                 lock (BlMutex)
                 {
                     try
                     {
-                        CallManager.UpdateExpiredOpenCalls();
+                        changed = CallManager.UpdateExpiredOpenCalls(); // מחזירה true אם היו שינויים
                     }
                     catch { }
                 }
+
+                if (changed)
+                {
+                    // ✅ מחוץ ל־lock — מותר לעדכן את התצוגה
+                    CallManager.Observers.NotifyListUpdated();
+                }
             });
+        }
 
-        //etc ...
-
-        //Calling all the observers of clock update
-        ClockUpdatedObservers?.Invoke(); //prepared for stage 5
+        // עדכון כל המאזינים לשעון
+        ClockUpdatedObservers?.Invoke();
     }
+
     #endregion Stage 4
 
     #region Stage 7 base
@@ -152,54 +156,40 @@ public static class AdminManager //stage 4
     {
         while (!s_stop)
         {
-            // קידום זמן המערכת
             UpdateClock(Now.AddMinutes(s_interval));
 
-            // הקצאות רנדומליות למתנדבים, סיום/ביטול טיפולים
+            bool hadChanges = false;
+
+            // נריץ את העדכון ברקע, נמתין לסיום
+            Task.Run(() =>
+            {
+                try
+                {
+                    hadChanges = CallManager.UpdateExpiredOpenCalls();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("⚠️ שגיאה בעדכון קריאות שפגו תוקפן: " + ex.Message);
+                }
+            }).Wait(); // נחכה לסיום לפני שמעדכנים את התצוגה
+
+            // ✅ רק אם היה שינוי – נשלח עדכון לרשימה
+            if (hadChanges)
+                CallManager.Observers.NotifyListUpdated();
+
+            // הרצת סימולציה
             VolunteerManager.SimulateVolunteerActivity();
 
-            // יצירת קריאה חדשה קצרה (אם אין אחת בתהליך)
-            if (_simulateTask is null || _simulateTask.IsCompleted)
-            {
-                _simulateTask = Task.Run(() =>
-                {
-                    lock (BlMutex)
-                    {
-                        try
-                        {
-                            var call = new BO.Call
-                            {
-                                FullAddress = "Jerusalem",
-                                OpenTime = Now,
-                                MaxCompletionTime = Now.AddMinutes(3),
-                                Description = "קריאה לדוגמה מהסימולטור",
-                                CallType = BO.CallType.FamilySupport
-                            };
-
-                            var callBL = new BlImplementation.CallImplementation();
-                            callBL.Create(call);
-
-                            Console.WriteLine($"📞 נוצרה קריאה סימולטיבית חדשה בשעה {Now:t}");
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("⚠️ שגיאה ביצירת קריאה מהסימולטור: " + ex.Message);
-                        }
-                    }
-                });
-            }
-
-            try
-            {
-                Thread.Sleep(1000); // מחכה שנייה בין סיבובים
-            }
-            catch (ThreadInterruptedException)
-            {
-                // הסימולטור נעצר ידנית - זה תקין
-                Console.WriteLine("🛑 הסימולטור נעצר על ידי המשתמש.");
-            }
+            Thread.Sleep(1000);
         }
     }
+
+
+
+
+
+
+
 
 
     #endregion Stage 7 base

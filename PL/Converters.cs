@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Helpers;
+using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -70,7 +71,7 @@ namespace PL.Call
         {
             if (value is DateTime maxTime)
             {
-                DateTime openTime = DateTime.Now;
+                DateTime openTime = AdminManager.Now;
                 if (parameter is DateTime providedOpenTime)
                     openTime = providedOpenTime;
 
@@ -83,7 +84,7 @@ namespace PL.Call
         {
             if (int.TryParse(value?.ToString(), out int minutes))
             {
-                DateTime openTime = DateTime.Now;
+                DateTime openTime = AdminManager.Now;
                 if (parameter is DateTime providedOpenTime)
                     openTime = providedOpenTime;
 

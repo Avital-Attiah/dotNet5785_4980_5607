@@ -131,19 +131,6 @@
     <DistanceType>Air</DistanceType>
   </Volunteer>
   <Volunteer>
-    <Id>214778645</Id>
-    <FullName>Brian Harris</FullName>
-    <Phone>0553219876</Phone>
-    <Email>brian@example.com</Email>
-    <CurrentAddress>Tel Aviv</CurrentAddress>
-    <Latitude>32.0853</Latitude>
-    <Longitude>34.7818</Longitude>
-    <Role>Volunteer</Role>
-    <IsActive>true</IsActive>
-    <MaxDistance>23</MaxDistance>
-    <DistanceType>Air</DistanceType>
-  </Volunteer>
-  <Volunteer>
     <Id>214052542</Id>
     <FullName>Olivia Moore</FullName>
     <Phone>0506785432</Phone>
@@ -196,20 +183,6 @@
     <IsActive>true</IsActive>
     <MaxDistance>12</MaxDistance>
     <DistanceType>Car</DistanceType>
-  </Volunteer>
-  <Volunteer>
-    <Id>58667395</Id>
-    <FullName>Yehuda Levi</FullName>
-    <Phone>0556701967</Phone>
-    <Email>YYY@gmail.com</Email>
-    <Password>848477015fb8cb942f5329bd60284520b43bffcdc64fd6e03ab6f267a2a6cf03</Password>
-    <CurrentAddress> Nazareth</CurrentAddress>
-    <Latitude>50.959802</Latitude>
-    <Longitude>3.5963218</Longitude>
-    <Role>Manager</Role>
-    <IsActive>true</IsActive>
-    <MaxDistance>16</MaxDistance>
-    <DistanceType>Air</DistanceType>
   </Volunteer>
   <Volunteer>
     <Id>393965751</Id>
@@ -282,14 +255,70 @@
     <DistanceType>Air</DistanceType>
   </Volunteer>
   <Volunteer>
+    <Id>328218888</Id>
+    <FullName>Hadas Levi</FullName>
+    <Phone>0527655520</Phone>
+    <Email>HHH@gmail.com</Email>
+    <Password>e682e5857f599b9bf537da8df4bcb4583a8027e0fbac99fb6deaa9bddbbcb625</Password>
+    <CurrentAddress>Jerusalem</CurrentAddress>
+    <Latitude>31.7788472</Latitude>
+    <Longitude>35.2257856</Longitude>
+    <Role>Manager</Role>
+    <IsActive>false</IsActive>
+    <MaxDistance>12</MaxDistance>
+    <DistanceType>Walking</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>43445345</Id>
+    <FullName>Sara Levi</FullName>
+    <Phone>0527665515</Phone>
+    <Email>S@gmail.com</Email>
+    <Password>8e33f44954fd5a56cbee2db0aee5f12f0b73d4fb0647c4251903090ae77118e0</Password>
+    <CurrentAddress>Jerusalem</CurrentAddress>
+    <Latitude>31.7788472</Latitude>
+    <Longitude>35.2257856</Longitude>
+    <Role>Manager</Role>
+    <IsActive>false</IsActive>
+    <MaxDistance>67</MaxDistance>
+    <DistanceType>Walking</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>214407199</Id>
+    <FullName>Sara Levin</FullName>
+    <Phone>0556701967</Phone>
+    <Email>S@gmail.com</Email>
+    <Password>8e33f44954fd5a56cbee2db0aee5f12f0b73d4fb0647c4251903090ae77118e0</Password>
+    <CurrentAddress>jerusalem</CurrentAddress>
+    <Latitude>31.7788472</Latitude>
+    <Longitude>35.2257856</Longitude>
+    <Role>Manager</Role>
+    <IsActive>false</IsActive>
+    <MaxDistance>12</MaxDistance>
+    <DistanceType>Walking</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>214778645</Id>
+    <FullName>Brian Harris</FullName>
+    <Phone>0553219876</Phone>
+    <Email>brian@example.com</Email>
+    <Password>89e742237cfb302d3eb54801a485abbf2cefb0d20dfb0b29303edbd219eba23b</Password>
+    <CurrentAddress>Tel Aviv</CurrentAddress>
+    <Latitude>32.0853</Latitude>
+    <Longitude>34.7818</Longitude>
+    <Role>Volunteer</Role>
+    <IsActive>false</IsActive>
+    <MaxDistance>23</MaxDistance>
+    <DistanceType>Air</DistanceType>
+  </Volunteer>
+  <Volunteer>
     <Id>214994980</Id>
     <FullName>Avital Attiah</FullName>
     <Phone>0527665515</Phone>
     <Email>avitala5515@gmail.com</Email>
-    <Password>e627dea7670212aed7e4b971362ea609ba857f41ae3725513f00b16035868abf</Password>
-    <CurrentAddress>jerusalem</CurrentAddress>
-    <Latitude>31.7788472</Latitude>
-    <Longitude>35.2257856</Longitude>
+    <Password>2a73892c885b0a8c052ca05c55ce65fdfb066230d9d0932e7a42112227cadfb1</Password>
+    <CurrentAddress>haifa</CurrentAddress>
+    <Latitude>32.8191218</Latitude>
+    <Longitude>34.9983856</Longitude>
     <Role>Manager</Role>
     <IsActive>true</IsActive>
     <MaxDistance>55</MaxDistance>

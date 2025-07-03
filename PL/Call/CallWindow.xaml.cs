@@ -1,5 +1,6 @@
 ﻿using BlApi;
 using BO;
+using Helpers;
 using System;
 using System.Globalization;
 using System.Windows;
@@ -30,7 +31,8 @@ namespace PL.Call
             Call = new BO.Call
             {
                 Status = CallStatus.Open,
-                OpenTime = DateTime.Now
+                OpenTime = AdminManager.Now,
+
             };
             InitializeComponent();
             DataContext = this;

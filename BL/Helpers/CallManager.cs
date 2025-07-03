@@ -90,46 +90,62 @@ namespace Helpers
         /// <summary>
         /// Updates the status of open calls that have expired by comparing their completion time to the current time.
         /// </summary>
-        public static void UpdateExpiredOpenCalls()
+        public static bool UpdateExpiredOpenCalls()
         {
+            bool changed = false;
+
             List<DO.Call> list;
-            lock (AdminManager.BlMutex) //stage 7
+            lock (AdminManager.BlMutex)
             {
-                list = s_dal.Call.ReadAll().ToList(); // Get all calls
+                list = s_dal.Call.ReadAll(c => c.MaxCompletionTime <= AdminManager.Now).ToList();
             }
 
             foreach (var doCall in list)
             {
-                if (doCall.MaxCompletionTime <= AdminManager.Now)
+                DO.Assignment? assignment;
+                lock (AdminManager.BlMutex)
                 {
-                    DO.Assignment? assignment;
-                    lock (AdminManager.BlMutex) //stage 7
-                    {
-                        assignment = s_dal.Assignment.Read(a => a.CallId == doCall.Id);
-                    }
+                    assignment = s_dal.Assignment.Read(a => a.CallId == doCall.Id);
+                }
 
-                    if (assignment == null)
+                if (assignment == null)
+                {
+                    DO.Assignment doAssignment = new(
+                        0,
+                        doCall.Id,
+                        0,
+                        AdminManager.Now,
+                        AdminManager.Now,
+                        DO.Enums.TreatmentStatus.Expired);
+
+                    lock (AdminManager.BlMutex)
+                        s_dal.Assignment.Create(doAssignment);
+
+                    Console.WriteLine($"❌ קריאה {doCall.Id} פגה תוקפה – נוצרה השמה Expired");
+                    changed = true;
+                }
+                else if (assignment.CompletionTime == null)
+                {
+                    DO.Assignment updatedAssignment = assignment with
                     {
-                        // If no assignment exists, create a new expired assignment
-                        DO.Assignment doAssignment =
-                            new(0, doCall.Id, 0, AdminManager.Now, AdminManager.Now, DO.Enums.TreatmentStatus.Expired);
-                        lock (AdminManager.BlMutex) //stage 7
-                        {
-                            s_dal.Assignment.Create(doAssignment);
-                        }
-                    }
-                    else
-                    {
-                        // If assignment exists, update it to expired
-                        DO.Assignment updatedAssignment = assignment with { CompletionTime = AdminManager.Now, Status = DO.Enums.TreatmentStatus.Expired };
-                        lock (AdminManager.BlMutex) //stage 7
-                        {
-                            s_dal.Assignment.Update(updatedAssignment);
-                        }
-                    }
+                        CompletionTime = AdminManager.Now,
+                        Status = DO.Enums.TreatmentStatus.Expired
+                    };
+
+                    lock (AdminManager.BlMutex)
+                        s_dal.Assignment.Update(updatedAssignment);
+
+                    Console.WriteLine($"❌ קריאה {doCall.Id} פגה תוקפה – ההשמה עודכנה ל־Expired");
+                    changed = true;
                 }
             }
+
+            return changed;
         }
+
+
+
+
 
         /// <summary>
         /// Gets the current status of a call based on its completion time and assignment status.

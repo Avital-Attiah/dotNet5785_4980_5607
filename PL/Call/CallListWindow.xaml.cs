@@ -17,7 +17,7 @@ namespace PL.Call
             BlApi.Factory.Get().Call.AddObserver(LoadCalls);
         }
 
-        private void LoadCalls()
+        public void LoadCalls()
         {
             Application.Current.Dispatcher.Invoke(() =>
             {

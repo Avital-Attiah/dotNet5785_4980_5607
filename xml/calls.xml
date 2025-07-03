@@ -12,39 +12,6 @@
     <MaxCompletionTime />
   </Call>
   <Call>
-    <Id>1005</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Haifa</FullAddress>
-    <OpenTime>2025-07-01T12:40:45</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Suicide prevention</Description>
-    <Latitude>32.794</Latitude>
-    <Longitude>34.9896</Longitude>
-    <MaxCompletionTime />
-  </Call>
-  <Call>
-    <Id>1007</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Tel Aviv</FullAddress>
-    <OpenTime>2025-07-01T05:35:45</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Suicide prevention</Description>
-    <Latitude>32.0853</Latitude>
-    <Longitude>34.7818</Longitude>
-    <MaxCompletionTime />
-  </Call>
-  <Call>
-    <Id>1009</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Jerusalem</FullAddress>
-    <OpenTime>2025-07-01T10:53:45</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Stress management</Description>
-    <Latitude>31.7683</Latitude>
-    <Longitude>35.2137</Longitude>
-    <MaxCompletionTime />
-  </Call>
-  <Call>
     <Id>1011</Id>
     <CallType>Emergency</CallType>
     <FullAddress>Haifa</FullAddress>
@@ -155,39 +122,6 @@
     <MaxCompletionTime>2025-07-01T03:35:45</MaxCompletionTime>
   </Call>
   <Call>
-    <Id>1035</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Haifa</FullAddress>
-    <OpenTime>2025-07-01T07:58:45</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Loneliness support</Description>
-    <Latitude>32.794</Latitude>
-    <Longitude>34.9896</Longitude>
-    <MaxCompletionTime>2025-07-01T09:49:45</MaxCompletionTime>
-  </Call>
-  <Call>
-    <Id>1037</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Tel Aviv</FullAddress>
-    <OpenTime>2025-07-01T06:15:45</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Guidance for families</Description>
-    <Latitude>32.0853</Latitude>
-    <Longitude>34.7818</Longitude>
-    <MaxCompletionTime />
-  </Call>
-  <Call>
-    <Id>1039</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Jerusalem</FullAddress>
-    <OpenTime>2025-07-01T21:03:45</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Stress management</Description>
-    <Latitude>31.7683</Latitude>
-    <Longitude>35.2137</Longitude>
-    <MaxCompletionTime>2025-07-01T22:41:45</MaxCompletionTime>
-  </Call>
-  <Call>
     <Id>1041</Id>
     <CallType>Emergency</CallType>
     <FullAddress>Haifa</FullAddress>
@@ -274,28 +208,6 @@
     <Latitude>32.0853</Latitude>
     <Longitude>34.7818</Longitude>
     <MaxCompletionTime>2025-07-01T20:04:45</MaxCompletionTime>
-  </Call>
-  <Call>
-    <Id>1057</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Jerusalem</FullAddress>
-    <OpenTime>2025-07-01T17:03:45</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Loneliness support</Description>
-    <Latitude>31.7683</Latitude>
-    <Longitude>35.2137</Longitude>
-    <MaxCompletionTime />
-  </Call>
-  <Call>
-    <Id>1059</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Haifa</FullAddress>
-    <OpenTime>2025-07-01T19:29:45</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Crisis intervention</Description>
-    <Latitude>32.794</Latitude>
-    <Longitude>34.9896</Longitude>
-    <MaxCompletionTime>2025-07-01T20:49:45</MaxCompletionTime>
   </Call>
   <Call>
     <Id>1061</Id>
@@ -463,17 +375,6 @@
     <MaxCompletionTime>2025-07-01T11:12:45</MaxCompletionTime>
   </Call>
   <Call>
-    <Id>1093</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Jerusalem</FullAddress>
-    <OpenTime>2025-07-01T06:37:45</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Urgent assistance</Description>
-    <Latitude>31.7683</Latitude>
-    <Longitude>35.2137</Longitude>
-    <MaxCompletionTime />
-  </Call>
-  <Call>
     <Id>1095</Id>
     <CallType>Emergency</CallType>
     <FullAddress>Haifa</FullAddress>
@@ -483,28 +384,6 @@
     <Latitude>32.794</Latitude>
     <Longitude>34.9896</Longitude>
     <MaxCompletionTime />
-  </Call>
-  <Call>
-    <Id>1097</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Tel Aviv</FullAddress>
-    <OpenTime>2025-07-01T01:46:45</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Guidance for families</Description>
-    <Latitude>32.0853</Latitude>
-    <Longitude>34.7818</Longitude>
-    <MaxCompletionTime />
-  </Call>
-  <Call>
-    <Id>1099</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Jerusalem</FullAddress>
-    <OpenTime>2025-07-01T19:19:45</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Suicide prevention</Description>
-    <Latitude>31.7683</Latitude>
-    <Longitude>35.2137</Longitude>
-    <MaxCompletionTime>2025-07-01T20:34:45</MaxCompletionTime>
   </Call>
   <Call>
     <Id>1001</Id>
@@ -562,36 +441,91 @@
     <MaxCompletionTime>2025-07-02T02:28:31.5471782+03:00</MaxCompletionTime>
   </Call>
   <Call>
-    <Id>1103</Id>
-    <CallType>FamilySupport</CallType>
-    <FullAddress>Jabotinsky St 1, Tel Aviv</FullAddress>
-    <OpenTime>2025-07-02T01:50:55.3893879+03:00</OpenTime>
+    <Id>1127</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>ירושלים</FullAddress>
+    <OpenTime>2025-07-06T01:10:45</OpenTime>
     <isEmergency>false</isEmergency>
-    <Description>1233</Description>
-    <Latitude>32.1708832</Latitude>
-    <Longitude>34.8288667</Longitude>
-    <MaxCompletionTime>2025-07-02T02:03:55.3893879+03:00</MaxCompletionTime>
+    <Description>בדיקה</Description>
+    <Latitude>31.7788472</Latitude>
+    <Longitude>35.2257856</Longitude>
+    <MaxCompletionTime>2025-07-06T01:40:45</MaxCompletionTime>
   </Call>
   <Call>
-    <Id>1079</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Tel Aviv</FullAddress>
-    <OpenTime>2025-07-01T15:04:45</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Mental health advice</Description>
-    <Latitude>32.0853</Latitude>
-    <Longitude>34.7818</Longitude>
-    <MaxCompletionTime>2025-07-01T15:17:45</MaxCompletionTime>
+    <Id>1128</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>jerusalem</FullAddress>
+    <OpenTime>2025-07-06T01:10:45</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>stress</Description>
+    <Latitude>31.7788472</Latitude>
+    <Longitude>35.2257856</Longitude>
+    <MaxCompletionTime>2025-07-06T03:00:45</MaxCompletionTime>
   </Call>
   <Call>
-    <Id>1015</Id>
-    <CallType>Emergency</CallType>
-    <FullAddress>Jerusalem</FullAddress>
-    <OpenTime>2025-07-01T03:10:45</OpenTime>
-    <isEmergency>true</isEmergency>
-    <Description>Suicide prevention</Description>
-    <Latitude>31.7683</Latitude>
-    <Longitude>35.2137</Longitude>
-    <MaxCompletionTime>2025-07-01T03:58:45</MaxCompletionTime>
+    <Id>1129</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>Haifa</FullAddress>
+    <OpenTime>2025-07-06T01:10:45</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>stress</Description>
+    <Latitude>32.8191218</Latitude>
+    <Longitude>34.9983856</Longitude>
+    <MaxCompletionTime>2025-07-06T02:17:45</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1130</Id>
+    <CallType>FamilySupport</CallType>
+    <FullAddress>haifa</FullAddress>
+    <OpenTime>2025-07-06T01:10:45</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>attack</Description>
+    <Latitude>32.8191218</Latitude>
+    <Longitude>34.9983856</Longitude>
+    <MaxCompletionTime>2025-07-06T04:40:45</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1131</Id>
+    <CallType>EmotionalSupport</CallType>
+    <FullAddress>haifa</FullAddress>
+    <OpenTime>2025-07-06T01:10:45</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>Suicide attempt</Description>
+    <Latitude>32.8191218</Latitude>
+    <Longitude>34.9983856</Longitude>
+    <MaxCompletionTime>2025-07-06T05:20:45</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1132</Id>
+    <CallType>FamilySupport</CallType>
+    <FullAddress>haifa</FullAddress>
+    <OpenTime>2025-07-06T01:10:45</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>Anxiety attack</Description>
+    <Latitude>32.8191218</Latitude>
+    <Longitude>34.9983856</Longitude>
+    <MaxCompletionTime>2025-07-06T02:30:45</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1133</Id>
+    <CallType>ProfessionalConsultation</CallType>
+    <FullAddress>haifa</FullAddress>
+    <OpenTime>2025-07-06T01:10:45</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>help!!!</Description>
+    <Latitude>32.8191218</Latitude>
+    <Longitude>34.9983856</Longitude>
+    <MaxCompletionTime>2025-07-06T02:13:45</MaxCompletionTime>
+  </Call>
+  <Call>
+    <Id>1134</Id>
+    <CallType>FamilySupport</CallType>
+    <FullAddress>Haifa</FullAddress>
+    <OpenTime>2025-07-06T01:10:45</OpenTime>
+    <isEmergency>false</isEmergency>
+    <Description>stress!!</Description>
+    <Latitude>32.8191218</Latitude>
+    <Longitude>34.9983856</Longitude>
+    <MaxCompletionTime>2025-07-06T01:22:45</MaxCompletionTime>
   </Call>
 </Calls>
